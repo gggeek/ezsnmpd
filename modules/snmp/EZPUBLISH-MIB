@@ -1,0 +1,30 @@
+EZPUBLISH-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+        enterprises
+                FROM RFC1155-SMI
+        OBJECT-TYPE
+                FROM RFC-1212
+        DisplayString
+                FROM RFC-1213;
+
+	-- The assignments
+
+eZPublishMIB MODULE-IDENTITY
+        LAST-UPDATED "200802220000Z"
+        ORGANIZATION "eZ Systems"
+        CONTACT-INFO
+                "Gaetano Giunta
+                email: gg@ez.no"
+        DESCRIPTION
+                "This MIB module contains application specific
+                managed objects for the eZ Publish CMS server."
+        REVISION "200802220000Z"
+        DESCRIPTION
+                "The intial version."
+
+        ::= { enterprises 35000 }
+
+eZPublish       OBJECT IDENTIFIER ::= {eZPublishMIB 1}
+settings        OBJECT IDENTIFIER ::= {eZPublish 1}
+status          OBJECT IDENTIFIER ::= {eZPublish 2}

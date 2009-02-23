@@ -1,0 +1,23 @@
+Extension ezSNMPd for eZ publish
+===================================
+
+...
+
+===================================
+
+References:
+
+- adding scripts to net-snmp agent
+
+http://www.nagiosexchange.org/cgi-bin/page.cgi?g=Detailed%2F2855.html;d=1
+http://dreness.com/wikimedia/index.php?title=Net_SNMP
+http://www.net-snmp.org/docs/man/snmpd.conf.html
+
+- smi information (for building MIBs)
+
+http://tools.ietf.org/html/rfc2578
+http://tools.ietf.org/html/rfc2579
+http://tools.ietf.org/html/rfc2580
+
+===================================
+
