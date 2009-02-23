@@ -21,7 +21,7 @@ if ( isset( $_SERVER['REQUEST_METHOD'] ) )
 
 // move to eZ Publish root dir
 $dir = dirname( __FILE__ );
-chdir( $dir . '/../..' );
+chdir( $dir . '/../../../..' );
 
 // Set a default time zone if none is given to avoid "It is not safe to rely
 // on the system's timezone settings" warnings. The time zone can be overriden
