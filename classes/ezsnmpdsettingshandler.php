@@ -23,5 +23,11 @@ class eZsnmpdSettingsHandler extends eZsnmpdHandler {
             'type' => 'counter',
             'value' => rand( 0, 100 ) );
     }
+
+    function getMIB()
+    {
+        return '
+settings        OBJECT IDENTIFIER ::= {eZPublish 1}
+    }
 }
 ?>

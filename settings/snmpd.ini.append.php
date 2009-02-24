@@ -13,5 +13,6 @@ Prefix=1.3.6.1.4.1.35000.1
 SNMPHandlerClasses[]
 SNMPHandlerClasses[]=eZsnmpdSettingsHandler
 SNMPHandlerClasses[]=eZsnmpdStatusHandler
+SNMPHandlerClasses[]=eZsnmpdInfoHandler
 
 /* ?>

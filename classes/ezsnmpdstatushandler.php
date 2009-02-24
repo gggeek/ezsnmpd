@@ -86,6 +86,8 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
     function getMIB()
     {
         return '
+status          OBJECT IDENTIFIER ::= {eZPublish 2}
+
 ezpStatusContentObjects OBJECT-TYPE
     SYNTAX          Unsigned32
     MAX-ACCESS      read-only

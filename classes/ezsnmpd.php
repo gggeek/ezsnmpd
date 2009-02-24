@@ -23,6 +23,7 @@ class eZSNMPd {
      const TYPE_OID       = 'objectid';
      const TYPE_STRING    = 'string';
 
+     const VERSION        = '0.1';
 /*
 
 $oid = "";

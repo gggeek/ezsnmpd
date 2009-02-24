@@ -11,7 +11,7 @@
     - create a php script to generate a settings mib from standard ini files ot viceversa (mis: type, description)
   - add stats from ggsysinfo to status oid (here or in ggsysinfo ???)
 
-+ add an ez module / php script that generates mibs in parseable form (ASN.1) - from what exactly?
++ improve mib generation. Right now top-level mib nodes are hardcoded in the base MIB...
 
 + write install doc
 
