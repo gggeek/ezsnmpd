@@ -20,14 +20,14 @@ class eZsnmpdInfoHandler extends eZsnmpdHandler {
 
     function oidList( )
     {
-        return array( '3.1.1', '3.1.2' );
+        return array( '3.1', '3.2' );
     }
 
     function get( $oid )
     {
         switch( $oid )
         {
-            case '3.1.1': // cache-blocks
+            case '3.1': // cache-blocks
                 /// @todo ...
                 return array(
                     'oid' => $oid,
@@ -35,7 +35,7 @@ class eZsnmpdInfoHandler extends eZsnmpdHandler {
                     'value' => eZSNMPd::VERSION,
                 );
 
-            case '3.1.2': // view-cache
+            case '3.2': // view-cache
                 /// @todo ...
                 return array(
                     'oid' => $oid,
