@@ -28,6 +28,7 @@ class eZsnmpdSettingsHandler extends eZsnmpdHandler {
     {
         return '
 settings        OBJECT IDENTIFIER ::= {eZPublish 1}
+';
     }
 }
 ?>
