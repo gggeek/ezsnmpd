@@ -1,3 +1,5 @@
++ fix cli script not working if called from an eZP install with symlinks
+
 + fix support for getnext (snmpwalk is still ko)
 
 + finish munin counters

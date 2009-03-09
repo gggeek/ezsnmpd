@@ -19,9 +19,12 @@ if ( isset( $_SERVER['REQUEST_METHOD'] ) )
     die();
 }
 
-// move to eZ Publish root dir
+// try move to eZ Publish root dir if called in different dirs
 $dir = dirname( __FILE__ );
-chdir( $dir . '/../../../..' );
+if ( !file_exists( getcwd() . '/autoload.php' ) )
+{
+   chdir( $dir . '/../../../..' );
+}
 
 // Set a default time zone if none is given to avoid "It is not safe to rely
 // on the system's timezone settings" warnings. The time zone can be overriden
