@@ -20,10 +20,10 @@ if ( isset( $_SERVER['REQUEST_METHOD'] ) )
 }
 
 // try move to eZ Publish root dir if called in different dirs
-$dir = dirname( __FILE__ );
 if ( !file_exists( getcwd() . '/autoload.php' ) )
 {
-   chdir( $dir . '/../../../..' );
+    $dir = dirname( __FILE__ );
+    chdir( $dir . '/../../../..' );
 }
 
 // Set a default time zone if none is given to avoid "It is not safe to rely
