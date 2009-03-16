@@ -92,7 +92,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
 status          OBJECT IDENTIFIER ::= {eZPublish 2}
 
 database OBJECT-TYPE
-    SYNTAX          Unsigned32
+    SYNTAX          Integer
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
@@ -102,29 +102,29 @@ database OBJECT-TYPE
 content         OBJECT IDENTIFIER ::= {database 1}
 
 contentObjects OBJECT-TYPE
-    SYNTAX          Unsigned32
+    SYNTAX          Integer
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-            "The number of content objects."
+            "The number of content objects (-1 if db cannot be connected to)."
     ::= { content 1 }
 
 users           OBJECT IDENTIFIER ::= {database 2}
 
 users OBJECT-TYPE
-    SYNTAX          Unsigned32
+    SYNTAX          Integer
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-            "The number of existing user accounts."
+            "The number of existing user accounts (-1 if db cannot be connected to)."
     ::= { users 1 }
 
 sessions OBJECT-TYPE
-    SYNTAX          Unsigned32
+    SYNTAX          Integer
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
-            "The number of active sessions."
+            "The number of active sessions (-1 if db cannot be connected to)."
     ::= { users 2 }
 
 cache           OBJECT IDENTIFIER ::= {status 2}
