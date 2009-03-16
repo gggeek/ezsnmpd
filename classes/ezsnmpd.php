@@ -11,19 +11,24 @@
 
 class eZSNMPd {
 
-     const TYPE_INTEGER   = 'integer';
-     const TYPE_GAUGE     = 'gauge';
-     const TYPE_GAUGE32   = 'gauge';
-     const TYPE_GAUGE64   = 'gauge';
-     const TYPE_COUNTER   = 'counter';
-     const TYPE_COUNTER32 = 'counter';
-     const TYPE_COUNTER64 = 'counter';
-     const TYPE_TIMETICKS = 'timeticks';
-     const TYPE_IPADDRESS = 'ipaddress';
-     const TYPE_OID       = 'objectid';
-     const TYPE_STRING    = 'string';
+     const TYPE_INTEGER    = 'integer';
+     const TYPE_INTEGER32  = 'integer';
+     const TYPE_INTEGER64  = 'integer';
+     const TYPE_UNSIGNED   = 'unsigned';
+     const TYPE_UNSIGNED32 = 'unsigned';
+     const TYPE_UNSIGNED64 = 'unsigned';
+     const TYPE_GAUGE      = 'gauge';
+     const TYPE_GAUGE32    = 'gauge';
+     const TYPE_GAUGE64    = 'gauge';
+     const TYPE_COUNTER    = 'counter';
+     const TYPE_COUNTER32  = 'counter';
+     const TYPE_COUNTER64  = 'counter';
+     const TYPE_TIMETICKS  = 'timeticks';
+     const TYPE_IPADDRESS  = 'ipaddress';
+     const TYPE_OID        = 'objectid';
+     const TYPE_STRING     = 'string';
 
-     const VERSION        = '0.1';
+     const VERSION         = '0.1';
 /*
 
 $oid = "";
