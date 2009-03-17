@@ -152,7 +152,7 @@ function oidIsSmaller($a, $b) {
 	            case ezsnmpdHandler::ERROR_INCONSISTENT_VALUE:
 	                $response = "inconsistent-value";
 	                break;
-	            case ezsnmpdHandler::ERROR_NOT_WRITRABLE:
+	            case ezsnmpdHandler::ERROR_NOT_WRITEABLE:
 	                $response = "not-writable";
 	                break;
 	            default:

@@ -14,7 +14,7 @@ abstract class eZsnmpdHandler {
     const ERROR_WRONG_VALUE = -2;
     const ERROR_WRONG_LENGHT = -3;
     const ERROR_INCONSISTENT_VALUE = -4;
-    const ERROR_NOT_WRITRABLE = -5;
+    const ERROR_NOT_WRITEABLE = -5;
 
     /**
     * Must return an array of all the OIDs handled.
@@ -54,7 +54,7 @@ abstract class eZsnmpdHandler {
     */
     function set( $oid, $value, $type )
     {
-        return self::ERROR_NOT_WRITRABLE;
+        return self::ERROR_NOT_WRITEABLE;
     }
 
     /**
