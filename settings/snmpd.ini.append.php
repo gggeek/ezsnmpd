@@ -14,5 +14,7 @@ SNMPHandlerClasses[]
 SNMPHandlerClasses[]=eZsnmpdSettingsHandler
 SNMPHandlerClasses[]=eZsnmpdStatusHandler
 SNMPHandlerClasses[]=eZsnmpdInfoHandler
+# Used for test/development
+SNMPHandlerClasses[]=eZsnmpdTestHandler
 
 /* ?>

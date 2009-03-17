@@ -58,7 +58,7 @@ abstract class eZsnmpdHandler {
     }
 
     /**
-    * Must return plaintext MIB descroption for the OIDs served
+    * Must return plaintext MIB description for the OIDs served
     */
     function getMIB()
     {
