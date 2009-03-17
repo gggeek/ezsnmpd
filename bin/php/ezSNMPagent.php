@@ -150,9 +150,21 @@ do
 			$mode = "set2";
 			break;
 		case "set2":
-    		$type = $buffer;
-			$mode = "set3";
-			break;
+            if ( strpos( $buffer, ' ' ) === false )
+            {
+                $type = $buffer;
+                $mode = "set3";
+            }
+            else // If the type and the value are on the same line (as with snmpset)
+            {
+                list( $type, $value ) = explode( ' ', $buffer, 2 );
+                eZDebugSetting::writeDebug( 'snmp-access', "set $oid $type $value", 'command' );
+                $response = $server->set( $oid, $value, $type );
+                eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
+                echo "$response\n";
+                $mode = "command";
+            }
+            break;
 		case "set3":
             $value = $buffer;
             eZDebugSetting::writeDebug( 'snmp-access', "set $oid $type $value", 'command' );
