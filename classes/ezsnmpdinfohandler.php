@@ -27,16 +27,14 @@ class eZsnmpdInfoHandler extends eZsnmpdHandler {
     {
         switch( $oid )
         {
-            case '3.1': // cache-blocks
-                /// @todo ...
+            case '3.1':
                 return array(
                     'oid' => $oid,
-                    'type' => eZPublishSDK::version,
-                    'value' => eZSNMPd::VERSION,
+                    'type' => eZSNMPd::TYPE_STRING,
+                    'value' => eZPublishSDK::version,
                 );
 
-            case '3.2': // view-cache
-                /// @todo ...
+            case '3.2':
                 return array(
                     'oid' => $oid,
                     'type' => eZSNMPd::TYPE_STRING,
