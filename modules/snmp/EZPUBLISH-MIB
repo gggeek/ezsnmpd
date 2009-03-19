@@ -29,6 +29,6 @@ eZPublishMIB MODULE-IDENTITY
         DESCRIPTION
                 "The intial version."
 
-        ::= { enterprises 35000 }
+        ::= { enterprises 33120 }
 
 eZPublish       OBJECT IDENTIFIER ::= {eZPublishMIB 1}
