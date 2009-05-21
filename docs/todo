@@ -10,8 +10,6 @@
 
 + add an ezp version nr oid
 
-+ fix snmpd agent to actually set siteaccess if passed as 1st param
-
 + settle on a list of MIBs, gettable and settable
   - add an oid per ini setting, per ini block, per ini file
     - create a php script to generate a settings mib from standard ini files ot viceversa (mis: type, description)
@@ -26,3 +24,7 @@
 + ...
 
 + profit!!!
+
+done:
+- fix snmpd agent to actually set siteaccess if passed as 1st param
+- allow cli script to be called with params to get/set a single oid (one-shot calls)

@@ -16,10 +16,11 @@
 if ( isset( $_SERVER['REQUEST_METHOD'] ) )
 {
     // this script is not meant to be accessed via the web!
+    // note: ezscript class later does the same check, but after intializing a lot of stuff
     die();
 }
 
-// try move to eZ Publish root dir if called in different dirs
+// try to move to eZ Publish root dir if called in different dirs
 if ( !file_exists( getcwd() . '/autoload.php' ) )
 {
     $dir = dirname( __FILE__ );
@@ -36,152 +37,142 @@ if ( !ini_get( "date.timezone" ) )
 
 require 'autoload.php';
 
-if ( $argc > 2 )
-{
-	echo "SYNTAX: " . $argv[0] . " [siteaccess]\n";
-	exit( 1 );
-}
-
-if ( $argc > 1 )
-{
-	// @todo switch siteaccess ...
-}
-
 // magic global vars
 $useLogFiles = true;
 
-//$cli = eZCLI::instance();
 $script = eZScript::instance( array( 'description' => ( "SNMP agent daemon" ),
-                                     'use-session' => false,
-                                     'use-modules' => true,
                                      'use-extensions' => true ) );
 $script->startup();
+if ( $argc > 1 )
+{
+    // if no options passed on cli, do not waste time with parsing stuff
+    $options = $script->getOptions( '[G:|GET:][S:|SET:]',
+                                    '',
+                                    array(
+                                        'GET' => 'get oid value, ex: --GET a.b.c',
+                                        'SET' => 'set oid value, ex: --SET a.b.c/type/value'
+                                    ) );
+}
+else
+{
+    $options = array();
+}
 $script->initialize();
-
-function changeSiteAccessSetting( $siteaccess )
-{
-    if ( file_exists( 'settings/siteaccess/' . $siteaccess ) )
-    {
-        return true;
-    }
-    elseif ( isExtensionSiteaccess( $optionData ) )
-    {
-        eZExtension::prependExtensionSiteAccesses( $siteaccess );
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
-function isExtensionSiteaccess( $siteaccessName )
-{
-    $ini = eZINI::instance();
-    $extensionDirectory = $ini->variable( 'ExtensionSettings', 'ExtensionDirectory' );
-    $activeExtensions = $ini->variable( 'ExtensionSettings', 'ActiveExtensions' );
-    foreach ( $activeExtensions as $extensionName )
-    {
-        $possibleExtensionPath = $extensionDirectory . '/' . $extensionName . '/settings/siteaccess/' . $siteaccessName;
-        if ( file_exists( $possibleExtensionPath ) )
-            return true;
-    }
-    return false;
-}
-
 
 // *** init mibs and start answering loop ***
 
 $server = new eZSNMPd();
-$mode = "command";
-$buffer = "";
-$quit = false;
 
-$fh = fopen('php://stdin', 'r');
-do
+if ( isset( $options['GET'] ) )
 {
-	$buffer = rtrim( fgets( $fh, 4096 ) );
-	switch ( $mode )
+    eZDebugSetting::writeDebug( 'snmp-access', "get {$options['GET']}", 'command' );
+    $response = $server->get( $options['GET'] );
+    eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
+    echo "$response\n";
+}
+elseif( isset( $options['SET'] ) )
+{
+    list( $oid, $type, $value ) = explode( '/', $options['SET'], 3 );
+    eZDebugSetting::writeDebug( 'snmp-access', "set $oid $type $value", 'command' );
+    $response = $server->set( $oid, $value, $type );
+    eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
+    echo "$response\n";
+}
+else
+{
+
+
+    $mode = "command";
+    $buffer = "";
+    $quit = false;
+
+    $fh = fopen('php://stdin', 'r');
+    do
     {
+    	$buffer = rtrim( fgets( $fh, 4096 ) );
+    	switch ( $mode )
+        {
 
-		case "command":
-    		$response = '';
-			switch ( strtoupper( $buffer ) )
-            {
-				case "GET":
-				case "GETNEXT":
-				case "SET":
-					$mode = strtolower( $buffer );
-					break;
-				case "PING":
-					// this is for startup handshake
-					$response = "PONG";
-					break;
-				case "QUIT":
-					// this is for telnet-tests ;-)
-					$quit = true;
-					$response = "Terminating.";
-					break;
-				default:
-    				// unrecognized command
-					$response = "NONE";
-					break;
-			}
-			if ( $response !== '' )
-			{
-    			eZDebugSetting::writeDebug( 'snmp-access', $buffer, 'command' );
-			    eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
-				echo "$response\n";
-			}
-			break;
+    		case "command":
+        		$response = '';
+    			switch ( strtoupper( $buffer ) )
+                {
+    				case "GET":
+    				case "GETNEXT":
+    				case "SET":
+    					$mode = strtolower( $buffer );
+    					break;
+    				case "PING":
+    					// this is for startup handshake
+    					$response = "PONG";
+    					break;
+    				case "QUIT":
+    					// this is for telnet-tests ;-)
+    					$quit = true;
+    					$response = "Terminating.";
+    					break;
+    				default:
+        				// unrecognized command
+    					$response = "NONE";
+    					break;
+    			}
+    			if ( $response !== '' )
+    			{
+        			eZDebugSetting::writeDebug( 'snmp-access', $buffer, 'command' );
+    			    eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
+    				echo "$response\n";
+    			}
+    			break;
 
-		case "getnext":
-		case "get":
+    		case "getnext":
+    		case "get":
 
-            eZDebugSetting::writeDebug( 'snmp-access', "$mode $buffer", 'command' );
-            $response = $server->$mode( $buffer );
-            eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
-			echo "$response\n";
-			$mode = "command";
-			break;
+                eZDebugSetting::writeDebug( 'snmp-access', "$mode $buffer", 'command' );
+                $response = $server->$mode( $buffer );
+                eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
+    			echo "$response\n";
+    			$mode = "command";
+    			break;
 
-		case "set":
-    		$oid = $buffer;
-			$mode = "set2";
-			break;
-		case "set2":
-            if ( strpos( $buffer, ' ' ) === false )
-            {
-                $type = $buffer;
-                $mode = "set3";
-            }
-            else // If the type and the value are on the same line (as with snmpset)
-            {
-                list( $type, $value ) = explode( ' ', $buffer, 2 );
+    		case "set":
+        		$oid = $buffer;
+    			$mode = "set2";
+    			break;
+    		case "set2":
+                if ( strpos( $buffer, ' ' ) === false )
+                {
+                    $type = $buffer;
+                    $mode = "set3";
+                }
+                else // If the type and the value are on the same line (as with snmpset)
+                {
+                    list( $type, $value ) = explode( ' ', $buffer, 2 );
+                    eZDebugSetting::writeDebug( 'snmp-access', "set $oid $type $value", 'command' );
+                    $response = $server->set( $oid, $value, $type );
+                    eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
+                    echo "$response\n";
+                    $mode = "command";
+                }
+                break;
+    		case "set3":
+                $value = $buffer;
                 eZDebugSetting::writeDebug( 'snmp-access', "set $oid $type $value", 'command' );
                 $response = $server->set( $oid, $value, $type );
                 eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
-                echo "$response\n";
-                $mode = "command";
-            }
-            break;
-		case "set3":
-            $value = $buffer;
-            eZDebugSetting::writeDebug( 'snmp-access', "set $oid $type $value", 'command' );
-            $response = $server->set( $oid, $value, $type );
-            eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
-			echo "$response\n";
-			$mode = "command";
-			break;
+    			echo "$response\n";
+    			$mode = "command";
+    			break;
 
-		default:
-    		// assert false...
-			eZDebugSetting::writeDebug( 'snmp-access', 'NONE', 'response' );
-			echo "NONE\n";
-			$mode = "command";
-			break;
-	}
-} while ( !$quit );
+    		default:
+        		// assert false...
+    			eZDebugSetting::writeDebug( 'snmp-access', 'NONE', 'response' );
+    			echo "NONE\n";
+    			$mode = "command";
+    			break;
+    	}
+    } while ( !$quit );
+
+}
 
 $script->shutdown();
 
