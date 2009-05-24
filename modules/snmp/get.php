@@ -14,7 +14,7 @@ $oid = $Params['oid'];
 if ( $oid != '' )
 {
     $server = new eZSNMPd();
-    $response = $server->$mode( $oid );
+    $response = $server->get( $oid );
 }
 
 header( 'Content-Type: text/plain' );
