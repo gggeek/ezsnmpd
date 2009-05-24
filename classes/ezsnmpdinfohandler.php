@@ -31,7 +31,7 @@ class eZsnmpdInfoHandler extends eZsnmpdHandler {
                 return array(
                     'oid' => $oid,
                     'type' => eZSNMPd::TYPE_STRING,
-                    'value' => eZPublishSDK::version,
+                    'value' => eZPublishSDK::version(),
                 );
 
             case '3.2':
