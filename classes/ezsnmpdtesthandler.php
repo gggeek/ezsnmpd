@@ -25,6 +25,7 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
                     'value' => rand( 0, 100 ) );
 
             case '4.2':
+                /// @todo missing here: try-catch around db connection, $db->close() at the end
                 $db = eZDB::instance();
                 $rows = $db->arrayQuery( 'SELECT text FROM writetest where id = 42' );
                 return array(
@@ -45,6 +46,7 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
                 return parent::ERROR_NOT_WRITEABLE;
 
             case '4.2':
+                /// @todo missing here: try-catch around db connection, $db->close() at the end
                 $value = trim( $value, ' "' );
                 if ( $type != eZSNMPd::TYPE_STRING )
                     return parent::ERROR_WRONG_TYPE;
