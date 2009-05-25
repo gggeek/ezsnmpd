@@ -46,11 +46,12 @@ $script->startup();
 if ( $argc > 1 )
 {
     // if no options passed on cli, do not waste time with parsing stuff
-    $options = $script->getOptions( '[G:|GET:][S:|SET:]',
+    $options = $script->getOptions( '[G:|GET:][S:|SET:][M|MIB]',
                                     '',
                                     array(
                                         'GET' => 'get oid value, ex: --GET a.b.c',
-                                        'SET' => 'set oid value, ex: --SET a.b.c/type/value'
+                                        'SET' => 'set oid value, ex: --SET a.b.c/type/value',
+                                        'MIB' => 'get the complete MIB'
                                     ) );
 }
 else
@@ -76,6 +77,13 @@ elseif( isset( $options['SET'] ) )
     eZDebugSetting::writeDebug( 'snmp-access', "set $oid $type $value", 'command' );
     $response = $server->set( $oid, $value, $type );
     eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
+    echo "$response\n";
+}
+elseif ( isset( $options['MIB'] ) )
+{
+    eZDebugSetting::writeDebug( 'snmp-access', "mib", 'command' );
+    $response = $server->getHandlerMIBs();
+    eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
     echo "$response\n";
 }
 else
