@@ -11,24 +11,27 @@
 
 class eZSNMPd {
 
-     const TYPE_INTEGER    = 'integer';
-     const TYPE_INTEGER32  = 'integer';
-     const TYPE_INTEGER64  = 'integer';
-     const TYPE_UNSIGNED   = 'unsigned';
-     const TYPE_UNSIGNED32 = 'unsigned';
-     const TYPE_UNSIGNED64 = 'unsigned';
-     const TYPE_GAUGE      = 'gauge';
-     const TYPE_GAUGE32    = 'gauge';
-     const TYPE_GAUGE64    = 'gauge';
-     const TYPE_COUNTER    = 'counter';
-     const TYPE_COUNTER32  = 'counter';
-     const TYPE_COUNTER64  = 'counter';
-     const TYPE_TIMETICKS  = 'timeticks';
-     const TYPE_IPADDRESS  = 'ipaddress';
-     const TYPE_OID        = 'objectid';
-     const TYPE_STRING     = 'string';
+    // these types are taken from snmpd.conf man pages, and do not correspond
+    // directly to mib base types, such as seen in mib files
+    const TYPE_INTEGER    = 'integer';
+    const TYPE_INTEGER32  = 'integer';
+    const TYPE_INTEGER64  = 'integer';
+    const TYPE_GAUGE      = 'gauge';
+    const TYPE_GAUGE32    = 'gauge';
+    const TYPE_GAUGE64    = 'gauge';
+    const TYPE_COUNTER    = 'counter';
+    const TYPE_COUNTER32  = 'counter';
+    const TYPE_COUNTER64  = 'counter';
+    const TYPE_TIMETICKS  = 'timeticks';
+    const TYPE_IPADDRESS  = 'ipaddress';
+    const TYPE_OID        = 'objectid';
+    const TYPE_STRING     = 'string';
 
-     const VERSION         = '0.1';
+    const TYPE_UNSIGNED   = 'unsigned';
+    const TYPE_UNSIGNED32 = 'unsigned';
+    const TYPE_UNSIGNED64 = 'unsigned';
+
+    const VERSION         = '0.1';
 /*
 
 $oid = "";
@@ -240,6 +243,19 @@ function oidIsSmaller($a, $b) {
         return $results;
     }
 
+    /// Filter variable names to make them valid asn.1 identifiers:
+    /// - must start with lowercase letter
+    /// - only a-z a-Z 0-9 are permitted
+    public static function asncleanup( $name )
+    {
+        $name = str_replace( array( '_', '.' ), '-', $name );
+        $name[0] = strtolower( $name[0] );
+        if ( $name[0] >= '0' && $name[0] <= '9' )
+        {
+            $name = 'xxx' . $name;
+        }
+        return $name;
+    }
 }
 
 ?>

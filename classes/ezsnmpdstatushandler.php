@@ -38,9 +38,22 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
     {
         if ( array_key_exists( $oid, self::$simplequeries ) )
         {
-            $db = eZDB::instance();
+            try
+            {
+                $db = eZDB::instance();
+            }
+            catch ( Exception $e )
+            {
+                return 0;
+            }
+            // eZP 4.0 will not raise an exception on connection errors
+            if ( !$db->isConnected() )
+            {
+                return 0;
+            }
             $results = $db->arrayQuery( self::$simplequeries[$oid] );
-            if ( is_array( $results) && count( $results ) )
+            $db->close();
+            if ( is_array( $results ) && count( $results ) )
             {
                 return array(
                     'oid' => $oid,

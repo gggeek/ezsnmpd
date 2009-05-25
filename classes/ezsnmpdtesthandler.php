@@ -11,20 +11,20 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
 
     function oidList( )
     {
-        return array ( '4.*' );
+        return array ( '5.*' );
     }
 
      function get( $oid )
      {
         switch( $oid )
         {
-            case '4.1':
+            case '5.1':
                 return array(
                     'oid' => $oid,
                     'type' => 'counter',
                     'value' => rand( 0, 100 ) );
 
-            case '4.2':
+            case '5.2':
                 /// @todo missing here: try-catch around db connection, $db->close() at the end
                 $db = eZDB::instance();
                 $rows = $db->arrayQuery( 'SELECT text FROM writetest where id = 42' );
@@ -42,10 +42,10 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
         eZDebugSetting::writeDebug( 'snmp-access', "$oid, $value, $type", __METHOD__ );
         switch( $oid )
         {
-            case '4.1':
+            case '5.1':
                 return parent::ERROR_NOT_WRITEABLE;
 
-            case '4.2':
+            case '5.2':
                 /// @todo missing here: try-catch around db connection, $db->close() at the end
                 $value = trim( $value, ' "' );
                 if ( $type != eZSNMPd::TYPE_STRING )
@@ -63,7 +63,7 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
     function getMIB()
     {
         return '
-scrap        OBJECT IDENTIFIER ::= {eZPublish 4}
+scrap        OBJECT IDENTIFIER ::= {eZPublish 5}
 
 random OBJECT-TYPE
     SYNTAX          String
