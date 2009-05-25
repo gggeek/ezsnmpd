@@ -51,7 +51,7 @@ class eZsnmpdInfoHandler extends eZsnmpdHandler {
 info            OBJECT IDENTIFIER ::= {eZPublish 3}
 
 ezpInfoeZPVersion OBJECT-TYPE
-    SYNTAX          String
+    SYNTAX          DisplayString
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
@@ -59,7 +59,7 @@ ezpInfoeZPVersion OBJECT-TYPE
     ::= { info 1 }
 
 ezpInfoezsnmpdVersion OBJECT-TYPE
-    SYNTAX          String
+    SYNTAX          DisplayString
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION

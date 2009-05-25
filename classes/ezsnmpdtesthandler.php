@@ -66,7 +66,7 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
 scrap        OBJECT IDENTIFIER ::= {eZPublish 5}
 
 random OBJECT-TYPE
-    SYNTAX          String
+    SYNTAX          DisplayString
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
@@ -74,7 +74,7 @@ random OBJECT-TYPE
     ::= { scrap 1 }
 
 writetest OBJECT-TYPE
-    SYNTAX          String
+    SYNTAX          DisplayString
     MAX-ACCESS      read-write
     STATUS          current
     DESCRIPTION

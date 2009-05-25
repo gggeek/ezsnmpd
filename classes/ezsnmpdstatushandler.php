@@ -19,19 +19,19 @@
 class eZsnmpdStatusHandler extends eZsnmpdHandler {
 
     static $simplequeries = array(
-        '2.1.1.1' => 'SELECT COUNT(id) AS count FROM ezcontentobject', // eZContentObjects
-        '2.1.1.2' => 'SELECT COUNT(id) AS count FROM ezcontentobject_attribute', // eZContentObjectAttributes
-        '2.1.1.3' => 'SELECT COUNT(node_id) AS count FROM ezcontentobject_tree', // eZContentObjectTreeNode
-        '2.1.1.4' => 'SELECT COUNT(id) AS count FROM ezcontentobject_link', // eZContentObjectRelations
-        '2.1.1.5' => 'SELECT COUNT(id) AS count FROM ezcontentobject WHERE STATUS=0', // eZContentObjectDrafts
+        '2.1.2.1' => 'SELECT COUNT(id) AS count FROM ezcontentobject', // eZContentObjects
+        '2.1.2.2' => 'SELECT COUNT(id) AS count FROM ezcontentobject_attribute', // eZContentObjectAttributes
+        '2.1.2.3' => 'SELECT COUNT(node_id) AS count FROM ezcontentobject_tree', // eZContentObjectTreeNode
+        '2.1.2.4' => 'SELECT COUNT(id) AS count FROM ezcontentobject_link', // eZContentObjectRelations
+        '2.1.2.5' => 'SELECT COUNT(id) AS count FROM ezcontentobject WHERE STATUS=0', // eZContentObjectDrafts
 
-        '2.1.2.1' => 'SELECT COUNT(contentobject_id) AS count FROM ezuser', // user count
-        '2.1.2.2' => 'SELECT COUNT(session_key) AS count FROM ezsession', // sessions
+        '2.1.3.1' => 'SELECT COUNT(contentobject_id) AS count FROM ezuser', // user count
+        '2.1.3.2' => 'SELECT COUNT(session_key) AS count FROM ezsession', // sessions
     );
 
     function oidList( )
     {
-        return array_merge ( array_keys( self::$simplequeries ), array( '2.2.1', '2.2.2' ) );
+        return array_merge ( array_keys( self::$simplequeries ), array( '2.1.1', '2.3.1', '2.3.2' ) );
     }
 
     function get( $oid )
@@ -41,13 +41,13 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
             try
             {
                 $db = eZDB::instance();
+                // eZP 4.0 will not raise an exception on connection errors
+                if ( !$db->isConnected() )
+                {
+                    return 0;
+                }
             }
             catch ( Exception $e )
-            {
-                return 0;
-            }
-            // eZP 4.0 will not raise an exception on connection errors
-            if ( !$db->isConnected() )
             {
                 return 0;
             }
@@ -70,9 +70,27 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         $handlerName = $fileINI->variable( 'ClusteringSettings', 'FileHandler' );
         switch( $oid )
         {
-            case '2.1':
+            case '2.1.1':
                 // @todo verify if db can be connected to
-
+                $ok = 1;
+                try
+                {
+                    $db = eZDB::instance();
+                    // eZP 4.0 will not raise an exception on connection errors
+                    if ( !$db->isConnected() )
+                    {
+                        $ok = 0;
+                    }
+                    $db->close();
+                }
+                catch ( Exception $e )
+                {
+                    $ok = 0;
+                }
+                return array(
+                    'oid' => $oid,
+                    'type' => eZSNMPd::TYPE_INTEGER, // counter cannot be used, as it is monotonically increasing
+                    'value' => $ok );
             case '2.2.1': // cache-blocks
                 /// @todo ...
                 switch( $handlerName )
@@ -104,28 +122,46 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         return '
 status          OBJECT IDENTIFIER ::= {eZPublish 2}
 
-database OBJECT-TYPE
-    SYNTAX          Integer
+database OBJECT IDENTIFIER ::= { status 1 }
+
+dbstatus OBJECT-TYPE
+    SYNTAX          INTEGER
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
             "Availability of the database."
-    ::= { status 1 }
+    ::= { database 1 }
 
-content         OBJECT IDENTIFIER ::= {database 1}
+content         OBJECT IDENTIFIER ::= {database 2}
 
 contentObjects OBJECT-TYPE
-    SYNTAX          Integer
+    SYNTAX          INTEGER
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
             "The number of content objects (-1 if db cannot be connected to)."
     ::= { content 1 }
 
-users           OBJECT IDENTIFIER ::= {database 2}
+contentObjectAttributes OBJECT-TYPE
+    SYNTAX          INTEGER
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            "The number of content object attributes (-1 if db cannot be connected to)."
+    ::= { content 2 }
 
-users OBJECT-TYPE
-    SYNTAX          Integer
+contentObjectNodes OBJECT-TYPE
+    SYNTAX          INTEGER
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+        "The number of content nodes (-1 if db cannot be connected to)."
+    ::= { content 3 }
+
+users           OBJECT IDENTIFIER ::= {database 3}
+
+registeredusers OBJECT-TYPE
+    SYNTAX          INTEGER
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
@@ -133,7 +169,7 @@ users OBJECT-TYPE
     ::= { users 1 }
 
 sessions OBJECT-TYPE
-    SYNTAX          Integer
+    SYNTAX          INTEGER
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION

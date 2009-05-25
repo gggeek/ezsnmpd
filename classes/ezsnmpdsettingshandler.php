@@ -18,7 +18,7 @@
  * - settings that are a list on not-previously known values (eg. image.ini) are
  *   even more subject to this problem
  *
- * @todo fix already-registered oid names (ie. settings with same name in different files / blocks)
+ * @todo fix overly-long oid names
  * @todo add support for array-values
  * @todo allow write-access to settings (take into care also siteaccess/override: where do we write them?)
  * @todo test using 'Boolean' type with net-snmp tools (snmpget)
@@ -75,17 +75,17 @@ settings        OBJECT IDENTIFIER ::= {eZPublish 1}
             foreach( $file['groups'] as $j => $group )
             {
                 $groupname = eZSNMPd::asncleanup( $group['group'] );
-                $out .= "\n" . str_pad( $groupname, 15 ) . ' OBJECT IDENTIFIER ::= {'. "$filename $j}\n";
+                $out .= "\n" . str_pad( $filename . $groupname, 15 ) . ' OBJECT IDENTIFIER ::= {'. "$filename $j}\n";
                 foreach( $group['settings'] as $k => $setting )
                 {
                     $name = eZSNMPd::asncleanup( $setting['name'] );
                     $out .= "
-$name OBJECT-TYPE
+$filename$groupname$name OBJECT-TYPE
     SYNTAX          {$setting['type']}
     MAX-ACCESS      " . ( $setting['rw'] ? 'read-write' : ' read-only' ) . "
     STATUS          current
     DESCRIPTION     \"\"
-    ::= { " . $groupname ." $k }\n";
+    ::= { " . $filename . $groupname ." $k }\n";
                 }
             }
         }
