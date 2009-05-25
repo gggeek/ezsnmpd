@@ -1,11 +1,55 @@
-Extension ezSNMPd for eZ publish
+ezSNMPd extension for eZ publish
 ===================================
 
-...
+The goal of the ezSNMPd extension is to provide a unified API for monitoring
+installations of the eZ Publish cms.
 
-===================================
+This means exposing a set of values that can be queried, such as e.g. the status
+of the datadabase (can connect to or not), the number of content objects and so
+on...
 
-References:
+The protocols that can be used to query these values are, in order of preference:
+1 - via the SNMP protocol, using an appropriate 3rd party tool
+2 - via command line, invoking a php script
+3 - via the web, using a plain http GET request
+
+The main advantages of using snmp instead of http for querying values are:
+- snmp is a standard monitoring protocol, understood by every monitoring tool
+  in the market, such as nagios, zenoss, hp openview etc...
+- the values can be queried even when the webserver is down / unreachable
+- access to snmp can be secured independently of access to the web interfaces
+
+For the current release there is no support for active event notification, i.e.
+snmp trap signals.
+
+You can read more about snmp at http://en.wikipedia.org/wiki/Snmp
+
+The set of values that can be queried is minimal in this release of the extension,
+but an extensibility mechanism via "handler" classes is provided, so that other
+extensions can hook into the system to provide new values to be queried.
+
+
+Requirements
+============
+
+o  eZ Publish version:
+
+   Make sure you have eZ Publish version 4.0 or higher
+
+o  SNMP Agent:
+
+   An external snmp agent is needed to handle reception of snmp requests.
+   The net-snmp service, available for linux and windows (http://www.net-snmp.org),
+   provides the extensible agent that is compatible with the ezsnmp extension.
+   Other agents that support the same extensibility 'pass_persist' API might work,
+   too, but they have not been tested.
+
+   NB: without an snmp-agent, the extension can still be used but monitoring will
+   have to be done via http calls or dircet execution of command-line php scripts.
+
+
+Developer References
+====================
 
 - adding scripts to net-snmp agent
 
@@ -18,6 +62,3 @@ http://www.net-snmp.org/docs/man/snmpd.conf.html
 http://tools.ietf.org/html/rfc2578
 http://tools.ietf.org/html/rfc2579
 http://tools.ietf.org/html/rfc2580
-
-===================================
-

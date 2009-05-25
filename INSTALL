@@ -17,6 +17,8 @@ eZ SNMPd extension 0.1 installation instructions
 
     pass_persist .1.3.6.1.4.1.35000.1 D:\htdocs\eZ\extension\ezsnmpd\bin\win\ezSNMPagent.bat
 
+    (change the path to the ezSNMPagent.php according to your eZ Publish installation)
+
 
 - test that the extension works by running
 
