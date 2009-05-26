@@ -6,13 +6,15 @@ to do:
 
 + settle on a list of MIBs, gettable and settable
   - finish ini settings mib: add support for array values, writing settings
-  - add stats from ggsysinfo to status mib (here or in ggsysinfo ???)
-  - finish counters imported from ezmunin
-  - add other info from eZP admin interface: sessions, upgrade_check, etc...
+  - add stats from ggsysinfo to status mib (here or in ggsysinfo ???): cache-files per cache type, files in storage per dir
+  - finish counters imported from ezmunin (missing: nbr. of cache-block and view-cache templates)
+  - add other info from eZP admin interface: active sessions / logged in users, upgrade_check, etc...
 
 + improve install / readme doc
 
 + add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ...
+
++ facilitate process of creating MIBs at the same time as pollers
 
 + ...
 

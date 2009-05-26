@@ -12,7 +12,7 @@ IMPORTS
 -- The assignments
 
 eZPublishMIB MODULE-IDENTITY
-        LAST-UPDATED "200905250000Z"
+        LAST-UPDATED "200905260000Z"
         ORGANIZATION "eZ Systems"
         CONTACT-INFO
                 "Gaetano Giunta
@@ -20,9 +20,9 @@ eZPublishMIB MODULE-IDENTITY
         DESCRIPTION
                 "This MIB module contains application specific
                 managed objects for the eZ Publish CMS server."
-        REVISION "200905250000Z"
+        REVISION "200905260000Z"
         DESCRIPTION
-                "Added the complete settings subtree; more conforming SMIv2 mib"
+                "Added the complete settings subtree; reshuffled and expanded status subtree; more conforming SMIv2 mib"
         REVISION "200903130000Z"
         DESCRIPTION
                 "Corrected datetimes in MIB."

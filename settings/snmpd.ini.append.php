@@ -11,10 +11,15 @@ Prefix=1.3.6.1.4.1.33120.1
 # List of php classes delegated to answer GET/SET responses
 # each one of those takes care of a list of OIDs, that form the overall eZ Publish MIB
 SNMPHandlerClasses[]
-SNMPHandlerClasses[]=eZsnmpdSettingsHandler
+#SNMPHandlerClasses[]=eZsnmpdSettingsHandler
 SNMPHandlerClasses[]=eZsnmpdStatusHandler
 SNMPHandlerClasses[]=eZsnmpdInfoHandler
 # Used for test/development
 SNMPHandlerClasses[]=eZsnmpdTestHandler
 
+[StatusHandler]
+# Set this to non-null to enable testing of connectivity to mail server
+MailReceiver=
+# List of webservers used to test connectivity to thr web
+WebBeacons[]
 /* ?>
