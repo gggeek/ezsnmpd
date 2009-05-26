@@ -22,4 +22,8 @@ SNMPHandlerClasses[]=eZsnmpdTestHandler
 MailReceiver=
 # List of webservers used to test connectivity to thr web
 WebBeacons[]
+WebBeacons[]=http://www.google.com
+#WebBeacons[]=http://www.yahoo.com
+#WebBeacons[]=http://www.microsoft.com
+
 /* ?>
