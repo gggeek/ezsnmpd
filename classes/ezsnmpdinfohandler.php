@@ -20,7 +20,7 @@ class eZsnmpdInfoHandler extends eZsnmpdHandler {
 
     function oidList( )
     {
-        return array( '3.1', '3.2' );
+        return array( '3.1', '3.2', '3.3' );
     }
 
     function get( $oid )
@@ -40,6 +40,13 @@ class eZsnmpdInfoHandler extends eZsnmpdHandler {
                     'type' => eZSNMPd::TYPE_STRING,
                     'value' => eZSNMPd::VERSION,
                 );
+
+            case '3.3':
+                return array(
+                    'oid' => $oid,
+                    'type' => eZSNMPd::TYPE_STRING,
+                    'value' => $GLOBALS['eZCurrentAccess']['name'],
+            );
         }
 
         return 0; // oid not managed
@@ -64,6 +71,14 @@ ezpInfoezsnmpdVersion OBJECT-TYPE
     STATUS          current
     DESCRIPTION
             "The ezsnmpd extension release number."
+    ::= { info 2 }
+
+ezpInfoSiteAccess OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+    "The siteaccess in use when answering this request."
     ::= { info 2 }';
     }
 }
