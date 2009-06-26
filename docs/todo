@@ -1,20 +1,34 @@
 to do:
 
-+ fix cli script not working if called from an eZP install with symlinks
++ fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir)
 
 + fix support for getnext (snmpwalk is still ko ?)
 
-+ settle on a list of MIBs, gettable and settable
-  - finish ini settings mib: add support for array values, writing settings
-  - add stats from ggsysinfo to status mib (here or in ggsysinfo ???): cache-files per cache type, files in storage per dir
-  - finish counters imported from ezmunin (missing: nbr. of cache-block and view-cache templates)
-  - add other info from eZP admin interface: active sessions / logged in users, upgrade_check, etc...
++ test: disconnect from db after every status query, to avoid keeping resources occupied
 
-+ improve install / readme doc
++ settle on a list of MIBs, gettable and settable
+  - add stats from ggsysinfo to status mib: cache-files per cache type, files in storage per dir
+  - finish counters imported from ezmunin (missing: nbr. of cache-block and view-cache templates)
+  - add other info from eZP admin interface:
+    - active sessions
+	- logged in users
+	- upgrade_check
+  - nodes a and objects (full info, identified by id)
+  - pending items (drafts and items waiting for approval)
+  - object count per version
+  - webshop objects in the different stages
+  - a set of common db corruption cases tests
+  -  etc...
+
++ finish ini settings mib: add support for array values, writing settings
+
++ improve install / readme doc (add section on anon user access to snmp/get via custom siteaccess, links to snmp modules for mysql and apache)
+
++ add php script (or sh wrapper) for one-shot calls from net-snmp agent, for those who fear a long-running php
 
 + add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ...
 
-+ facilitate process of creating MIBs at the same time as pollers
++ facilitate process of creating MIBs at the same time as handlers
 
 + ...
 
@@ -24,7 +38,7 @@ to do:
 done:
 - fix snmpd agent to actually set siteaccess if passed as 1st param
 - allow cli script to be called with params to get/set a single oid or retrieve mib (one-shot calls)
-- disconnect from db after every status query, to avoid keeping resources occupied
 - add a try/catch around db->connect, to be compatible with 4.1
-- add an ezp version nr oid
+- add an ezp version nr. oid
 - add an oid per ini setting, per ini block, per ini file
+- add an oid with current siteaccess
