@@ -9,6 +9,8 @@
  * @copyright (C) G. Giunta 2009
  * @license code licensed under the GPL License: see README
  *
+ * @todo add enum for OK/KO/NA values, use 1/2/3 instead of 1/0/-1, as it is more snmp-standard
+ *
  * @todo add other metrics, such as:
  *       expired / active sessions
  *       object nr. per version
