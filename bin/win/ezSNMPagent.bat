@@ -7,4 +7,4 @@ REM (ini file for cli is usually different from the one used for the webserver)
 
 set _phpdir_=d:\php5
 
-%_phpdir_%\php -c %_phpdir_% %~dp0..\php\ezSNMPagent.php
+%_phpdir_%\php -c %_phpdir_% %~dp0..\php\ezSNMPagent.php %*
