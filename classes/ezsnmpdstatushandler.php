@@ -81,7 +81,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                 $ok = 1;
                 try
                 {
-                    $db = eZDB::instance();
+                    $db = eZDB::instance( false, false, true );
                     // eZP 4.0 will not raise an exception on connection errors
                     if ( !$db->isConnected() )
                     {
