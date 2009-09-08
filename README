@@ -15,7 +15,7 @@ The protocols that can be used to query these values are, in order of preference
 
 The main advantages of using snmp instead of http for querying values are:
 - snmp is a standard monitoring protocol, understood by every monitoring tool
-  in the market, such as nagios, zenoss, hp openview etc...
+  in the market, such as nagios, zenoss, hyperic etc...
 - the values can be queried even when the webserver is down / unreachable
 - access to snmp can be secured independently of access to the web interfaces
 

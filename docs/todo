@@ -22,7 +22,7 @@ to do:
 
 + finish ini settings mib: add support for array values, writing settings
 
-+ improve install / readme doc (add section on anon user access to snmp/get via custom siteaccess, links to snmp modules for mysql and apache)
++ improve install / readme doc (add section on anon user access to snmp/get via custom siteaccess)
 
 + add php script (or sh wrapper) for one-shot calls from net-snmp agent, for those who fear a long-running php
 
@@ -42,3 +42,4 @@ done:
 - add an ezp version nr. oid
 - add an oid per ini setting, per ini block, per ini file
 - add an oid with current siteaccess
+- improve install / readme doc (add links to snmp modules for mysql and apache)

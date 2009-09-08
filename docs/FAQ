@@ -1,0 +1,18 @@
+Q: will this extension implement monitoring probes for mysql/apache/other?
+A: no
+
+Q: why?
+A: because of the principle of separation of concerns. Every app knows best how
+   to monitor its internals, and should not try to delve too deep into others.
+   Besides, you can install packages to enable monitoring via SNMP of most
+   commonly used software:
+
+   Apache - mod_apache_snmp (http://mod-apache-snmp.sourceforge.net/)
+
+   Mysql - http://www.webnms.com/mysql_agent/index.html
+           http://www.masterzen.fr/2009/04/13/introducing-mysql-snmp/
+		   http://www.mysql.com/products/enterprise/monitor-features.html
+
+   Postgresql - pgsnmpd (http://pgsnmpd.projects.postgresql.org/)
+
+   Oracle - Oracle Management Agent
