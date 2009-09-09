@@ -7,4 +7,7 @@ REM (ini file for cli is usually different from the one used for the webserver)
 
 set _phpdir_=d:\php5
 
+REM this seems to work on vista even with symlinks involved
+cd %~dp0\..\..\..\..
+
 %_phpdir_%\php -c %_phpdir_% %~dp0..\php\ezSNMPagent.php %*
