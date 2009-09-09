@@ -6,6 +6,8 @@
  * @version $Id$
  * @copyright (C) G. Giunta 2009
  * @license code licensed under the GPL License: see README
+ *
+ * @todo add support for columnar objects
  */
 
 abstract class eZsnmpdHandler {
@@ -18,6 +20,7 @@ abstract class eZsnmpdHandler {
 
     /**
     * Must return an array of all the OIDs handled.
+    * For scalar objects, the trailing .0 is to be omitted
     * Trailing wildcards are accepted, eg 1.1.*
     */
     abstract function oidList();
@@ -32,19 +35,28 @@ abstract class eZsnmpdHandler {
 
     /**
     * Must return a string with the next oid.
-    * Should be implemented when oidList returns some regexp-based oids
+    * Should be reimplemented when oidList() returns some regexp-based oids
     */
     function getnext( $oid )
     {
-        $oidList = $this->oidList();
-        sort( $oidList );
-        if ( ($key = array_search( $oid, $oidList )) !== false )
+        if ( preg_match( '/\\.0$/', $oid ) )
         {
-            $key++;
-            if ( $key < count( $oidList ) )
+            // next oid is taken from the list
+            $oidList = $this->oidList();
+            sort( $oidList );
+            if ( ($key = array_search( preg_replace( '/\\.0$/', '', $oid ), $oidList )) !== false )
             {
-                return $this->get( $oidList[$key] );
+                $key++;
+                if ( $key < count( $oidList ) )
+                {
+                    return $this->get( $oidList[$key] . '.0' );
+                }
             }
+        }
+        else
+        {
+            // next oid is the scalar value of the current oid
+            return $this->get( $oid . '.0' );
         }
         return null;
     }

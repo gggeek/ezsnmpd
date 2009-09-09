@@ -16,7 +16,8 @@
  *       object nr. per version
  *       inactive users
  *       files in the fs (storage)
- *       files in the fs (cache)
+ *       files in the fs (cache, per cache type)
+ *       activated caches
  */
 
 class eZsnmpdStatusHandler extends eZsnmpdHandler {
@@ -31,6 +32,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         '2.1.2.7' => 'SELECT COUNT(id) AS count FROM ezinfocollection',
 
         '2.1.3.1' => 'SELECT COUNT(contentobject_id) AS count FROM ezuser', // user count
+
         '2.1.4.1' => 'SELECT COUNT(session_key) AS count FROM ezsession', // all sessions
         '2.1.4.2' => 'SELECT COUNT(session_key) AS count FROM ezsession where ezsession.user_id = /*anonymousId*/', // anon sessions
         '2.1.4.3' => 'SELECT COUNT(session_key) AS count FROM ezsession where ezsession.user_id != /*anonymousId*/', // registered sessions
@@ -38,12 +40,16 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
 
     function oidList( )
     {
-        return array_merge ( array_keys( self::$simplequeries ), array( '2.1.1', '2.1.2', /*'2.3.1', '2.3.2',*/ '2.4.1', '2.4.2', '2.4.3' ) );
+        return array_merge ( array_keys( self::$simplequeries ), array( '2.1.1', '2.2.1', '2.2.2', '2.4.1', '2.4.2', '2.4.3', '2.5.1' ) );
     }
 
+    /**
+    * @todo shall we return an error if the scalar values are quieried without a .0 appended?
+    */
     function get( $oid )
     {
-        if ( array_key_exists( $oid, self::$simplequeries ) )
+        $internaloid = preg_replace( '/.0$/', '', $oid );
+        if ( array_key_exists( $internaloid, self::$simplequeries ) )
         {
             try
             {
@@ -58,7 +64,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
             {
                 return 0;
             }
-            $results = $db->arrayQuery( str_replace( '/*anonymousId*/', eZUser::anonymousId(), self::$simplequeries[$oid] ) );
+            $results = $db->arrayQuery( str_replace( '/*anonymousId*/', eZUser::anonymousId(), self::$simplequeries[$internaloid] ) );
             $db->close();
             if ( is_array( $results ) && count( $results ) )
             {
@@ -74,7 +80,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         }
 
         $fileINI = eZINI::instance( 'file.ini' );
-        switch( $oid )
+        switch( $internaloid )
         {
             case '2.1.1':
                 // @todo verify if db can be connected to
@@ -92,29 +98,6 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                 catch ( Exception $e )
                 {
                     $ok = 0;
-                }
-                return array(
-                    'oid' => $oid,
-                    'type' => eZSNMPd::TYPE_INTEGER,
-                    'value' => $ok );
-
-            case '2.1.2':
-                if ( $fileINI->variable( 'ClusteringSettings', 'FileHandler' ) == 'ezdb' )
-                {
-                    // @todo...
-                    $dbFileHandler = eZClusterFileHandler::instance();
-                    if ( $dbFileHandler instanceof eZDBFileHandler )
-                    {
-                        // warning - we dig into the private parts of the cluster file handler,
-                        // as no real API are provided for it (yet)
-                        if ( is_resource( $dbFileHandler->backend->db ) )
-                            $ok = 1;
-                    }
-                    $ok = 0;
-                }
-                else
-                {
-                    $ok = -1;
                 }
                 return array(
                     'oid' => $oid,
@@ -248,7 +231,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                     $sender = $ini->variable( 'MailSettings', 'EmailSender' );
                     $mail->setSender($sender);
                     $mail->setSubject( "Test email" );
-                    $mail->setBody( "Thsi email was automatically sent while testing eZ Publish connectivity to the mail server. Please do not reply." );
+                    $mail->setBody( "This email was automatically sent while testing eZ Publish connectivity to the mail server. Please do not reply." );
                     $mailResult = eZMailTransport::send( $mail );
                     if ( $mailResult )
                     {
@@ -263,6 +246,30 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                     'oid' => $oid,
                     'type' => eZSNMPd::TYPE_INTEGER,
                     'value' => $ok );
+
+            case '2.5.1':
+                if ( $fileINI->variable( 'ClusteringSettings', 'FileHandler' ) == 'ezdb' )
+                {
+                    // @todo...
+                    $dbFileHandler = eZClusterFileHandler::instance();
+                    if ( $dbFileHandler instanceof eZDBFileHandler )
+                    {
+                        // warning - we dig into the private parts of the cluster file handler,
+                        // as no real API are provided for it (yet)
+                        if ( is_resource( $dbFileHandler->backend->db ) )
+                            $ok = 1;
+                    }
+                    $ok = 0;
+                }
+                else
+                {
+                    $ok = -1;
+                }
+                return array(
+                    'oid' => $oid,
+                    'type' => eZSNMPd::TYPE_INTEGER,
+                    'value' => $ok );
+
         }
 
         return 0; // oid not managed

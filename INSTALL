@@ -11,18 +11,18 @@ eZ SNMPd extension 0.1 installation instructions
 
 - alter the snmpd.conf (usually found in /etc/snmp) and restart the service. Example line to add:
 
-    pass_persist .1.3.6.1.4.1.33120.1 \var\www\eZ\extension\ezsnmpd\bin\php\ezSNMPagent.php
+    pass .1.3.6.1.4.1.33120.1 \var\www\eZ\extension\ezsnmpd\bin\php\ezSNMPagent.php
 
     or
 
-    pass_persist .1.3.6.1.4.1.33120.1 D:\htdocs\eZ\extension\ezsnmpd\bin\win\ezSNMPagent.bat
+    pass .1.3.6.1.4.1.33120.1 D:\htdocs\eZ\extension\ezsnmpd\bin\win\ezSNMPagent.bat
 
     (change the path to the ezSNMPagent.php according to your eZ Publish installation)
 
 
 - test that the extension works by running
 
-    snmpget -v1 -c public -v 1 localhost 1.3.6.1.4.1.33120.1.2.1.1.1
+    snmpget -v1 -c public localhost 1.3.6.1.4.1.33120.1.2.1.1
 
     (change the '-c public' param above to suit your snmp community string)
 
@@ -30,10 +30,10 @@ eZ SNMPd extension 0.1 installation instructions
 - if the above command results in an error message, test that the ezSNMPagent.php script is working properly
 
     launch that script from a command line (remember to move first to the eZ Publish base directory)
-	the script should start and wait for commands, without echoing anything to screen
-	type PING [enter]. The script should answer PONG
-	type GET [enter] 1.3.6.1.4.1.33120.1.2.1.1.1 [enter]. The script should answer something like this:
-	1.3.6.1.4.1.33120.1.2.1.1.1
+    the script should start and wait for commands, without echoing anything to screen
+    type PING [enter]. The script should answer PONG
+    type GET [enter] 1.3.6.1.4.1.33120.1.2.1.1.0 [enter]. The script should answer something like this:
+    1.3.6.1.4.1.33120.1.2.1.1.0
     integer
     44
     type QUIT [enter]
@@ -43,4 +43,4 @@ eZ SNMPd extension 0.1 installation instructions
 
     http://my.ezpublish.site/index.php/siteaccess/snmp/mib
 
-    please note that by default that page is world-readable.
+    and save it as EZSYSTEMS-MIB.txt. Please note that by default that page is world-readable.

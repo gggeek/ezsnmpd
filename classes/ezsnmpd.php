@@ -102,17 +102,21 @@ function oidIsSmaller($a, $b) {
         }
     }
 
+    /**
+    * @return string|null null in case of error
+    */
     public function get( $oid, $mode='get' )
     {
-        $response = 'NONE';
+        $response = null;
         $oid = $this->removePrefix( $oid );
-        $handler = $this->getHandler( $oid, $mode );
+        //$oid = $this->removeSuffix( $oid );
+        $handler = $this->getHandler( $this->removeSuffix( $oid ), $mode );
         if ( is_object( $handler ) )
         {
 	        $data = $handler->$mode( $oid );
 	        if ( is_array( $data ) && array_key_exists( 'oid', $data ) && array_key_exists( 'type', $data ) && array_key_exists( 'value', $data ) )
 	        {
-		        $response = $this->prefix.$data['oid'] . "\n" . $data['type'] . "\n" . $data['value'];
+		        $response = $this->prefix . $data['oid'] . "\n" . $data['type'] . "\n" . $data['value'];
 	        }
 	        else
 	        {
@@ -130,10 +134,15 @@ function oidIsSmaller($a, $b) {
         return $this->get( $oid, 'getnext' );
     }
 
+    /*
+    * @return string
+    * @todo change DONE to true to be more consistent with get()?
+    */
     public function set( $oid, $value, $type )
     {
         $response = "not-writable";
         $oid = $this->removePrefix( $oid );
+        //$oid = $this->removeSuffix( $oid );
         $handler = $this->getHandler( $oid, 'set' );
         if ( is_object( $handler ) )
         {
@@ -195,6 +204,15 @@ function oidIsSmaller($a, $b) {
     protected function removePrefix( $oid )
     {
         return preg_replace( $this->prefixregexp, '', $oid );
+    }
+
+    /**
+     * Remove the suffix part from a full oid.
+     * This is used to simplify writing handlers - the .0 used for scalar values is removed
+     */
+    protected function removeSuffix( $oid )
+    {
+        return preg_replace( '/.0$/', '', $oid );
     }
 
     /**

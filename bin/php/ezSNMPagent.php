@@ -2,6 +2,7 @@
 <?php
 /**
  * ezSNMPagent - PHP script to be invoked from the SNMP agent
+ * Should work when invoked with both 'pass' or 'pass_persist'
  *
  * Based on mySNMPagent - Copyright (C) 2008 Guenther Mair [guenther.mair@hoslo.ch]
  *
@@ -9,6 +10,8 @@
  * @version $Id$
  * @copyright (C) G. Giunta 2009
  * @license code licensed under the GPL License: see README
+ *
+ * @todo resolve clash between -s used by eZP standard options and -s used by snmpd for set...
  */
 
 // *** bootstrap ***
@@ -46,11 +49,12 @@ $script->startup();
 if ( $argc > 1 )
 {
     // if no options passed on cli, do not waste time with parsing stuff
-    $options = $script->getOptions( '[G:|GET:][S:|SET:][M|MIB]',
+    $options = $script->getOptions( '[g:|GET:][n:|GETNEXT:][S:|SET:][m|MIB]',
                                     '',
                                     array(
-                                        'GET' => 'get oid value, ex: --GET a.b.c',
-                                        'SET' => 'set oid value, ex: --SET a.b.c/type/value',
+                                        'GET' => 'get oid value, ex: --GET=a.b.c',
+                                        'GETNEXT' => 'get next oid value, ex: --GETNEXT=a.b.c',
+                                        'SET' => 'set oid value, ex: --SET=a.b.c/type/value',
                                         'MIB' => 'get the complete MIB'
                                     ) );
 }
@@ -66,18 +70,20 @@ $server = new eZSNMPd();
 
 if ( isset( $options['GET'] ) )
 {
-    eZDebugSetting::writeDebug( 'snmp-access', "get {$options['GET']}", 'command' );
-    $response = $server->get( $options['GET'] );
-    eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
-    echo "$response\n";
+    echo snmpget( 'get', $options['GET'], $server );
+}
+elseif ( isset( $options['GETNEXT'] ) )
+{
+    echo snmpget( 'getnext', $options['GETNEXT'], $server );
 }
 elseif( isset( $options['SET'] ) )
 {
-    list( $oid, $type, $value ) = explode( '/', $options['SET'], 3 );
-    eZDebugSetting::writeDebug( 'snmp-access', "set $oid $type $value", 'command' );
-    $response = $server->set( $oid, $value, $type );
-    eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
-    echo "$response\n";
+    /// @todo validate presence of the 3 params?
+    $response = snmpset( $options['SET'], $options['arguments'][0], $options['arguments'][1], $server );
+    if ( $response !== 'DONE' )
+    {
+        echo $response;
+    }
 }
 elseif ( isset( $options['MIB'] ) )
 {
@@ -89,7 +95,6 @@ elseif ( isset( $options['MIB'] ) )
 else
 {
 
-
     $mode = "command";
     $buffer = "";
     $quit = false;
@@ -98,6 +103,7 @@ else
     do
     {
     	$buffer = rtrim( fgets( $fh, 4096 ) );
+file_put_contents( 'd:/x.log', 'IN: ' . $buffer . "\n", FILE_APPEND );
     	switch ( $mode )
         {
 
@@ -134,11 +140,8 @@ else
 
     		case "getnext":
     		case "get":
-
-                eZDebugSetting::writeDebug( 'snmp-access', "$mode $buffer", 'command' );
-                $response = $server->$mode( $buffer );
-                eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
-    			echo "$response\n";
+    		    $response = snmpget( $mode, $buffer, $server, true );
+    		    echo $response === null ? "NONE\n" : "$response\n";
     			$mode = "command";
     			break;
 
@@ -155,19 +158,12 @@ else
                 else // If the type and the value are on the same line (as with snmpset)
                 {
                     list( $type, $value ) = explode( ' ', $buffer, 2 );
-                    eZDebugSetting::writeDebug( 'snmp-access', "set $oid $type $value", 'command' );
-                    $response = $server->set( $oid, $value, $type );
-                    eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
-                    echo "$response\n";
+                    echo snmpset( $oid, $type, $value, $server ) . "\n";
                     $mode = "command";
                 }
                 break;
     		case "set3":
-                $value = $buffer;
-                eZDebugSetting::writeDebug( 'snmp-access', "set $oid $type $value", 'command' );
-                $response = $server->set( $oid, $value, $type );
-                eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
-    			echo "$response\n";
+    		    echo snmpset( $oid, $type, $buffer, $server ) . "\n";
     			$mode = "command";
     			break;
 
@@ -180,6 +176,24 @@ else
     	}
     } while ( !$quit );
 
+}
+
+function snmpset( $oid, $type, $value, $server )
+{
+    eZDebugSetting::writeDebug( 'snmp-access', "set $oid $type $value", 'command' );
+    $response = $server->set( $oid, $value, $type );
+    eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
+    return $response;
+}
+
+function snmpget( $mode, $buffer, $server )
+{
+    eZDebugSetting::writeDebug( 'snmp-access', "$mode $buffer", 'command' );
+file_put_contents( 'd:/x.log', "Q: $mode $buffer\n", FILE_APPEND );
+    $response = $server->$mode( $buffer );
+file_put_contents( 'd:/x.log', 'A: ' . str_replace( "\n", " ", $response ) . "\n", FILE_APPEND );
+    eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response ), 'response' );
+    return $response;
 }
 
 $script->shutdown();
