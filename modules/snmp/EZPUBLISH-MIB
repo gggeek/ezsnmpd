@@ -1,8 +1,8 @@
-EZPUBLISH-MIB DEFINITIONS ::= BEGIN
+EZSYSTEMS-MIB DEFINITIONS ::= BEGIN
 
 IMPORTS
         enterprises,
-        MODULE-INDENTITY
+        MODULE-IDENTITY
                 FROM SNMPv2-SMI
         OBJECT-TYPE
                 FROM RFC-1212
@@ -11,7 +11,7 @@ IMPORTS
 
 -- The assignments
 
-eZPublishMIB MODULE-IDENTITY
+eZSystemsMIB MODULE-IDENTITY
         LAST-UPDATED "200905260000Z"
         ORGANIZATION "eZ Systems"
         CONTACT-INFO
@@ -20,6 +20,9 @@ eZPublishMIB MODULE-IDENTITY
         DESCRIPTION
                 "This MIB module contains application specific
                 managed objects for the eZ Publish CMS server."
+        REVISION "2009009090000Z"
+        DESCRIPTION
+                "Fixed mib compliance; renamed root to eZSystems"
         REVISION "200905260000Z"
         DESCRIPTION
                 "Added the complete settings subtree; reshuffled and expanded status subtree; more conforming SMIv2 mib"
@@ -38,7 +41,7 @@ eZPublishMIB MODULE-IDENTITY
 -- a truth value
 Boolean ::=   INTEGER { true(1), false(2) }
 
-eZPublish       OBJECT IDENTIFIER ::= {eZPublishMIB 1}
+eZPublish       OBJECT IDENTIFIER ::= {eZSystemsMIB 1}
 
 -- a branch where other extensions can add their oid
 -- general rule: one new oid per extension below eZPublishMIB.eZPublish.extensions
