@@ -30,6 +30,8 @@ to do:
 
 + facilitate process of creating MIBs at the same time as handlers
 
++ add a fetch function to retrieve and set oid values within templates
+
 + ...
 
 + profit!!!
