@@ -12,6 +12,10 @@
 
 abstract class eZsnmpdHandler {
 
+    const NO_SUCH_OID = null;
+
+    const SET_SUCCESFUL = 0;
+
     const ERROR_WRONG_TYPE = -1;
     const ERROR_WRONG_VALUE = -2;
     const ERROR_WRONG_LENGHT = -3;
@@ -22,18 +26,16 @@ abstract class eZsnmpdHandler {
     * Must return an array of all the OIDs handled.
     * NB: for scalar objects, the trailing .0 is to be omitted
     * Trailing wildcards are accepted, eg 1.1.*
+    * @return array
     */
-    abstract function oidList();
+    abstract public function oidList();
 
     /**
     * Must return a 3-valued array on success, or NULL if key was not readable/unknown
-    * NB: for scalar objects, the trailing .0 will be part of $oid
+    * @param string $oid note: for scalar objects, the trailing .0 will be part of $oid
     * @return array|null array keys: 'oid', 'type', 'value'. For types, see ezsnmpd constants
     */
-    function get( $oid )
-    {
-        return null;
-    }
+    abstract public function get( $oid );
 
     /**
     * Must return a string with the next oid.
@@ -66,7 +68,7 @@ abstract class eZsnmpdHandler {
     /**
     * Must return 0 on success, or an error code from above
     */
-    function set( $oid, $value, $type )
+    public function set( $oid, $value, $type )
     {
         return self::ERROR_NOT_WRITEABLE;
     }
@@ -74,7 +76,7 @@ abstract class eZsnmpdHandler {
     /**
     * Must return plaintext MIB description for the OIDs served
     */
-    function getMIB()
+    public function getMIB()
     {
         return '';
     }

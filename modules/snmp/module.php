@@ -20,6 +20,11 @@ $ViewList['get'] = array(
     'params' => array( 'oid' )
 );
 
+$ViewList['getnext'] = array(
+    'script' => 'getnext.php',
+    'params' => array( 'oid' )
+);
+
 $FunctionList = array();
 
 ?>

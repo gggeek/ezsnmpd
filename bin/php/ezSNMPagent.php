@@ -24,6 +24,7 @@ if ( isset( $_SERVER['REQUEST_METHOD'] ) )
 }
 
 // try to move to eZ Publish root dir if called in different dirs
+/// @bug does not work when symlinks are involved
 if ( !file_exists( getcwd() . '/autoload.php' ) )
 {
     $dir = dirname( __FILE__ );
@@ -49,14 +50,16 @@ $script->startup();
 if ( $argc > 1 )
 {
     // if no options passed on cli, do not waste time with parsing stuff
-    $options = $script->getOptions( '[g:|GET:][n:|GETNEXT:][S:|SET:][m|MIB]',
+    $options = $script->getOptions( '[a:|siteaccess:][g:|get:][n:|getnext:][s:|set:][m|mib]',
                                     '',
                                     array(
-                                        'GET' => 'get oid value, ex: --GET=a.b.c',
-                                        'GETNEXT' => 'get next oid value, ex: --GETNEXT=a.b.c',
-                                        'SET' => 'set oid value, ex: --SET=a.b.c/type/value',
-                                        'MIB' => 'get the complete MIB'
-                                    ) );
+                                        'get' => 'get oid value, ex: --get=a.b.c',
+                                        'getnext' => 'get next oid value, ex: --getnext=a.b.c',
+                                        'set' => 'set oid value, ex: --set=a.b.c type value',
+                                        'mib' => 'get the complete MIB'
+                                    ),
+                                    false,
+                                    array( 'siteaccess' => false ) );
 }
 else
 {
@@ -68,24 +71,24 @@ $script->initialize();
 
 $server = new eZSNMPd();
 
-if ( isset( $options['GET'] ) )
+if ( isset( $options['get'] ) )
 {
-    echo snmpget( 'get', $options['GET'], $server );
+    echo snmpget( 'get', $options['get'], $server );
 }
-elseif ( isset( $options['GETNEXT'] ) )
+elseif ( isset( $options['getnext'] ) )
 {
-    echo snmpget( 'getnext', $options['GETNEXT'], $server );
+    echo snmpget( 'getnext', $options['getnext'], $server );
 }
-elseif( isset( $options['SET'] ) )
+elseif( isset( $options['set'] ) )
 {
     /// @todo validate presence of the 3 params?
-    $response = snmpset( $options['SET'], $options['arguments'][0], $options['arguments'][1], $server );
+    $response = snmpset( $options['set'], $options['arguments'][0], $options['arguments'][1], $server );
     if ( $response !== 'DONE' )
     {
         echo $response;
     }
 }
-elseif ( isset( $options['MIB'] ) )
+elseif ( isset( $options['mib'] ) )
 {
     eZDebugSetting::writeDebug( 'snmp-access', "mib", 'command' );
     $response = $server->getHandlerMIBs();
@@ -103,7 +106,6 @@ else
     do
     {
     	$buffer = rtrim( fgets( $fh, 4096 ) );
-file_put_contents( 'd:/x.log', 'IN: ' . $buffer . "\n", FILE_APPEND );
     	switch ( $mode )
         {
 
@@ -154,16 +156,16 @@ file_put_contents( 'd:/x.log', 'IN: ' . $buffer . "\n", FILE_APPEND );
                 {
                     $type = $buffer;
                     $mode = "set3";
+                    break;
                 }
                 else // If the type and the value are on the same line (as with snmpset)
                 {
-                    list( $type, $value ) = explode( ' ', $buffer, 2 );
-                    echo snmpset( $oid, $type, $value, $server ) . "\n";
-                    $mode = "command";
+                    list( $type, $buffer ) = explode( ' ', $buffer, 2 );
+                    // fall through voluntarily
                 }
-                break;
     		case "set3":
-    		    echo snmpset( $oid, $type, $buffer, $server ) . "\n";
+    		    $response = snmpset( $oid, $type, $buffer, $server ) . "\n";
+    		    echo $response === true ? "DONE\n" : $response . "\n";
     			$mode = "command";
     			break;
 
@@ -189,9 +191,7 @@ function snmpset( $oid, $type, $value, $server )
 function snmpget( $mode, $buffer, $server )
 {
     eZDebugSetting::writeDebug( 'snmp-access', "$mode $buffer", 'command' );
-file_put_contents( 'd:/x.log', "Q: $mode $buffer\n", FILE_APPEND );
     $response = $server->$mode( $buffer );
-file_put_contents( 'd:/x.log', 'A: ' . str_replace( "\n", " ", $response ) . "\n", FILE_APPEND );
     eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response ), 'response' );
     return $response;
 }

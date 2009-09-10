@@ -2,7 +2,7 @@
 /**
  * SNMP Handler used to retrieve status-related information
  * Handles access to the 'status' branch of the MIB (2)
- * initial key indicators taken from ezmunin
+ * initial key indicators taken from ezmunin and ggsysinfo
  *
  * @author G. Giunta
  * @version $Id$
@@ -18,6 +18,12 @@
  *       files in the fs (storage)
  *       files in the fs (cache, per cache type)
  *       activated caches
+ *       object nr. per class
+ *       inactive users / blocked users
+ *       active caches
+ *       cache files count per cache type
+ *       cache files count per size per cache type (eg. 1k, 10k, 100k, 1mb)
+ *       cache files count per age per cache type (eg. 1hr, 1day, 1week, 1month)
  */
 
 class eZsnmpdStatusHandler extends eZsnmpdHandler {
@@ -44,11 +50,11 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
     }
 
     /**
-    * @todo shall we return an error if the scalar values are quieried without a .0 appended?
+    * @todo we should return an error if the scalar values are queried without a .0 appendeded...
     */
     function get( $oid )
     {
-        $internaloid = preg_replace( '/.0$/', '', $oid );
+        $internaloid = preg_replace( '/\.0$/', '', $oid );
         if ( array_key_exists( $internaloid, self::$simplequeries ) )
         {
             try
@@ -220,7 +226,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                     'value' => $ok );
 
             case '2.4.3': // email connection
-                $ini = eZINI::instance( 'smpd.ini' );
+                $ini = eZINI::instance( 'snmpd.ini' );
                 $recipient = $ini->variable( 'StatusHandler', 'MailReceiver' );
                 $ok = 0;
                 $mail = new eZMail();
@@ -272,7 +278,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
 
         }
 
-        return 0; // oid not managed
+        return self::NO_SUCH_OID; // oid not managed
     }
 
     function getMIB()

@@ -1,24 +1,28 @@
 to do:
 
-+ fix support for getnext/snmpwalk when handlers have x.* in their oid list
-
-+ fix support for set (does not work in 'pass' mode, only 'pass_persist')
++ fix string-based-sorting of oids in ezsnmpd class: getnext fails on settings handler because 10.109.4 comes before 10.11
 
 + add support for tabular values
 
++ fix usage of pass_persist mode (also allow handlers to know it they can cahe internal data structures or not)
+
 + fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir)
 
++ test extensively support for the set command (in 'pass' mode try changing siteaccess via '-a' option)
+
 + test: disconnect from db after every status query, to avoid keeping resources occupied in pass_persist mode
+
++ allow support for getnext/snmpwalk when handlers have x.* in their oid list (allow settings handler to work faster by not loading exact list of oids unless queried)
 
 + settle on a list of MIBs, gettable and settable
   - add stats from ggsysinfo to status mib: cache-files per cache type, files in storage per dir
   - finish counters imported from ezmunin (missing: nbr. of cache-block and view-cache templates)
   - add other info from eZP admin interface:
-    - active sessions
-	- logged in users
-	- upgrade_check
-  - nodes a and objects (full info, identified by id)
-  - pending items (drafts and items waiting for approval)
+    - active sessions count
+	- logged in users count
+	- upgrade_check (ok/ko)
+  - nodes, objects, classes, users (full info, identified by id, in a separate branch/handler)
+  - pending items count (drafts and items waiting for approval)
   - object count per version
   - webshop objects in the different stages
   - a set of common db corruption cases tests
@@ -26,24 +30,12 @@ to do:
 
 + finish ini settings mib: add support for array values, writing settings
 
-+ improve install / readme doc (add section on anon user access to snmp/get via custom siteaccess)
-
 + add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ...
 
-+ facilitate process of creating MIBs at the same time as handlers
++ facilitate process of creating MIBs at the same time as handlers (see settings handler as base)
 
 + add a fetch function to retrieve and set oid values from within templates
 
 + ...
 
 + profit!!!
-
-
-done:
-- fix snmpd agent to actually set siteaccess if passed as 1st param
-- allow cli script to be called with params to get/set a single oid or retrieve mib (one-shot calls)
-- add a try/catch around db->connect, to be compatible with 4.1
-- add an ezp version nr. oid
-- add an oid per ini setting, per ini block, per ini file
-- add an oid with current siteaccess
-- improve install / readme doc (add links to snmp modules for mysql and apache)

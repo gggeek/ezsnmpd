@@ -1,6 +1,7 @@
 <?php
 /**
- * Handles access to the 'settings' branch of the MIB (1)
+ * Handles access to the 'settings' branch of the MIB (1).
+ * NB: slowes down a bit the snmpd serving when in use
  *
  * @author G. Giunta
  * @version $Id$
@@ -14,40 +15,57 @@
  * - the numbering of the settings is dependent on the settings present in the base
  *   'settings' dir of eZP. If new settinsg are added or old ones removed, oid
  *   numbers will be reassigned
- * - extension-added settings are not made available in this branch
+ * - extension-added settings are not made available (yet)
  * - settings that are a list on not-previously known values (eg. image.ini) are
  *   even more subject to this problem
  *
  * @todo fix overly-long oid names
  * @todo add support for array-values
  * @todo allow write-access to settings (take into care also siteaccess/override: where do we write them?)
- * @todo test using 'Boolean' type with net-snmp tools (snmpget)
  * @todo allow read-access to know where a given setting is coming from (siteaccess/extension/override/default)
+ * @todo create a separate settings branch for all related sitecceasses in use
  */
 
 class eZsnmpdSettingsHandler extends eZsnmpdHandler {
 
-    /// For speed, we do not enumerate all oids here
+    /**
+    * @todo speed optimization: either cache the results of buildMIB or inline here
+    *       a trimmed-down version (or add support for x.* in ezsnmpd::getnext()... )
+    */
     function oidList( )
     {
-        return array ( '1.*' );
+        $settings = array();
+
+        foreach ( $this->buildMIB() as $i => $file )
+        {
+            foreach( $file['groups'] as $j => $group )
+            {
+                foreach( array_keys( $group['settings'] ) as $k )
+                {
+                    $settings[] = "1.1.$i.$j.$k";
+                }
+            }
+        }
+        return $settings;
     }
 
     function get( $oid )
     {
-        $result = $this->buildMIB( preg_replace( '/^1\./', '', $oid ) );
-
+        $result = $this->buildMIB( preg_replace( array( '/^1\.1\./', '/\.0$/' ), '', $oid ) );
         if ( count( $result ) )
         {
             $result = reset( $result );
             $group = reset( $result['groups'] );
             $val = reset( $group['settings'] );
+            $decodedtypes = array( 'Boolean' => eZSNMPd::TYPE_INTEGER,
+                                   'INTEGER' => eZSNMPd::TYPE_INTEGER,
+                                   'DisplayString' => eZSNMPd::TYPE_STRING );
             return array(
                 'oid' => $oid,
-                'type' => $val['type'],
+                'type' => $decodedtypes[$val['type']],
                 'value' => $val['value'] );
         }
-        return 0;
+        return self::NO_SUCH_OID;
 
     }
 
@@ -67,11 +85,13 @@ class eZsnmpdSettingsHandler extends eZsnmpdHandler {
         $out = '
 
 settings        OBJECT IDENTIFIER ::= {eZPublish 1}
+
+currentSASettings    OBJECT IDENTIFIER ::= {settings 1}
 ';
         foreach ( $this->buildMIB() as $i => $file )
         {
             $filename = $file['file'];
-            $out .= "\n" . str_pad ( $filename, 15 ) . " OBJECT IDENTIFIER ::= {settings  $i}\n";
+            $out .= "\n" . str_pad ( $filename, 15 ) . " OBJECT IDENTIFIER ::= {currentSASettings  $i}\n";
             foreach( $file['groups'] as $j => $group )
             {
                 $groupname = eZSNMPd::asncleanup( $group['group'] );
@@ -93,9 +113,13 @@ $filename$groupname$name OBJECT-TYPE
     }
 
     /**
-    * Builds the mib tree, either for a single oid or for full settings
+    * Builds the mib tree, either for a single oid or for full settings.
+    * NB: we do not cache this, as in pass_persist mode settings might change
+    *     over time (be added/removed, etc...)
+    * @return array A nested array:
+    *               [ 1-n => [ 'file' => filename, 'groups' => [ 1-n => [ 'group' => groupname, 'settings' => [ 1-n => [ 'name' => settingname, 'value' => value, 'type' => asn-type, 'rw' => bool ] ] ] ] ] ]
     */
-    function buildMIB( $oid=null )
+    protected function buildMIB( $oid=null )
     {
         if ( $oid != null )
         {
@@ -166,7 +190,5 @@ $filename$groupname$name OBJECT-TYPE
         return $out;
     }
 
-    /// used to decode from mib-types to snmpd.conf types...
-    protected static $decodetype = array( 'Boolean' => 'integer', 'DisplayString' => 'string', 'INTEGER' => 'integer' );
 }
 ?>

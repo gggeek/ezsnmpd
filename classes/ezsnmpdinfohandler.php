@@ -8,12 +8,6 @@
  * @version $Id$
  * @copyright (C) G. Giunta 2009
  * @license code licensed under the GPL License: see README
- *
- * @todo add other metrics, such as:
- *       expired sessions
- *       content classes
- *       object nr. per version
- *       inactive users
  */
 
 class eZsnmpdInfoHandler extends eZsnmpdHandler {
@@ -25,7 +19,8 @@ class eZsnmpdInfoHandler extends eZsnmpdHandler {
 
     function get( $oid )
     {
-        switch( $oid )
+        $internaloid = preg_replace( '/\.0$/', '', $oid );
+        switch( $internaloid )
         {
             case '3.1':
                 return array(
@@ -49,7 +44,7 @@ class eZsnmpdInfoHandler extends eZsnmpdHandler {
             );
         }
 
-        return 0; // oid not managed
+        return self::NO_SUCH_OID; // oid not managed
     }
 
     function getMIB()
@@ -79,7 +74,7 @@ ezpInfoSiteAccess OBJECT-TYPE
     STATUS          current
     DESCRIPTION
     "The siteaccess in use when answering this request."
-    ::= { info 2 }';
+    ::= { info 3 }';
     }
 }
 ?>

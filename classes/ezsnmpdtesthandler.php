@@ -1,6 +1,7 @@
 <?php
 /**
- * Handles access to a branch reserved for testing S
+ * Handles access to a branch reserved for testing / provides an example of a writable oid
+ *
  * @author G. Giunta
  * @version $Id$
  * @copyright (C) G. Giunta 2009
@@ -11,17 +12,17 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
 
     function oidList( )
     {
-        return array ( '5.*' );
+        return array ( '5.1', '5.2' );
     }
 
-     function get( $oid )
-     {
-        switch( $oid )
+    function get( $oid )
+    {
+        switch( preg_replace( '/\.0$/', '', $oid ) )
         {
             case '5.1':
                 return array(
                     'oid' => $oid,
-                    'type' => 'counter',
+                    'type' => eZSNMPd::TYPE_INTEGER,
                     'value' => rand( 0, 100 ) );
 
             case '5.2':
@@ -34,30 +35,27 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
                     'value' => $rows[0]['text'] );
         }
 
-        return 0; // oid not managed
+        return self::NO_SUCH_OID; // oid not managed
      }
 
     function set( $oid, $value, $type )
     {
-        eZDebugSetting::writeDebug( 'snmp-access', "$oid, $value, $type", __METHOD__ );
-        switch( $oid )
+        switch( preg_replace( '/\.0$/', '', $oid ) )
         {
-            case '5.1':
-                return parent::ERROR_NOT_WRITEABLE;
 
             case '5.2':
                 /// @todo missing here: try-catch around db connection, $db->close() at the end
                 $value = trim( $value, ' "' );
                 if ( $type != eZSNMPd::TYPE_STRING )
-                    return parent::ERROR_WRONG_TYPE;
+                    return self::ERROR_WRONG_TYPE;
                 if ( strlen( $value ) > 45 )
-                    return parent::ERROR_WRONG_LENGHT;
+                    return self::ERROR_WRONG_LENGHT;
                 $db = eZDB::instance();
                 $db->query( "UPDATE writetest SET text = '". $db->escapeString( $value ). "' where id = 42" );
-                return 0;
+                return self::SET_SUCCESFUL;
         }
 
-        return parent::ERROR_NOT_WRITEABLE; // oid not managed
+        return self::ERROR_NOT_WRITEABLE; // oid not managed
     }
 
     function getMIB()
@@ -66,7 +64,7 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
 scrap        OBJECT IDENTIFIER ::= {eZPublish 5}
 
 random OBJECT-TYPE
-    SYNTAX          DisplayString
+    SYNTAX          INTEGER
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION

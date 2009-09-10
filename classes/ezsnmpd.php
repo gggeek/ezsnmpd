@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ * The daemon class that implements the get/getnext/set snmp API
  *
  * @author G. Giunta
  * @version $Id$
@@ -129,13 +129,13 @@ function oidIsSmaller($a, $b) {
 	        $data = $handler->get( $oid );
 	        if ( is_array( $data ) && array_key_exists( 'oid', $data ) && array_key_exists( 'type', $data ) && array_key_exists( 'value', $data ) )
 	        {
-		        $response = $this->prefix . $data['oid'] . "\n" . $data['type'] . "\n" . $data['value'];
+		        $response = $this->prefix . $data['oid'] . "\n" . $data['type'] . "\n" . $data['value']. "\n";
 	        }
 	        else
 	        {
-			    if ( $data !== null )
+			    if ( $data !== eZsnmpdHandler::NO_SUCH_OID )
 			    {
-			        eZDebug::writeError( "SNMP set command handler method returned unexpected result $ok (class $handler)" );
+			        eZDebug::writeError( "SNMP get command handler method returned unexpected result ($data) for oid $oid" );
 			    }
             }
         }
@@ -148,8 +148,7 @@ function oidIsSmaller($a, $b) {
     }
 
     /*
-    * @return string
-    * @todo change DONE to true to be more consistent with get()?
+    * @return string|true string in case of error
     */
     public function set( $oid, $value, $type )
     {
@@ -161,8 +160,8 @@ function oidIsSmaller($a, $b) {
 	        $ok = $handler->set( $oid, $value, $type );
 	        switch( $ok )
 	        {
-		        case 0:
-		            $response = "DONE";
+		        case eZsnmpdHandler::SET_SUCCESFUL:
+		            $response = true;
 		            break;
 	            case ezsnmpdHandler::ERROR_WRONG_TYPE:
 	                $response = "wrong-type";
@@ -180,14 +179,18 @@ function oidIsSmaller($a, $b) {
 	                $response = "not-writable";
 	                break;
 	            default:
-		            eZDebug::writeError( "SNMP set command handler method returned unexpected result $ok (class $handler)" );
+		            eZDebug::writeError( "SNMP set command handler method returned unexpected result ($ok) for oid $oid" );
 	                $response = "not-writable";
 	        }
         }
         return $response;
     }
 
-    /// @todo add somehow a way to tell a mib of a running eZ from the others, adding maybe in comments a CRC or list of all handlers registered?
+    /**
+    *  @todo add somehow a way to tell a mib of a running eZ from the others,
+    *        adding maybe in comments a CRC or list of all handlers registered?
+    *        Some handlers might generate have dynamic mibs...
+    */
     public function getHandlerMIBs()
     {
         $mibs = '';
@@ -228,7 +231,7 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-    * Given an (already shortened) oid, return the corresponding handler class, or null
+    * Given an oid, return the corresponding handler class, or null
     */
     protected function getHandler( $oid )
     {
@@ -253,10 +256,10 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-     * Given an (already shortened) oid, return the handler class corresponding
-     * to, the next oid, or null
+     * Given an oid, return the handler class corresponding to the next oid, or null
      *
      * @todo find a way to make this work with regexp handlers...
+     * @bug will fail if there are a lot of oids: ksort sorts OIDstandard on lexicographic ordering, putting .109 before .11
      */
     protected function getnextHandler( $oid )
     {
@@ -284,6 +287,11 @@ function oidIsSmaller($a, $b) {
             {
                 $next = $oids[$pos+1];
                 return array( new $this->OIDstandard[$next], $next . '.0' );
+            }
+            else
+            {
+                // last oid in the tree: no more next
+                return null;
             }
         }
         // last chance: maybe the searched oid is an node in the tree, not a leaf
