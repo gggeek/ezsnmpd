@@ -20,13 +20,15 @@ abstract class eZsnmpdHandler {
 
     /**
     * Must return an array of all the OIDs handled.
-    * For scalar objects, the trailing .0 is to be omitted
+    * NB: for scalar objects, the trailing .0 is to be omitted
     * Trailing wildcards are accepted, eg 1.1.*
     */
     abstract function oidList();
 
     /**
     * Must return a 3-valued array on success, or NULL if key was not readable/unknown
+    * NB: for scalar objects, the trailing .0 will be part of $oid
+    * @return array|null array keys: 'oid', 'type', 'value'. For types, see ezsnmpd constants
     */
     function get( $oid )
     {
@@ -37,12 +39,12 @@ abstract class eZsnmpdHandler {
     * Must return a string with the next oid.
     * Should be reimplemented when oidList() returns some regexp-based oids
     */
-    function getnext( $oid )
+    /*function getnext( $oid )
     {
+        $oidList = $this->oidList();
         if ( preg_match( '/\\.0$/', $oid ) )
         {
             // next oid is taken from the list
-            $oidList = $this->oidList();
             sort( $oidList );
             if ( ($key = array_search( preg_replace( '/\\.0$/', '', $oid ), $oidList )) !== false )
             {
@@ -59,7 +61,7 @@ abstract class eZsnmpdHandler {
             return $this->get( $oid . '.0' );
         }
         return null;
-    }
+    }*/
 
     /**
     * Must return 0 on success, or an error code from above

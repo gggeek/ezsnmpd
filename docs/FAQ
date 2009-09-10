@@ -8,10 +8,6 @@ A: This extension does not provide on its own any report or graphical interface
    will do, with a little configuration. OSS tools include nagios, zenoss, munin,
    hyperic and many others.
 
-Q: do you provide plugins for any of those monitoring tools to ease the integration
-   of ezsnmpd and the creation of nice looking graphs?
-A: not yet, but it is planned
-
 Q: where do i find the list of indicator values that are available?
 A: in the so-called MIB file. It uses a notation that is standard in snmp world:
    ASN.1. It is unfortunately very hard to read by humans, but there are a lot
@@ -21,6 +17,10 @@ Q: so where is this MIB file? I cannot see it in the distribution
 A: it is in fact dynamically generated.
    You can find it at http://my.ezpublish.site/index.php/siteaccess/snmp/mib
    and save it as ezpublish.mib
+
+Q: do you provide plugins for any of those monitoring tools to ease the integration
+   of ezsnmpd and the creation of nice looking graphs?
+A: not yet, but it is planned
 
 Q: will this extension implement monitoring probes for mysql/apache/other?
 A: no
@@ -40,3 +40,8 @@ A: because of the principle of separation of concerns. Every app knows best how
    Postgresql - pgsnmpd (http://pgsnmpd.projects.postgresql.org/)
 
    Oracle - Oracle Management Agent
+
+Q: can extra indicator values be added from other extensions?
+A: it is easily done:
+   - ...
+   - ...

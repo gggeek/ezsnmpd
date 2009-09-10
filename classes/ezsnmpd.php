@@ -11,8 +11,8 @@
 
 class eZSNMPd {
 
-    // these types are taken from snmpd.conf man pages, and do not correspond
-    // directly to mib base types, such as seen in mib files
+    // these types are taken from snmpd.conf man pages, valid for pass and pass_persist
+    // subagents, and do not correspond directly to mib base types, such as seen in mib files
     const TYPE_INTEGER    = 'integer';
     const TYPE_INTEGER32  = 'integer';
     const TYPE_INTEGER64  = 'integer';
@@ -65,6 +65,10 @@ function oidIsSmaller($a, $b) {
     private $prefix = '';
     private $prefixregexp = '';
 
+    /**
+    * @todo add caching of list of Handler obejcts, in case we later want to get
+    *       MIBs from them? uses more memory for a very small speed gain...
+    */
     function __construct()
     {
         $ini = eZINI::instance( 'snmpd.ini' );
@@ -86,6 +90,8 @@ function oidIsSmaller($a, $b) {
             $this->OIDregexp = array_merge( $this->OIDregexp, $oids['regexp'] );
             $this->OIDstandard = array_merge( $this->OIDstandard, $oids['standard'] );
         }
+        ksort( $this->OIDregexp );
+        ksort( $this->OIDstandard );
 
         $this->prefix = $ini->variable( 'MIB', 'Prefix' );
         if ( $this->prefix != '' )
@@ -96,7 +102,7 @@ function oidIsSmaller($a, $b) {
             }
             if ( substr( $this->prefix, -1 ) != '.' )
             {
-                $this->prefix =  $this->prefix . '.';
+                $this->prefix = $this->prefix . '.';
             }
             $this->prefixregexp = '/^\.?' . str_replace( '.', '\.', $this->prefix ) . '/'; // quote for regexp
         }
@@ -109,11 +115,18 @@ function oidIsSmaller($a, $b) {
     {
         $response = null;
         $oid = $this->removePrefix( $oid );
-        //$oid = $this->removeSuffix( $oid );
-        $handler = $this->getHandler( $this->removeSuffix( $oid ), $mode );
+        if ( $mode == 'getnext' )
+        {
+            list( $handler, $oid ) = $this->getnextHandler( $oid );
+        }
+        else
+        {
+            $handler = $this->getHandler( $oid );
+        }
+
         if ( is_object( $handler ) )
         {
-	        $data = $handler->$mode( $oid );
+	        $data = $handler->get( $oid );
 	        if ( is_array( $data ) && array_key_exists( 'oid', $data ) && array_key_exists( 'type', $data ) && array_key_exists( 'value', $data ) )
 	        {
 		        $response = $this->prefix . $data['oid'] . "\n" . $data['type'] . "\n" . $data['value'];
@@ -142,8 +155,7 @@ function oidIsSmaller($a, $b) {
     {
         $response = "not-writable";
         $oid = $this->removePrefix( $oid );
-        //$oid = $this->removeSuffix( $oid );
-        $handler = $this->getHandler( $oid, 'set' );
+        $handler = $this->getHandler( $oid );
         if ( is_object( $handler ) )
         {
 	        $ok = $handler->set( $oid, $value, $type );
@@ -175,7 +187,7 @@ function oidIsSmaller($a, $b) {
         return $response;
     }
 
-   /// @todo add somehow a way ro tell a mib of a running eZ from the others, addo,h maybe in comments a CRC or list of all handlers registered?
+    /// @todo add somehow a way to tell a mib of a running eZ from the others, adding maybe in comments a CRC or list of all handlers registered?
     public function getHandlerMIBs()
     {
         $mibs = '';
@@ -212,15 +224,16 @@ function oidIsSmaller($a, $b) {
      */
     protected function removeSuffix( $oid )
     {
-        return preg_replace( '/.0$/', '', $oid );
+        return preg_replace( '/\.0$/', '', $oid );
     }
 
     /**
     * Given an (already shortened) oid, return the corresponding handler class, or null
     */
-    protected function getHandler( $oid, $method )
+    protected function getHandler( $oid )
     {
         $class = null;
+        $oid = $this->removeSuffix( $oid );
         if ( array_key_exists( $oid, $this->OIDstandard ) )
         {
             $class = new $this->OIDstandard[$oid];
@@ -237,6 +250,62 @@ function oidIsSmaller($a, $b) {
             }
         }
         return $class;
+    }
+
+    /**
+     * Given an (already shortened) oid, return the handler class corresponding
+     * to, the next oid, or null
+     *
+     * @todo find a way to make this work with regexp handlers...
+     */
+    protected function getnextHandler( $oid )
+    {
+        // if it is not a scalar value, look first to see if the object exists
+        // if it does, return its scalar value
+        if ( !preg_match( '/\.0$/', $oid ) )
+        {
+            if ( array_key_exists( $oid, $this->OIDstandard ) )
+            {
+                return array( new $this->OIDstandard[$oid], $oid . '.0' );
+            }
+        }
+        else
+        {
+            // looking for next of a scalar val: remove the .0 suffix
+            $oid = $this->removeSuffix( $oid );
+        }
+        // now search for an exact match with a known oid
+        // if found, return the next oid in the list
+        if ( array_key_exists( $oid, $this->OIDstandard ) )
+        {
+            $oids = array_keys( $this->OIDstandard );
+            $pos = array_search( $oid, $oids );
+            if ( ( $pos + 1 ) < count( $oids ) )
+            {
+                $next = $oids[$pos+1];
+                return array( new $this->OIDstandard[$next], $next . '.0' );
+            }
+        }
+        // last chance: maybe the searched oid is an node in the tree, not a leaf
+        // a little bit of regexp magic here: if an oid begins with the searched
+        // one, then it is its first ancestor
+        $match = "/^" . str_replace( '.', '\.', $oid ) ."/";
+        foreach( $this->OIDstandard as $anOid => $aClass )
+        {
+            if ( preg_match( $match, $anOid ) )
+            {
+                return array( new $aClass, $anOid . '.0' );
+            }
+        }
+        // but what about snmp walking the complete mib?
+        if ( ( ( '.' . $this->prefix ) == ( $oid . '.' ) ) && count( $this->OIDstandard ) )
+        {
+            reset( $this->OIDstandard );
+            $class = current( $this->OIDstandard );
+            return array( new $class(), key( $this->OIDstandard ) . '.0' );
+        }
+
+        return null;
     }
 
     /**

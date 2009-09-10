@@ -1,6 +1,6 @@
 to do:
 
-+ fix support for getnext (snmpwalk is still ko)
++ fix support for getnext/snmpwalk when handlers have x.* in their oid list
 
 + fix support for set (does not work in 'pass' mode, only 'pass_persist')
 
@@ -8,7 +8,7 @@ to do:
 
 + fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir)
 
-+ test: disconnect from db after every status query, to avoid keeping resources occupied
++ test: disconnect from db after every status query, to avoid keeping resources occupied in pass_persist mode
 
 + settle on a list of MIBs, gettable and settable
   - add stats from ggsysinfo to status mib: cache-files per cache type, files in storage per dir
@@ -32,7 +32,7 @@ to do:
 
 + facilitate process of creating MIBs at the same time as handlers
 
-+ add a fetch function to retrieve and set oid values within templates
++ add a fetch function to retrieve and set oid values from within templates
 
 + ...
 
