@@ -1,18 +1,18 @@
 to do:
 
-+ fix string-based-sorting of oids in ezsnmpd class: getnext fails on settings handler because 10.109.4 comes before 10.11
++ fix string-based-sorting of oids in ezsnmpd class: getnext fails on settings handler because 10.109.4 comes before 10.11 => test
 
 + add support for tabular values
 
 + fix usage of pass_persist mode (also allow handlers to know it they can cahe internal data structures or not)
 
-+ fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir)
++ fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir) => test on linux
 
 + test extensively support for the set command (in 'pass' mode try changing siteaccess via '-a' option)
 
 + test: disconnect from db after every status query, to avoid keeping resources occupied in pass_persist mode
 
-+ allow support for getnext/snmpwalk when handlers have x.* in their oid list (allow settings handler to work faster by not loading exact list of oids unless queried)
++ allow support for getnext/snmpwalk when handlers have x.* in their oid list (allow settings handler to work faster by not loading exact list of oids unless queried or fix pass_persist and cache that info)
 
 + settle on a list of MIBs, gettable and settable
   - add stats from ggsysinfo to status mib: cache-files per cache type, files in storage per dir

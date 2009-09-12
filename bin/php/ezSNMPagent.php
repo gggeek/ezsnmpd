@@ -23,13 +23,16 @@ if ( isset( $_SERVER['REQUEST_METHOD'] ) )
     die();
 }
 
+// following moved to wrapper shell script
+
 // try to move to eZ Publish root dir if called in different dirs
+// to ease being called directly from snmp agent
 /// @bug does not work when symlinks are involved
-if ( !file_exists( getcwd() . '/autoload.php' ) )
+/*if ( !file_exists( getcwd() . '/autoload.php' ) )
 {
     $dir = dirname( __FILE__ );
     chdir( $dir . '/../../../..' );
-}
+}*/
 
 // Set a default time zone if none is given to avoid "It is not safe to rely
 // on the system's timezone settings" warnings. The time zone can be overriden

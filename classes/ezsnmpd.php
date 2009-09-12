@@ -31,7 +31,7 @@ class eZSNMPd {
     const TYPE_UNSIGNED32 = 'unsigned';
     const TYPE_UNSIGNED64 = 'unsigned';
 
-    const VERSION         = '0.1';
+    const VERSION         = '0.2';
 /*
 
 $oid = "";
@@ -90,8 +90,8 @@ function oidIsSmaller($a, $b) {
             $this->OIDregexp = array_merge( $this->OIDregexp, $oids['regexp'] );
             $this->OIDstandard = array_merge( $this->OIDstandard, $oids['standard'] );
         }
-        ksort( $this->OIDregexp );
-        ksort( $this->OIDstandard );
+        uksort( $this->OIDregexp, 'version_compare' );
+        uksort( $this->OIDstandard, 'version_compare' );
 
         $this->prefix = $ini->variable( 'MIB', 'Prefix' );
         if ( $this->prefix != '' )

@@ -15,7 +15,7 @@ eZ SNMPd extension 0.1 installation instructions
 
 - alter the snmpd.conf file (usually found in /etc/snmp) and restart the service. Example line to add:
 
-    pass .1.3.6.1.4.1.33120.1 \var\www\eZ\extension\ezsnmpd\bin\php\ezSNMPagent.php
+    pass .1.3.6.1.4.1.33120.1 \var\www\eZ\extension\ezsnmpd\bin\shell\ezSNMPagent.sh
 
     or
 
