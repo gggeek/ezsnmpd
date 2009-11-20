@@ -44,9 +44,16 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         '2.1.4.3' => 'SELECT COUNT(session_key) AS count FROM ezsession where ezsession.user_id != /*anonymousId*/', // registered sessions
     );
 
+    function oidRoot()
+    {
+        return '2.';
+    }
+
     function oidList( )
     {
-        return array_merge ( array_keys( self::$simplequeries ), array( '2.1.1', '2.2.1', '2.2.2', '2.4.1', '2.4.2', '2.4.3', '2.5.1' ) );
+        $list = array_merge ( array_keys( self::$simplequeries ), array( '2.1.1', '2.2.1', '2.2.2', '2.4.1', '2.4.2', '2.4.3', '2.5.1' ) );
+        usort($list, 'version_compare' );
+        return $list;
     }
 
     /**

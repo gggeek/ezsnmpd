@@ -94,7 +94,7 @@ elseif( isset( $options['set'] ) )
 elseif ( isset( $options['mib'] ) )
 {
     eZDebugSetting::writeDebug( 'snmp-access', "mib", 'command' );
-    $response = $server->getHandlerMIBs();
+    $response = $server->getFullMIB();
     eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
     echo "$response\n";
 }

@@ -26,26 +26,34 @@
  * @todo create a separate settings branch for all related sitecceasses in use
  */
 
-class eZsnmpdSettingsHandler extends eZsnmpdHandler {
+class eZsnmpdSettingsHandler extends eZsnmpdWildcardHandler {
+
+    function oidRoot()
+    {
+        return '1.';
+    }
 
     /**
-    * @todo speed optimization: either cache the results of buildMIB or inline here
-    *       a trimmed-down version (or add support for x.* in ezsnmpd::getnext()... )
+    * We cache the full list of oids for speed concerns
     */
     function oidList( )
     {
-        $settings = array();
-
-        foreach ( $this->buildMIB() as $i => $file )
+        static $settings;
+        if ( !is_array( $settings ) )
         {
-            foreach( $file['groups'] as $j => $group )
+            $settings = array();
+            foreach ( $this->buildMIB() as $i => $file )
             {
-                foreach( array_keys( $group['settings'] ) as $k )
+                foreach( $file['groups'] as $j => $group )
                 {
-                    $settings[] = "1.1.$i.$j.$k";
+                    foreach( array_keys( $group['settings'] ) as $k )
+                    {
+                        $settings[] = "1.1.$i.$j.$k";
+                    }
                 }
             }
         }
+        //$settings = array( '1.1.*' );
         return $settings;
     }
 

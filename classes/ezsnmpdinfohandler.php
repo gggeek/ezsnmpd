@@ -12,6 +12,11 @@
 
 class eZsnmpdInfoHandler extends eZsnmpdHandler {
 
+    function oidRoot()
+    {
+        return '3.';
+    }
+
     function oidList( )
     {
         return array( '3.1', '3.2', '3.3' );

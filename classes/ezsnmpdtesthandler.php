@@ -10,6 +10,11 @@
 
 class eZsnmpdTestHandler extends eZsnmpdHandler {
 
+    function oidRoot()
+    {
+        return '5.';
+    }
+
     function oidList( )
     {
         return array ( '5.1', '5.2' );

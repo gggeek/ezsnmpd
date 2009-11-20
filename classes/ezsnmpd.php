@@ -61,13 +61,14 @@ function oidIsSmaller($a, $b) {
 */
 
     private $OIDregexp = array();
-    private $OIDstandard = array();
+    //private $OIDstandard = array();
     private $prefix = '';
     private $prefixregexp = '';
 
     /**
-    * @todo add caching of list of Handler obejcts, in case we later want to get
+    * @todo add caching of list of Handler objects, in case we later want to get
     *       MIBs from them? uses more memory for a very small speed gain...
+    * @todo add a check for vailidity of oidRoot string format and for regexp clashes?
     */
     function __construct()
     {
@@ -80,18 +81,16 @@ function oidIsSmaller($a, $b) {
                 eZDebug::writeError( "SNMP command handler class $class not found" );
                 continue;
             }
-            $obj = new $class();
-            if ( !is_subclass_of( $obj, 'eZsnmpdHandler' ) )
+            $ref = new ReflectionClass( $class );
+            if ( !$ref->implementsInterface( 'eZsnmpdHandlerInterface' ) )
             {
-                eZDebug::writeError( "SNMP command handler class $class is not correct subclass of eZsnmpdHandler" );
+                eZDebug::writeError( "SNMP command handler class $class does not implement eZsnmpdHandlerInterface" );
                 continue;
             }
-            $oids = $this->separateregexps( $obj->oidList(), $class );
-            $this->OIDregexp = array_merge( $this->OIDregexp, $oids['regexp'] );
-            $this->OIDstandard = array_merge( $this->OIDstandard, $oids['standard'] );
+            $obj = new $class();
+            $this->OIDregexp['/^' . str_replace( '.', '\.', $obj->oidRoot() ) . '/'] = $class;
         }
         uksort( $this->OIDregexp, 'version_compare' );
-        uksort( $this->OIDstandard, 'version_compare' );
 
         $this->prefix = $ini->variable( 'MIB', 'Prefix' );
         if ( $this->prefix != '' )
@@ -111,18 +110,11 @@ function oidIsSmaller($a, $b) {
     /**
     * @return string|null null in case of error
     */
-    public function get( $oid, $mode='get' )
+    public function get( $oid )
     {
         $response = null;
         $oid = $this->removePrefix( $oid );
-        if ( $mode == 'getnext' )
-        {
-            list( $handler, $oid ) = $this->getnextHandler( $oid );
-        }
-        else
-        {
-            $handler = $this->getHandler( $oid );
-        }
+        $handler = $this->getHandler( $oid );
 
         if ( is_object( $handler ) )
         {
@@ -133,7 +125,7 @@ function oidIsSmaller($a, $b) {
 	        }
 	        else
 	        {
-			    if ( $data !== eZsnmpdHandler::NO_SUCH_OID )
+			    if ( $data !== eZsnmpdHandlerInterface::NO_SUCH_OID )
 			    {
 			        eZDebug::writeError( "SNMP get command handler method returned unexpected result ($data) for oid $oid" );
 			    }
@@ -142,9 +134,54 @@ function oidIsSmaller($a, $b) {
         return $response;
     }
 
+    /**
+    * Make sure that if handler X says this is last oid, we move on to next handler
+    */
     public function getnext( $oid )
     {
-        return $this->get( $oid, 'getnext' );
+        $oid = $this->removePrefix( $oid );
+        $found = false;
+        // check if we have to walk the mib starting from root
+        if ( $oid == '' || $oid . '.' == $this->prefix )
+        {
+            $found = true;
+        }
+
+        foreach( $this->OIDregexp as $regexp => $class )
+        {
+            if ( !$found )
+            {
+                // the 2nd regexp is used to match the root of the mib, eg. user passed 2 and handler declares 2.
+                $found = preg_match( $regexp, $oid ) || preg_match( $regexp, $oid . '.' ) ;
+                if ( !$found )
+                {
+                    continue;
+                }
+                $handler = new $class();
+            }
+            else
+            {
+                $handler = new $class();
+                $oid = $handler->oidRoot();
+            }
+            $data = $handler->getnext( $oid );
+            if ( is_array( $data ) && array_key_exists( 'oid', $data ) && array_key_exists( 'type', $data ) && array_key_exists( 'value', $data ) )
+            {
+                return $this->prefix . $data['oid'] . "\n" . $data['type'] . "\n" . $data['value']. "\n";
+            }
+            else
+            {
+                if ( $data != eZsnmpdHandlerInterface::LAST_OID )
+                {
+                    if ( $data !== eZsnmpdHandlerInterface::NO_SUCH_OID )
+                    {
+                        eZDebug::writeError( "SNMP get command handler method returned unexpected result ($data) for oid $oid" );
+                    }
+                    break;
+                }
+            }
+        }
+        return null;
     }
 
     /*
@@ -187,11 +224,32 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-    *  @todo add somehow a way to tell a mib of a running eZ from the others,
-    *        adding maybe in comments a CRC or list of all handlers registered?
-    *        Some handlers might generate have dynamic mibs...
+    * @return string
     */
-    public function getHandlerMIBs()
+    public function getFullMIB()
+    {
+        $out = $this->getHandlerMIBs();
+        return $this->getRootMIB( md5( $out ) ) . $out;
+    }
+
+    /**
+    * @param string $uniqid md5 or other identifier used to tell apart versions
+    *                       of the mib that differ (typically because of the
+    *                       variable handler part)
+    * @return string
+    *
+    * @todo find a more appropriate piece of MODULE-IDENTITY to put the uniqid into
+    *       than a simple comment
+    */
+    protected function getRootMIB( $uniqid )
+    {
+        return file_get_contents( './extension/ezsnmpd/share/EZPUBLISH-MIB' ) . "\n\n-- eZSNMPd mib uniqid: $uniqid\n\n";
+    }
+
+    /**
+    * @return string
+    */
+    protected function getHandlerMIBs()
     {
         $mibs = '';
         $ini = eZINI::instance( 'snmpd.ini' );
@@ -202,12 +260,13 @@ function oidIsSmaller($a, $b) {
                 eZDebug::writeError( "SNMP command handler class $class not found" );
                 continue;
             }
-            $obj = new $class();
-            if ( !is_subclass_of( $obj, 'eZsnmpdHandler' ) )
+            $ref = new ReflectionClass( $class );
+            if ( !$ref->implementsInterface( 'eZsnmpdHandlerInterface' ) )
             {
-                eZDebug::writeError( "SNMP command handler class $class is not correct subclass of eZsnmpdHandler" );
+                eZDebug::writeError( "SNMP command handler class $class does not implement eZsnmpdHandlerInterface" );
                 continue;
             }
+            $obj = new $class();
             $mibs .= $obj->getMIB() . "\n";
         }
         return $mibs;
@@ -225,7 +284,7 @@ function oidIsSmaller($a, $b) {
      * Remove the suffix part from a full oid.
      * This is used to simplify writing handlers - the .0 used for scalar values is removed
      */
-    protected function removeSuffix( $oid )
+    public static function removeSuffix( $oid )
     {
         return preg_replace( '/\.0$/', '', $oid );
     }
@@ -236,20 +295,13 @@ function oidIsSmaller($a, $b) {
     protected function getHandler( $oid )
     {
         $class = null;
-        $oid = $this->removeSuffix( $oid );
-        if ( array_key_exists( $oid, $this->OIDstandard ) )
+        $oid = self::removeSuffix( $oid );
+        foreach( $this->OIDregexp as $regexp => $val )
         {
-            $class = new $this->OIDstandard[$oid];
-        }
-        else
-        {
-            foreach( $this->OIDregexp as $regexp => $val )
+            if ( preg_match( $regexp, $oid ) )
             {
-                if ( preg_match( $regexp, $oid ) )
-                {
-                    $class = new $val;
-                    break;
-                }
+                $class = new $val;
+                break;
             }
         }
         return $class;
@@ -258,69 +310,108 @@ function oidIsSmaller($a, $b) {
     /**
      * Given an oid, return the handler class corresponding to the next oid, or null
      *
-     * @todo find a way to make this work with regexp handlers...
+     * To make this work with regexp handlers, the logic is inversed wrt the getHandler:
+     * - first look if oid matches a regexp, and if we do ask the regexp handler to work
+     *   for us
+     * - if no regexp matches, then a scan within plain oid list is done
+     * Of course overlapping regexp ranges with plain enuerated oids is not a good idea!
+     *
      * @bug will fail if there are a lot of oids: ksort sorts OIDstandard on lexicographic ordering, putting .109 before .11
      */
-    protected function getnextHandler( $oid )
+    /*protected function getnextHandler( $oid )
+    {
+        foreach( $this->OIDregexp as $regexp => $val )
+        {
+            if ( preg_match( $regexp, $oid ) )
+            {
+                $class = new $val;
+                $result = $class->getnext( $oid );
+                if ( $result === true )
+                {
+                    // move to next handler in the list: either
+                    /// @todo ...
+                }
+                return $result;
+            }
+        }
+
+        $result = self::getNextInArray( $oid, $this->OIDstandard, $this->prefix );
+        if ( is_array( $result ) )
+        {
+            $result[0] = new $result[0];
+        }
+        else if ( $result === true )
+        {
+            $rseult = null;
+        }
+        return $result;
+    }*/
+
+    /**
+    * Implement this logic in a way that makes it easier to be shared with other code
+    * @param string $oid
+    * @param array $array sorted array of oid strings
+    * @return array|null|true
+    */
+    /*public static function getNextInArray( $oid, $array, $prefix )
     {
         // if it is not a scalar value, look first to see if the object exists
         // if it does, return its scalar value
         if ( !preg_match( '/\.0$/', $oid ) )
         {
-            if ( array_key_exists( $oid, $this->OIDstandard ) )
+            if ( $pos = array_search( $oid, $array ) )
             {
-                return array( new $this->OIDstandard[$oid], $oid . '.0' );
+                return array( $array[$pos], $oid . '.0' );
             }
         }
         else
         {
             // looking for next of a scalar val: remove the .0 suffix
-            $oid = $this->removeSuffix( $oid );
+            $oid = self::removeSuffix( $oid );
         }
+
         // now search for an exact match with a known oid
         // if found, return the next oid in the list
-        if ( array_key_exists( $oid, $this->OIDstandard ) )
+        if ( $pos = array_search( $oid, $array ) )
         {
-            $oids = array_keys( $this->OIDstandard );
-            $pos = array_search( $oid, $oids );
-            if ( ( $pos + 1 ) < count( $oids ) )
+            if ( ( $pos + 1 ) < count( $array ) )
             {
                 $next = $oids[$pos+1];
-                return array( new $this->OIDstandard[$next], $next . '.0' );
+                return array( $array[$next], $next . '.0' );
             }
             else
             {
                 // last oid in the tree: no more next
-                return null;
+                return true;
             }
         }
-        // last chance: maybe the searched oid is an node in the tree, not a leaf
+        // last chance: maybe the searched oid is a node in the tree, not a leaf
         // a little bit of regexp magic here: if an oid begins with the searched
         // one, then it is its first ancestor
         $match = "/^" . str_replace( '.', '\.', $oid ) ."/";
-        foreach( $this->OIDstandard as $anOid => $aClass )
+        foreach( $array as $anOid => $aClass )
         {
             if ( preg_match( $match, $anOid ) )
             {
-                return array( new $aClass, $anOid . '.0' );
+                return array( $aClass, $anOid . '.0' );
             }
         }
         // but what about snmp walking the complete mib?
-        if ( ( ( '.' . $this->prefix ) == ( $oid . '.' ) ) && count( $this->OIDstandard ) )
+        if ( ( ( '.' . $prefix ) == ( $oid . '.' ) ) && count( $array ) )
         {
-            reset( $this->OIDstandard );
-            $class = current( $this->OIDstandard );
-            return array( new $class(), key( $this->OIDstandard ) . '.0' );
+            reset( $array );
+            $class = current( $array );
+            return array( $class(), key( $array ) . '.0' );
         }
 
         return null;
-    }
+    }*/
 
     /**
     * Split an array of oids in 2, separating regep ones from plain ones
     * Currently only .* is accepted for regexps
     */
-    protected function separateregexps( $oidarray, $class )
+    /*protected function separateregexps( $oidarray, $class )
     {
         $results = array( 'standard' => array(), 'regexp' => array() );
         foreach( $oidarray as $oid )
@@ -336,7 +427,7 @@ function oidIsSmaller($a, $b) {
             }
         }
         return $results;
-    }
+    }*/
 
     /// Filter variable names to make them valid asn.1 identifiers:
     /// - must start with lowercase letter

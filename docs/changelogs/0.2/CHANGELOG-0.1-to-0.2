@@ -2,7 +2,17 @@ Changes from 0.1 to 0.2 - released xxxx-yy-zz
 
 *Features:
 - added a shell script to ease usage with the net-snmpd agent on unices
+- add a unique id in a comment in the MIB automatically calculated to allow
+  differentiating it when different handlers are activated
 
 *Bugfixes:
 - proper sorting of oid arrays (allows snmpwalk for the settings handler)
-- improved windows batch file to work when eZPublish is installed on a drive other than the system one
+- improved windows batch file to work when eZPublish is installed on a drive
+  other than the system one
+- complete mib is printed from cli script (generic part was missing)
+
+*Misc changes
+- moved the root-mib file to /sare from /modules/snmp
+- IMPORTANT api of class eZsnmpdHandler has changed.
+  You will need to fix subclasses if any have been created.
+  Also the api of eZSNMPd has chanegd.

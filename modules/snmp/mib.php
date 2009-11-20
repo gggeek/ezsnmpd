@@ -10,8 +10,8 @@
 header( 'Content-Type: text/plain' );
 
 $server = new eZSNMPd();
-include( dirname( __FILE__ ) . '/EZPUBLISH-MIB' );
-echo $server->getHandlerMIBs();
+echo $server->getFullMIB( $handlerMIBs );
+echo $handlerMIBs;
 echo "\nEND";
 
 eZExecution::cleanExit();
