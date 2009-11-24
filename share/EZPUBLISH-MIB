@@ -12,7 +12,7 @@ IMPORTS
 -- The assignments
 
 eZSystemsMIB MODULE-IDENTITY
-        LAST-UPDATED "200905260000Z"
+        LAST-UPDATED "200911240000Z"
         ORGANIZATION "eZ Systems"
         CONTACT-INFO
                 "Gaetano Giunta
@@ -20,7 +20,10 @@ eZSystemsMIB MODULE-IDENTITY
         DESCRIPTION
                 "This MIB module contains application specific
                 managed objects for the eZ Publish CMS server."
-        REVISION "2009009090000Z"
+        REVISION "200911240000Z"
+        DESCRIPTION
+                "Added cache files info in status oid; fixed mib compliance; added md5 of exact version in a comment line"
+        REVISION "200909090000Z"
         DESCRIPTION
                 "Fixed mib compliance; renamed root to eZSystems"
         REVISION "200905260000Z"

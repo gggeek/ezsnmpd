@@ -229,7 +229,7 @@ function oidIsSmaller($a, $b) {
     public function getFullMIB()
     {
         $out = $this->getHandlerMIBs();
-        return $this->getRootMIB( md5( $out ) ) . $out;
+        return $this->getRootMIB( md5( $out ) ) . $out . "\n\nEND\n";
     }
 
     /**

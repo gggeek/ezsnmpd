@@ -16,14 +16,12 @@
  *       object nr. per version
  *       inactive users
  *       files in the fs (storage)
- *       files in the fs (cache, per cache type)
- *       activated caches
+ *       cache files count+size when in cluster mode (right now only fs mode supported)
  *       object nr. per class
  *       inactive users / blocked users
- *       active caches
- *       cache files count per cache type
  *       cache files count per size per cache type (eg. 1k, 10k, 100k, 1mb)
  *       cache files count per age per cache type (eg. 1hr, 1day, 1week, 1month)
+ *       shop items
  */
 
 class eZsnmpdStatusHandler extends eZsnmpdHandler {
@@ -43,6 +41,8 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         '2.1.4.2' => 'SELECT COUNT(session_key) AS count FROM ezsession where ezsession.user_id = /*anonymousId*/', // anon sessions
         '2.1.4.3' => 'SELECT COUNT(session_key) AS count FROM ezsession where ezsession.user_id != /*anonymousId*/', // registered sessions
     );
+    static $oidlist = null;
+    static $cachelist = array();
 
     function oidRoot()
     {
@@ -51,9 +51,25 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
 
     function oidList( )
     {
-        $list = array_merge ( array_keys( self::$simplequeries ), array( '2.1.1', '2.2.1', '2.2.2', '2.4.1', '2.4.2', '2.4.3', '2.5.1' ) );
-        usort($list, 'version_compare' );
-        return $list;
+        if ( self::$oidlist === null )
+        {
+            // build list of oids corresponding to caches and store for later their config
+            $i = 1;
+            $cachemib = '';
+            foreach ( eZCache::fetchList() as $cacheItem )
+            {
+                if ( $cacheItem['path'] != false /*&& $cacheItem['enabled']*/ )
+                {
+                    $id = $cacheItem['id'];
+                    self::$cachelist =  array_merge( self::$cachelist, array( "2.2.$i.1" => $id, "2.2.$i.2" => $id, "2.2.$i.3" => $id, "2.2.$i.4" => $id, "2.2.$i.5" => $id ) );
+                    $i++;
+                }
+            }
+
+            self::$oidlist = array_merge ( array_keys( self::$simplequeries ), array_keys( self::$cachelist ), array( '2.1.1', '2.4.1', '2.4.2', '2.4.3', '2.5.1' ) );
+            usort( self::$oidlist, 'version_compare' );
+        }
+        return self::$oidlist;
     }
 
     /**
@@ -62,11 +78,12 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
     function get( $oid )
     {
         $internaloid = preg_replace( '/\.0$/', '', $oid );
+
         if ( array_key_exists( $internaloid, self::$simplequeries ) )
         {
             try
             {
-                $db = eZDB::instance();
+                $db = eZDB::instance( false, false, true );
                 // eZP 4.0 will not raise an exception on connection errors
                 if ( !$db->isConnected() )
                 {
@@ -92,11 +109,69 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
             }
         }
 
+        if ( array_key_exists( $internaloid, self::$cachelist ) )
+        {
+            $cacheinfo = eZCache::fetchByID( self::$cachelist[$internaloid] );
+            $oids = explode( '.', $internaloid );
+            switch( $oids[3] )
+            {
+                case '1':
+                    return array(
+                        'oid' => $oid,
+                        'type' => eZSNMPd::TYPE_STRING,
+                        'value' => $cacheinfo['name'] );
+                case '2':
+                    return array(
+                        'oid' => $oid,
+                        'type' => eZSNMPd::TYPE_INTEGER,
+                        'value' => (int)$cacheinfo['enabled'] );
+                case '3':
+                    return array(
+                        'oid' => $oid,
+                        'type' => eZSNMPd::TYPE_STRING,
+                        'value' => $cacheinfo['path'] );
+                case '4':
+                case '5':
+                    $fileINI = eZINI::instance( 'file.ini' );
+                    $handlerName = $fileINI->variable( 'ClusteringSettings', 'FileHandler' );
+                    switch( $handlerName )
+                    {
+                        case 'eZFSFileHandler':
+                        case 'eZFS2FileHandler':
+                            break;
+                        default: // the db-based filehandlers + dfs one not yet supported
+                            return array(
+                                'oid' => $oid,
+                                'type' => eZSNMPd::TYPE_STRING,
+                                'value' => -1 );
+
+                    }
+                    // take care: this is hardcoded from knowledge of cache structure...
+                    if ( $cacheinfo['path'] == 'var/cache/ini' )
+                    {
+                        $cachedir = eZSys::siteDir() . '/' . $cacheinfo['path'];
+                    }
+                    else
+                    {
+                        $cachedir = eZSys::cacheDirectory() . '/' . $cacheinfo['path'];
+                    }
+
+                    if ( $oids[3] == '4' )
+                    {
+                        $out = eZsnmpdTools::countFilesInDir( $cachedir );
+                    }
+                    else
+                    {
+                        $out = eZsnmpdTools::countFilesSizeInDir( $cachedir );
+                    }
+            }
+
+        }
         $fileINI = eZINI::instance( 'file.ini' );
         switch( $internaloid )
         {
             case '2.1.1':
-                // @todo verify if db can be connected to
+                // verify if db can be connected to
                 $ok = 1;
                 try
                 {
@@ -290,6 +365,62 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
 
     function getMIB()
     {
+        // prepare MIB chunk for caches
+        $cachemib = '';
+        // make sure we warm up the cache index
+        $this->oidList();
+        foreach( self::$cachelist as $oid => $id )
+        {
+            $oids = explode( '.', $oid );
+            if ( $oids[3] == '1' )
+            {
+                $cachename = 'cache' . ucfirst( str_replace( array( '_', '-' ), '', $id ) );
+                $cachemib .= "
+$cachename          OBJECT IDENTIFIER ::= {cache {$oids[2]}}
+
+{$cachename}Name OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            \"The name of this cache.\"
+    ::= { $cachename 1 }
+
+{$cachename}Enabled OBJECT-TYPE
+    SYNTAX          INTEGER
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            \"Cache status: 1 for enabled, 0 for disabled\"
+    ::= { $cachename 2 }
+
+{$cachename}Path OBJECT-TYPE
+    SYNTAX          INTEGER
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            \"Path of the cache on the filesystem\"
+    ::= { $cachename 3 }
+
+{$cachename}Count OBJECT-TYPE
+    SYNTAX          INTEGER
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            \"Number of files in the cache (-1 if current cluster mode not supported)\"
+    ::= { $cachename 4 }
+
+{$cachename}Size OBJECT-TYPE
+    SYNTAX          INTEGER
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            \"Sum of size of all files in the cache (-1 if current cluster mode not supported)\"
+    ::= { $cachename 5 }
+";
+            }
+        }
+
         return '
 status          OBJECT IDENTIFIER ::= {eZPublish 2}
 
@@ -397,8 +528,10 @@ registeredSessions OBJECT-TYPE
             "The number of active registered users sessions."
     ::= { sessions 3 }
 
-cache           OBJECT IDENTIFIER ::= {status 2}
+shop            OBJECT IDENTIFIER ::= {database 5}
 
+cache           OBJECT IDENTIFIER ::= {status 2}
+'.$cachemib.'
 storage         OBJECT IDENTIFIER ::= {status 3}
 
 external        OBJECT IDENTIFIER ::= {status 4}
@@ -438,5 +571,6 @@ clusterdbstatus OBJECT-TYPE
     ::= { cluster 1 }
 ';
     }
+
 }
 ?>

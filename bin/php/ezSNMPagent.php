@@ -53,12 +53,13 @@ $script->startup();
 if ( $argc > 1 )
 {
     // if no options passed on cli, do not waste time with parsing stuff
-    $options = $script->getOptions( '[a:|siteaccess:][g:|get:][n:|getnext:][s:|set:][m|mib]',
+    $options = $script->getOptions( '[a:|siteaccess:][g:|get:][n:|getnext:][s:|set:][m|mib][w|walk:]',
                                     '',
                                     array(
                                         'get' => 'get oid value, ex: --get=a.b.c',
                                         'getnext' => 'get next oid value, ex: --getnext=a.b.c',
                                         'set' => 'set oid value, ex: --set=a.b.c type value',
+                                        'walk' => 'walk the mib tree',
                                         'mib' => 'get the complete MIB'
                                     ),
                                     false,
@@ -95,6 +96,33 @@ elseif ( isset( $options['mib'] ) )
 {
     eZDebugSetting::writeDebug( 'snmp-access', "mib", 'command' );
     $response = $server->getFullMIB();
+    eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
+    echo "$response\n";
+}
+elseif ( isset( $options['walk'] ) )
+{
+    eZDebugSetting::writeDebug( 'snmp-access', "walk", 'command' );
+    if ( $options['walk'] === true )
+    {
+        $next = '';
+    }
+    else
+    {
+        $next = $options['walk'];
+    }
+    while( ( $response = snmpget( 'getnext', $next, $server ) ) !== null )
+    {
+        $parts = explode( "\n", $response );
+        $parts[1] = strtoupper( $parts[1] );
+        /// @todo more decoding of snmpd.conf formats to snmpwalk ones?
+        if ( $parts[1] == 'STRING' )
+        {
+            /// @todo verify if we nedd substitution for " and other chars (which one?)
+            $parts[2] = '"' . $parts[2] . '"';
+        }
+        echo "{$parts[0]} = {$parts[1]}: {$parts[2]}\n";
+        $next = $parts[0];
+    }
     eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
     echo "$response\n";
 }

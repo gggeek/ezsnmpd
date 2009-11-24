@@ -1,8 +1,14 @@
-Changes from 0.1 to 0.2 - released xxxx-yy-zz
+Changes from 0.1 to 0.2 - released 2009-11-zz
 
 *Features:
+- added to the status MIB the details of files in cache
+  For every cache type, the status (enabled/disabled), file count and total file
+  size are reported.
+  NB: size and number of cache files are not yet available if in cluster mode.
+- added a plugin for the PRTG monitoring tool
 - added a shell script to ease usage with the net-snmpd agent on unices
-- add a unique id in a comment in the MIB automatically calculated to allow
+- added -w option to the php script, that prints the equivalent of snmpwalk
+- add an automatically calculated unique id in a comment in the MIB to allow
   differentiating it when different handlers are activated
 
 *Bugfixes:
@@ -10,9 +16,10 @@ Changes from 0.1 to 0.2 - released xxxx-yy-zz
 - improved windows batch file to work when eZPublish is installed on a drive
   other than the system one
 - complete mib is printed from cli script (generic part was missing)
+- reconnect to db in status mib if 2 get operations are done in the same script
 
 *Misc changes
 - moved the root-mib file to /sare from /modules/snmp
-- IMPORTANT api of class eZsnmpdHandler has changed.
+- IMPORTANT for developers: the api of class eZsnmpdHandler has changed.
   You will need to fix subclasses if any have been created.
   Also the api of eZSNMPd has chanegd.
