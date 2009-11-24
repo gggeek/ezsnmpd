@@ -11,6 +11,7 @@
  *
  * @todo add enum for OK/KO/NA values, use 1/2/3 instead of 1/0/-1, as it is more snmp-standard
  *
+ * @todo fix cache-path for per-sa caches: the given path is not clear...
  * @todo add other metrics, such as:
  *       expired / active sessions
  *       object nr. per version

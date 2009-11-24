@@ -26,7 +26,7 @@
  * @todo create a separate settings branch for all related sitecceasses in use
  */
 
-class eZsnmpdSettingsHandler extends eZsnmpdWildcardHandler {
+class eZsnmpdSettingsHandler extends eZsnmpdHandler {
 
     function oidRoot()
     {
