@@ -1,12 +1,10 @@
 to do:
 
-+ fix string-based-sorting of oids in ezsnmpd class: getnext fails on settings handler because 10.109.4 comes before 10.11 => test
-
 + test if session count is increased when getting values via cli; find a way not to increase it when getting values via http
 
 + add support for tabular values
 
-+ fix usage of pass_persist mode (also allow handlers to know if they can cache internal data structures or not)
++ fix usage of pass_persist mode (test); also allow handlers to know if they can cache internal data structures or not
 
 + fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir) => test on linux
 
@@ -15,7 +13,7 @@ to do:
 + test: disconnect from db after every status query, to avoid keeping resources occupied in pass_persist mode
 
 + settle on a list of MIBs, gettable and settable
-  - add stats from ggsysinfo to status mib: cache-files per cache type, files in storage per dir
+  - finish stats from ggsysinfo to status mib: cache-files in cluster modes; etc...
   - finish counters imported from ezmunin (missing: nbr. of cache-block and view-cache templates)
   - add other info from eZP admin interface:
     - active sessions count
@@ -30,9 +28,11 @@ to do:
 
 + finish ini settings mib: add support for array values, writing settings
 
-+ add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, prtg ...
++ add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ...
 
 + facilitate process of creating MIBs at the same time as handlers (see settings handler as base for code and a standard array format)
+
++ generate a SMIv2 MIB that has conformance groups set so that smilint will not complain
 
 + add a fetch function to retrieve and set oid values from within templates
 

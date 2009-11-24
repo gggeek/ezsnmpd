@@ -22,7 +22,7 @@ eZSystemsMIB MODULE-IDENTITY
                 managed objects for the eZ Publish CMS server."
         REVISION "200911240000Z"
         DESCRIPTION
-                "Added cache files info in status oid; fixed mib compliance; added md5 of exact version in a comment line"
+                "Added cache files info in status oid; fixed mib compliance; added md5 of exact version in a comment line; fixed settings mib to be SMIv2 compliant"
         REVISION "200909090000Z"
         DESCRIPTION
                 "Fixed mib compliance; renamed root to eZSystems"

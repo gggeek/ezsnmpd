@@ -432,15 +432,16 @@ function oidIsSmaller($a, $b) {
     /// Filter variable names to make them valid asn.1 identifiers:
     /// - must start with lowercase letter
     /// - only a-z a-Z 0-9 are permitted
+    /// - max 64 chars
     public static function asncleanup( $name )
     {
-        $name = str_replace( array( '_', '.' ), '-', $name );
+        $name = str_replace( array( '_', '.', '-' ), '', $name );
         $name[0] = strtolower( $name[0] );
         if ( $name[0] >= '0' && $name[0] <= '9' )
         {
             $name = 'xxx' . $name;
         }
-        return $name;
+        return substr( $name, 0, 64 );
     }
 }
 

@@ -98,22 +98,23 @@ currentSASettings    OBJECT IDENTIFIER ::= {settings 1}
 ';
         foreach ( $this->buildMIB() as $i => $file )
         {
-            $filename = $file['file'];
+            // leave Ini at end of file to avoid clash with 'content' oid
+            $filename = eZSNMPd::asncleanup( str_replace( '.ini', 'Ini', $file['file'] ) );
             $out .= "\n" . str_pad ( $filename, 15 ) . " OBJECT IDENTIFIER ::= {currentSASettings  $i}\n";
             foreach( $file['groups'] as $j => $group )
             {
-                $groupname = eZSNMPd::asncleanup( $group['group'] );
-                $out .= "\n" . str_pad( $filename . $groupname, 15 ) . ' OBJECT IDENTIFIER ::= {'. "$filename $j}\n";
+                $groupname = eZSNMPd::asncleanup( $filename . $group['group'] );
+                $out .= "\n" . str_pad( $groupname, 15 ) . ' OBJECT IDENTIFIER ::= {'. "$filename $j}\n";
                 foreach( $group['settings'] as $k => $setting )
                 {
-                    $name = eZSNMPd::asncleanup( $setting['name'] );
+                    $oidname = eZSNMPd::asncleanup( $groupname . $setting['name'] );
                     $out .= "
-$filename$groupname$name OBJECT-TYPE
+$oidname OBJECT-TYPE
     SYNTAX          {$setting['type']}
-    MAX-ACCESS      " . ( $setting['rw'] ? 'read-write' : ' read-only' ) . "
+    MAX-ACCESS      " . ( $setting['rw'] ? 'read-write' : 'read-only' ) . "
     STATUS          current
-    DESCRIPTION     \"\"
-    ::= { " . $filename . $groupname ." $k }\n";
+    DESCRIPTION     \"". $file['file'] . ' / ' . $group['group'] . ' / ' . $setting['name'] ."\"
+    ::= { " . $groupname ." $k }\n";
                 }
             }
         }
@@ -191,8 +192,7 @@ $filename$groupname$name OBJECT-TYPE
                     }
                     $j++;
                 }
-                // remove invalid stuff from file name (.)
-                $out[$key+1] = array( 'file' => str_replace( '.ini', '', $file ), 'groups' => $outgroups );
+                $out[$key+1] = array( 'file' => $file, 'groups' => $outgroups );
             }
         }
         return $out;
