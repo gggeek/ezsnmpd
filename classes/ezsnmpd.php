@@ -68,7 +68,6 @@ function oidIsSmaller($a, $b) {
     /**
     * @todo add caching of list of Handler objects, in case we later want to get
     *       MIBs from them? uses more memory for a very small speed gain...
-    * @todo add a check for vailidity of oidRoot string format and for regexp clashes?
     */
     function __construct()
     {
@@ -88,7 +87,16 @@ function oidIsSmaller($a, $b) {
                 continue;
             }
             $obj = new $class();
-            $this->OIDregexp['/^' . str_replace( '.', '\.', $obj->oidRoot() ) . '/'] = $class;
+            $oidRoot = $obj->oidRoot();
+            if ( !is_array( $oidRoot ) )
+            {
+                $oidRoot = array( $oidRoot );
+            }
+            foreach ( $oidRoot as $root )
+            {
+                /// @todo add test for correct type and format of $root, and for clash with existing regexps...
+                $this->OIDregexp['/^' . str_replace( '.', '\.', $root ) . '/'] = $class;
+            }
         }
         uksort( $this->OIDregexp, 'version_compare' );
 
@@ -135,7 +143,8 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-    * Make sure that if handler X says this is last oid, we move on to next handler
+    * Make sure that if handler X says this is his last oid, we move on to next handler
+    * @return string|null null in case of error
     */
     public function getnext( $oid )
     {

@@ -11,11 +11,11 @@
  *
  * @todo add enum for OK/KO/NA values, use 1/2/3 instead of 1/0/-1, as it is more snmp-standard
  *
- * @todo fix cache-path for per-sa caches: the given path is not clear...
+ * @todo split this module in smaller subparts?
+ *
  * @todo add other metrics, such as:
  *       expired / active sessions
  *       object nr. per version
- *       inactive users
  *       files in the fs (storage)
  *       cache files count+size when in cluster mode (right now only fs mode supported)
  *       object nr. per class
@@ -62,7 +62,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                 if ( $cacheItem['path'] != false /*&& $cacheItem['enabled']*/ )
                 {
                     $id = $cacheItem['id'];
-                    self::$cachelist =  array_merge( self::$cachelist, array( "2.2.$i.1" => $id, "2.2.$i.2" => $id, "2.2.$i.3" => $id, "2.2.$i.4" => $id, "2.2.$i.5" => $id ) );
+                    self::$cachelist =  array_merge( self::$cachelist, array( "2.2.$i.1" => $id, "2.2.$i.2" => $id, "2.2.$i.3" => $id, "2.2.$i.4" => $id ) );
                     $i++;
                 }
             }
@@ -127,16 +127,12 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                         'type' => eZSNMPd::TYPE_INTEGER,
                         'value' => (int)$cacheinfo['enabled'] );
                 case '3':
-                    return array(
-                        'oid' => $oid,
-                        'type' => eZSNMPd::TYPE_STRING,
-                        'value' => $cacheinfo['path'] );
                 case '4':
-                case '5':
                     $fileINI = eZINI::instance( 'file.ini' );
                     $handlerName = $fileINI->variable( 'ClusteringSettings', 'FileHandler' );
                     switch( $handlerName )
                     {
+                        case 'ezfs':
                         case 'eZFSFileHandler':
                         case 'eZFS2FileHandler':
                             break;
@@ -157,7 +153,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                         $cachedir = eZSys::cacheDirectory() . '/' . $cacheinfo['path'];
                     }
 
-                    if ( $oids[3] == '4' )
+                    if ( $oids[3] == '3' )
                     {
                         $out = eZsnmpdTools::countFilesInDir( $cachedir );
                     }
@@ -375,7 +371,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
             $oids = explode( '.', $oid );
             if ( $oids[3] == '1' )
             {
-                $cachename = 'cache' . ucfirst( str_replace( array( '_', '-' ), '', $id ) );
+                $cachename = 'cache' . ucfirst( eZSNMPd::asncleanup( $id ) );
                 $cachemib .= "
 $cachename          OBJECT IDENTIFIER ::= {cache {$oids[2]}}
 
@@ -395,21 +391,13 @@ $cachename          OBJECT IDENTIFIER ::= {cache {$oids[2]}}
             \"Cache status: 1 for enabled, 0 for disabled\"
     ::= { $cachename 2 }
 
-{$cachename}Path OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            \"Path of the cache on the filesystem\"
-    ::= { $cachename 3 }
-
 {$cachename}Count OBJECT-TYPE
     SYNTAX          INTEGER
     MAX-ACCESS      read-only
     STATUS          current
     DESCRIPTION
             \"Number of files in the cache (-1 if current cluster mode not supported)\"
-    ::= { $cachename 4 }
+    ::= { $cachename 3 }
 
 {$cachename}Size OBJECT-TYPE
     SYNTAX          INTEGER
@@ -417,7 +405,7 @@ $cachename          OBJECT IDENTIFIER ::= {cache {$oids[2]}}
     STATUS          current
     DESCRIPTION
             \"Sum of size of all files in the cache (-1 if current cluster mode not supported)\"
-    ::= { $cachename 5 }
+    ::= { $cachename 4 }
 ";
             }
         }
