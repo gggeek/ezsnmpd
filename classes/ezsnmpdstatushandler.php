@@ -15,14 +15,14 @@
  *
  * @todo add other metrics, such as:
  *       expired / active sessions
- *       object nr. per version
  *       files in the fs (storage)
  *       cache files count+size when in cluster mode (right now only fs mode supported)
+ *       object nr. per version
  *       object nr. per class
  *       inactive users / blocked users
+ *       running workflows
  *       cache files count per size per cache type (eg. 1k, 10k, 100k, 1mb)
  *       cache files count per age per cache type (eg. 1hr, 1day, 1week, 1month)
- *       shop items
  */
 
 class eZsnmpdStatusHandler extends eZsnmpdHandler {
@@ -44,6 +44,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
     );
     static $oidlist = null;
     static $cachelist = array();
+    static $orderstatuslist = array();
 
     function oidRoot()
     {
@@ -67,7 +68,19 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                 }
             }
 
-            self::$oidlist = array_merge ( array_keys( self::$simplequeries ), array_keys( self::$cachelist ), array( '2.1.1', '2.4.1', '2.4.2', '2.4.3', '2.5.1' ) );
+            // build list of oids corresponding to order status
+            $db = eZDB::instance();
+            $status = $db->arrayQuery( 'select status_id, name from ezorder_status where is_active=1 order by id' );
+            if ( is_array( $status ) )
+            {
+                $i = 1;
+                foreach( $status as $line )
+                {
+                    self::$orderstatuslist = array_merge( self::$orderstatuslist, array( "2.1.5.1.$i.1" => $line['name'], "2.1.5.1.$i.2" => $line['status_id'], "2.1.5.1.$i.3" => $line['status_id'] ) );
+                    $i++;
+                }
+            }
+            self::$oidlist = array_merge ( array_keys( self::$simplequeries ), array_keys( self::$orderstatuslist ), array_keys( self::$cachelist ), array( '2.1.1', '2.4.1', '2.4.2', '2.4.3', '2.5.1' ) );
             usort( self::$oidlist, 'version_compare' );
         }
         return self::$oidlist;
@@ -107,6 +120,29 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
             else
             {
                 return 0;
+            }
+        }
+
+        if ( array_key_exists( $internaloid, self::$orderstatuslist ) )
+        {
+            $oids = explode( '.', $internaloid );
+            switch( $oids[5] )
+            {
+                case '1':
+                    return array(
+                        'oid' => $oid,
+                        'type' => eZSNMPd::TYPE_STRING,
+                        'value' => self::$orderstatuslist[$internaloid] );
+                case '2':
+                case '3':
+                    $db = eZDB::instance();
+                    $status = $db->arrayQuery( 'select count(*) as num from ezorder where is_temporary=0 and is_archived=' . ( $oids % 2 ) . ' and status_id='.self::$orderstatuslist[$internaloid], array( 'column' => 'num' ) );
+                    return array(
+                        'oid' => $oid,
+                        'type' => eZSNMPd::TYPE_INTEGER,
+                        'value' => $status[0] );
+                    break;
+
             }
         }
 
@@ -189,7 +225,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                     'type' => eZSNMPd::TYPE_INTEGER,
                     'value' => $ok );
 
-            case '2.2.1': // cache-blocks
+            /*case '2.2.1': // cache-blocks
                 /// @todo ...
                 $handlerName = $fileINI->variable( 'ClusteringSettings', 'FileHandler' );
                 switch( $handlerName )
@@ -211,7 +247,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                     case 'ezdb':
                         break;
                     default:
-                }
+                }*/
 
             case '2.4.1': // ldap connection
                 $ini = eZINI::instance( 'ldap.ini' );
@@ -333,7 +369,8 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                     'value' => $ok );
 
             case '2.5.1':
-                if ( $fileINI->variable( 'ClusteringSettings', 'FileHandler' ) == 'ezdb' )
+                $clusterhandler = $fileINI->variable( 'ClusteringSettings', 'FileHandler' );
+                if ( $clusterhandler == 'ezdb' || $clusterhandler == 'eZDBFileHandler' )
                 {
                     // @todo...
                     $dbFileHandler = eZClusterFileHandler::instance();
@@ -366,6 +403,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         $cachemib = '';
         // make sure we warm up the cache index
         $this->oidList();
+
         foreach( self::$cachelist as $oid => $id )
         {
             $oids = explode( '.', $oid );
@@ -383,7 +421,7 @@ $cachename          OBJECT IDENTIFIER ::= {cache {$oids[2]}}
             \"The name of this cache.\"
     ::= { $cachename 1 }
 
-{$cachename}Enabled OBJECT-TYPE
+{$cachename}Count OBJECT-TYPE
     SYNTAX          INTEGER
     MAX-ACCESS      read-only
     STATUS          current
@@ -406,6 +444,42 @@ $cachename          OBJECT IDENTIFIER ::= {cache {$oids[2]}}
     DESCRIPTION
             \"Sum of size of all files in the cache (-1 if current cluster mode not supported)\"
     ::= { $cachename 4 }
+";
+            }
+        }
+
+        foreach( self::$orderstatuslist as $oid => $id )
+        {
+            $oids = explode( '.', $oid );
+            if ( $oids[3] == '1' && $oids[5] == '1' )
+            {
+                $cachename = 'orderStatus' . ucfirst( eZSNMPd::asncleanup( $id ) );
+                $shopmib .= "
+$cachename          OBJECT IDENTIFIER ::= {orders {$oids[4]}}
+
+{$cachename}Name OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            \"The name of this order status.\"
+    ::= { $cachename 1 }
+
+{$cachename}Count OBJECT-TYPE
+    SYNTAX          INTEGER
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            \"Number of active orders in this status\"
+    ::= { $cachename 2 }
+
+{$cachename}ArchiveCount OBJECT-TYPE
+    SYNTAX          INTEGER
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            \"Number of acrchived orders in this status\"
+    ::= { $cachename 3 }
 ";
             }
         }
@@ -519,6 +593,9 @@ registeredSessions OBJECT-TYPE
 
 shop            OBJECT IDENTIFIER ::= {database 5}
 
+orders          OBJECT IDENTIFIER ::= {shop 1}
+
+'.$shopmib.'
 cache           OBJECT IDENTIFIER ::= {status 2}
 '.$cachemib.'
 storage         OBJECT IDENTIFIER ::= {status 3}

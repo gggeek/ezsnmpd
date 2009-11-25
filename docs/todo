@@ -22,7 +22,7 @@ to do:
   - nodes, objects, classes, users (full info, identified by id, in a separate branch/handler)
   - pending items count (drafts and items waiting for approval)
   - object count per version
-  - webshop objects in the different stages
+  - running workflows
   - a set of common db corruption cases tests
   -  etc...
 
