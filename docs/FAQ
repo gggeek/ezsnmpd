@@ -20,7 +20,7 @@ A: it is in fact dynamically generated.
 
 Q: do you provide plugins for any of those monitoring tools to ease the integration
    of ezsnmpd and the creation of nice looking graphs?
-A: not yet, but it is planned
+A: currently a config file for PRTG is available, but more are planned
 
 Q: will this extension implement monitoring probes for mysql/apache/other?
 A: no
@@ -73,3 +73,6 @@ A: yes. The address to get the values is:
    that purpose, and that is not accessible to the public, as sensitive information
    might be divulged to everybody otherwise, especially if you enabled the
    'settings handelr' in snmpd.ini!
+
+Q: the snmpwalk command times out after a couple of values. What to do?
+A: run it with a higher timeout, such as -t5 or -t10

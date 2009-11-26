@@ -13,7 +13,7 @@ to do:
 + test: disconnect from db after every status query, to avoid keeping resources occupied in pass_persist mode
 
 + settle on a list of MIBs, gettable and settable
-  - finish stats from ggsysinfo to status mib: cache-files in cluster modes; etc...
+  - finish stats from ggsysinfo to status mib: cache/storage files in cluster modes; etc...
   - finish counters imported from ezmunin (missing: nbr. of cache-block and view-cache templates)
   - add other info from eZP admin interface:
     - active sessions count
