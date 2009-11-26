@@ -120,7 +120,7 @@ elseif ( isset( $options['walk'] ) )
             /// @todo verify if we nedd substitution for " and other chars (which one?)
             $parts[2] = '"' . $parts[2] . '"';
         }
-        echo "{$parts[0]} = {$parts[1]}: {$parts[2]}\n";
+        echo ".{$parts[0]} = {$parts[1]}: {$parts[2]}\n";
         $next = $parts[0];
     }
     eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
