@@ -572,10 +572,10 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|external|ldap
+          EZSYSTEMS-MIB|order status pending|order status pending count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.4.1.0
+          1.3.6.1.4.1.33120.1.2.1.5.1.1.2.0
         </oid>
         <type>
           vmAbsolute
@@ -590,7 +590,7 @@
           #
         </units>
         <indicator>
-          ldap
+          order status pending count
         </indicator>
         <scale>
           1
@@ -614,15 +614,15 @@
           no
         </isfloat>
         <description>
-          Connectivity to LDAP server (-1 if not configured).
+          Number of active orders in this status
         </description>
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|external|web
+          EZSYSTEMS-MIB|order status pending|order status pending archive count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.4.2.0
+          1.3.6.1.4.1.33120.1.2.1.5.1.1.3.0
         </oid>
         <type>
           vmAbsolute
@@ -637,7 +637,7 @@
           #
         </units>
         <indicator>
-          web
+          order status pending archive count
         </indicator>
         <scale>
           1
@@ -661,15 +661,15 @@
           no
         </isfloat>
         <description>
-          Connectivity to the web. (probes a series of webservers defined in snmpd.ini, returns -1 if not configured).
+          Number of acrchived orders in this status
         </description>
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|external|email
+          EZSYSTEMS-MIB|order status processing|order status processing count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.4.3.0
+          1.3.6.1.4.1.33120.1.2.1.5.1.2.2.0
         </oid>
         <type>
           vmAbsolute
@@ -684,7 +684,7 @@
           #
         </units>
         <indicator>
-          email
+          order status processing count
         </indicator>
         <scale>
           1
@@ -708,15 +708,15 @@
           no
         </isfloat>
         <description>
-          Connectivity to mail server (NB: will send a test mail when probed to a recipient defined in snmpd.ini, returns -1 if not configured).
+          Number of active orders in this status
         </description>
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cluster|clusterdbstatus
+          EZSYSTEMS-MIB|order status processing|order status processing archive count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.5.1.0
+          1.3.6.1.4.1.33120.1.2.1.5.1.2.3.0
         </oid>
         <type>
           vmAbsolute
@@ -731,7 +731,7 @@
           #
         </units>
         <indicator>
-          clusterdbstatus
+          order status processing archive count
         </indicator>
         <scale>
           1
@@ -755,15 +755,15 @@
           no
         </isfloat>
         <description>
-          Availability of the cluster database (-1 for NA).
+          Number of acrchived orders in this status
         </description>
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|database|dbstatus
+          EZSYSTEMS-MIB|order status delivered|order status delivered count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.1.1.0
+          1.3.6.1.4.1.33120.1.2.1.5.1.3.2.0
         </oid>
         <type>
           vmAbsolute
@@ -778,7 +778,7 @@
           #
         </units>
         <indicator>
-          dbstatus
+          order status delivered count
         </indicator>
         <scale>
           1
@@ -802,15 +802,15 @@
           no
         </isfloat>
         <description>
-          Availability of the database.
+          Number of active orders in this status
         </description>
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|content|content objects
+          EZSYSTEMS-MIB|order status delivered|order status delivered archive count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.1.0
+          1.3.6.1.4.1.33120.1.2.1.5.1.3.3.0
         </oid>
         <type>
           vmAbsolute
@@ -825,7 +825,7 @@
           #
         </units>
         <indicator>
-          content objects
+          order status delivered archive count
         </indicator>
         <scale>
           1
@@ -849,482 +849,12 @@
           no
         </isfloat>
         <description>
-          The number of content objects.
+          Number of acrchived orders in this status
         </description>
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|content|content object attributes
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object attributes
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of content object attributes.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content object nodes
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.3.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object nodes
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of content nodes.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content object relations
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object relations
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of content object relations.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content object drafts
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object drafts
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of content objects in DRAFT state.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content object classes
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.6.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object classes
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of content object classes.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content object info collections
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.7.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object info collections
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of information collections.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|users|registeredusers
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.3.1.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          registeredusers
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of existing user accounts.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|sessions|all sessions
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.4.1.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          all sessions
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of active sessions.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|sessions|anon sessions
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.4.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          anon sessions
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of active anonymous users sessions.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|sessions|registered sessions
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.4.3.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          registered sessions
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of active registered users sessions.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache content|cache content enabled
+          EZSYSTEMS-MIB|cache content|cache content status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.1.2.0
@@ -1342,7 +872,7 @@
           #
         </units>
         <indicator>
-          cache content enabled
+          cache content status
         </indicator>
         <scale>
           1
@@ -1374,7 +904,7 @@
           EZSYSTEMS-MIB|cache content|cache content count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.1.4.0
+          1.3.6.1.4.1.33120.1.2.2.1.3.0
         </oid>
         <type>
           vmAbsolute
@@ -1421,2403 +951,6 @@
           EZSYSTEMS-MIB|cache content|cache content size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.1.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache content size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache globalini|cache globalini enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.2.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache globalini enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache globalini|cache globalini count
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.2.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache globalini count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache globalini|cache globalini size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.2.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache globalini size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache ini|cache ini enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.3.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache ini enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache ini|cache ini count
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.3.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache ini count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache ini|cache ini size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.3.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache ini size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache codepage|cache codepage enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.4.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache codepage enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache codepage|cache codepage count
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.4.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache codepage count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache codepage|cache codepage size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.4.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache codepage size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache urlalias|cache urlalias enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.5.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache urlalias enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache urlalias|cache urlalias count
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.5.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache urlalias count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache urlalias|cache urlalias size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.5.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache urlalias size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache chartrans|cache chartrans enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.6.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache chartrans enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache chartrans|cache chartrans count
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.6.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache chartrans count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache chartrans|cache chartrans size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.6.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache chartrans size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache template|cache template enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.7.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache template enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache template|cache template count
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.7.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache template count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache template|cache template size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.7.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache template size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache templateblock|cache templateblock enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.8.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache templateblock enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache templateblock|cache templateblock count
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.8.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache templateblock count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache templateblock|cache templateblock size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.8.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache templateblock size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache templateoverride|cache templateoverride enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.9.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache templateoverride enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache templateoverride|cache templateoverride count
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.9.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache templateoverride count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache templateoverride|cache templateoverride size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.9.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache templateoverride size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache texttoimage|cache texttoimage enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.10.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache texttoimage enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache texttoimage|cache texttoimage count
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.10.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache texttoimage count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache texttoimage|cache texttoimage size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.10.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache texttoimage size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache rsscache|cache rsscache enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.11.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache rsscache enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache rsscache|cache rsscache count
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.11.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache rsscache count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache rsscache|cache rsscache size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.11.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache rsscache size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache userinfocache|cache userinfocache enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.12.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache userinfocache enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache userinfocache|cache userinfocache count
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.12.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache userinfocache count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache userinfocache|cache userinfocache size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.12.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache userinfocache size
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Sum of size of all files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|external|ldap
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.4.1.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          ldap
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Connectivity to LDAP server (-1 if not configured).
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|external|web
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.4.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          web
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Connectivity to the web. (probes a series of webservers defined in snmpd.ini, returns -1 if not configured).
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|external|email
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.4.3.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          email
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Connectivity to mail server (NB: will send a test mail when probed to a recipient defined in snmpd.ini, returns -1 if not configured).
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cluster|clusterdbstatus
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.5.1.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          clusterdbstatus
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Availability of the cluster database (-1 for NA).
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|database|dbstatus
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.1.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          dbstatus
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Availability of the database.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content objects
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.1.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content objects
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of content objects.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content object attributes
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object attributes
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of content object attributes.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content object nodes
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.3.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object nodes
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of content nodes.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content object relations
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.4.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object relations
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of content object relations.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content object drafts
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object drafts
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of content objects in DRAFT state.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content object classes
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.6.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object classes
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of content object classes.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|content|content object info collections
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.2.7.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          content object info collections
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of information collections.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|users|registeredusers
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.3.1.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          registeredusers
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of existing user accounts.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|sessions|all sessions
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.4.1.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          all sessions
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of active sessions.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|sessions|anon sessions
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.4.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          anon sessions
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of active anonymous users sessions.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|sessions|registered sessions
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.1.4.3.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          registered sessions
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          The number of active registered users sessions.
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache content|cache content enabled
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.1.2.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
-          cache content enabled
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Cache status: 1 for enabled, 0 for disabled
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache content|cache content count
-        </name>
-        <oid>
           1.3.6.1.4.1.33120.1.2.2.1.4.0
         </oid>
         <type>
@@ -3833,53 +966,6 @@
           #
         </units>
         <indicator>
-          cache content count
-        </indicator>
-        <scale>
-          1
-        </scale>
-        <multiply>
-          no
-        </multiply>
-        <max>
-          0
-        </max>
-        <usegetnext>
-          no
-        </usegetnext>
-        <is64bit>
-          no
-        </is64bit>
-        <isunsigned>
-          no
-        </isunsigned>
-        <isfloat>
-          no
-        </isfloat>
-        <description>
-          Number of files in the cache (-1 if current cluster mode not supported)
-        </description>
-      </entry>
-      <entry>
-        <name>
-          EZSYSTEMS-MIB|cache content|cache content size
-        </name>
-        <oid>
-          1.3.6.1.4.1.33120.1.2.2.1.5.0
-        </oid>
-        <type>
-          vmAbsolute
-        </type>
-        <kind>
-          mkDirect
-        </kind>
-        <unittype>
-          sutCustom
-        </unittype>
-        <units>
-          #
-        </units>
-        <indicator>
           cache content size
         </indicator>
         <scale>
@@ -3909,7 +995,7 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cache globalini|cache globalini enabled
+          EZSYSTEMS-MIB|cache globalini|cache globalini status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.2.2.0
@@ -3927,7 +1013,7 @@
           #
         </units>
         <indicator>
-          cache globalini enabled
+          cache globalini status
         </indicator>
         <scale>
           1
@@ -3959,7 +1045,7 @@
           EZSYSTEMS-MIB|cache globalini|cache globalini count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.2.4.0
+          1.3.6.1.4.1.33120.1.2.2.2.3.0
         </oid>
         <type>
           vmAbsolute
@@ -4006,7 +1092,7 @@
           EZSYSTEMS-MIB|cache globalini|cache globalini size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.2.5.0
+          1.3.6.1.4.1.33120.1.2.2.2.4.0
         </oid>
         <type>
           vmAbsolute
@@ -4050,7 +1136,7 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cache ini|cache ini enabled
+          EZSYSTEMS-MIB|cache ini|cache ini status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.3.2.0
@@ -4068,7 +1154,7 @@
           #
         </units>
         <indicator>
-          cache ini enabled
+          cache ini status
         </indicator>
         <scale>
           1
@@ -4100,7 +1186,7 @@
           EZSYSTEMS-MIB|cache ini|cache ini count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.3.4.0
+          1.3.6.1.4.1.33120.1.2.2.3.3.0
         </oid>
         <type>
           vmAbsolute
@@ -4147,7 +1233,7 @@
           EZSYSTEMS-MIB|cache ini|cache ini size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.3.5.0
+          1.3.6.1.4.1.33120.1.2.2.3.4.0
         </oid>
         <type>
           vmAbsolute
@@ -4191,7 +1277,7 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cache codepage|cache codepage enabled
+          EZSYSTEMS-MIB|cache codepage|cache codepage status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.4.2.0
@@ -4209,7 +1295,7 @@
           #
         </units>
         <indicator>
-          cache codepage enabled
+          cache codepage status
         </indicator>
         <scale>
           1
@@ -4241,7 +1327,7 @@
           EZSYSTEMS-MIB|cache codepage|cache codepage count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.4.4.0
+          1.3.6.1.4.1.33120.1.2.2.4.3.0
         </oid>
         <type>
           vmAbsolute
@@ -4288,7 +1374,7 @@
           EZSYSTEMS-MIB|cache codepage|cache codepage size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.4.5.0
+          1.3.6.1.4.1.33120.1.2.2.4.4.0
         </oid>
         <type>
           vmAbsolute
@@ -4332,7 +1418,7 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cache urlalias|cache urlalias enabled
+          EZSYSTEMS-MIB|cache urlalias|cache urlalias status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.5.2.0
@@ -4350,7 +1436,7 @@
           #
         </units>
         <indicator>
-          cache urlalias enabled
+          cache urlalias status
         </indicator>
         <scale>
           1
@@ -4382,7 +1468,7 @@
           EZSYSTEMS-MIB|cache urlalias|cache urlalias count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.5.4.0
+          1.3.6.1.4.1.33120.1.2.2.5.3.0
         </oid>
         <type>
           vmAbsolute
@@ -4429,7 +1515,7 @@
           EZSYSTEMS-MIB|cache urlalias|cache urlalias size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.5.5.0
+          1.3.6.1.4.1.33120.1.2.2.5.4.0
         </oid>
         <type>
           vmAbsolute
@@ -4473,7 +1559,7 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cache chartrans|cache chartrans enabled
+          EZSYSTEMS-MIB|cache chartrans|cache chartrans status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.6.2.0
@@ -4491,7 +1577,7 @@
           #
         </units>
         <indicator>
-          cache chartrans enabled
+          cache chartrans status
         </indicator>
         <scale>
           1
@@ -4523,7 +1609,7 @@
           EZSYSTEMS-MIB|cache chartrans|cache chartrans count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.6.4.0
+          1.3.6.1.4.1.33120.1.2.2.6.3.0
         </oid>
         <type>
           vmAbsolute
@@ -4570,7 +1656,7 @@
           EZSYSTEMS-MIB|cache chartrans|cache chartrans size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.6.5.0
+          1.3.6.1.4.1.33120.1.2.2.6.4.0
         </oid>
         <type>
           vmAbsolute
@@ -4614,7 +1700,7 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cache template|cache template enabled
+          EZSYSTEMS-MIB|cache template|cache template status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.7.2.0
@@ -4632,7 +1718,7 @@
           #
         </units>
         <indicator>
-          cache template enabled
+          cache template status
         </indicator>
         <scale>
           1
@@ -4664,7 +1750,7 @@
           EZSYSTEMS-MIB|cache template|cache template count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.7.4.0
+          1.3.6.1.4.1.33120.1.2.2.7.3.0
         </oid>
         <type>
           vmAbsolute
@@ -4711,7 +1797,7 @@
           EZSYSTEMS-MIB|cache template|cache template size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.7.5.0
+          1.3.6.1.4.1.33120.1.2.2.7.4.0
         </oid>
         <type>
           vmAbsolute
@@ -4755,7 +1841,7 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cache templateblock|cache templateblock enabled
+          EZSYSTEMS-MIB|cache templateblock|cache templateblock status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.8.2.0
@@ -4773,7 +1859,7 @@
           #
         </units>
         <indicator>
-          cache templateblock enabled
+          cache templateblock status
         </indicator>
         <scale>
           1
@@ -4805,7 +1891,7 @@
           EZSYSTEMS-MIB|cache templateblock|cache templateblock count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.8.4.0
+          1.3.6.1.4.1.33120.1.2.2.8.3.0
         </oid>
         <type>
           vmAbsolute
@@ -4852,7 +1938,7 @@
           EZSYSTEMS-MIB|cache templateblock|cache templateblock size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.8.5.0
+          1.3.6.1.4.1.33120.1.2.2.8.4.0
         </oid>
         <type>
           vmAbsolute
@@ -4896,7 +1982,7 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cache templateoverride|cache templateoverride enabled
+          EZSYSTEMS-MIB|cache templateoverride|cache templateoverride status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.9.2.0
@@ -4914,7 +2000,7 @@
           #
         </units>
         <indicator>
-          cache templateoverride enabled
+          cache templateoverride status
         </indicator>
         <scale>
           1
@@ -4946,7 +2032,7 @@
           EZSYSTEMS-MIB|cache templateoverride|cache templateoverride count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.9.4.0
+          1.3.6.1.4.1.33120.1.2.2.9.3.0
         </oid>
         <type>
           vmAbsolute
@@ -4993,7 +2079,7 @@
           EZSYSTEMS-MIB|cache templateoverride|cache templateoverride size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.9.5.0
+          1.3.6.1.4.1.33120.1.2.2.9.4.0
         </oid>
         <type>
           vmAbsolute
@@ -5037,7 +2123,7 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cache texttoimage|cache texttoimage enabled
+          EZSYSTEMS-MIB|cache texttoimage|cache texttoimage status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.10.2.0
@@ -5055,7 +2141,7 @@
           #
         </units>
         <indicator>
-          cache texttoimage enabled
+          cache texttoimage status
         </indicator>
         <scale>
           1
@@ -5087,7 +2173,7 @@
           EZSYSTEMS-MIB|cache texttoimage|cache texttoimage count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.10.4.0
+          1.3.6.1.4.1.33120.1.2.2.10.3.0
         </oid>
         <type>
           vmAbsolute
@@ -5134,7 +2220,7 @@
           EZSYSTEMS-MIB|cache texttoimage|cache texttoimage size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.10.5.0
+          1.3.6.1.4.1.33120.1.2.2.10.4.0
         </oid>
         <type>
           vmAbsolute
@@ -5178,7 +2264,7 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cache rsscache|cache rsscache enabled
+          EZSYSTEMS-MIB|cache rsscache|cache rsscache status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.11.2.0
@@ -5196,7 +2282,7 @@
           #
         </units>
         <indicator>
-          cache rsscache enabled
+          cache rsscache status
         </indicator>
         <scale>
           1
@@ -5228,7 +2314,7 @@
           EZSYSTEMS-MIB|cache rsscache|cache rsscache count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.11.4.0
+          1.3.6.1.4.1.33120.1.2.2.11.3.0
         </oid>
         <type>
           vmAbsolute
@@ -5275,7 +2361,7 @@
           EZSYSTEMS-MIB|cache rsscache|cache rsscache size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.11.5.0
+          1.3.6.1.4.1.33120.1.2.2.11.4.0
         </oid>
         <type>
           vmAbsolute
@@ -5319,7 +2405,7 @@
       </entry>
       <entry>
         <name>
-          EZSYSTEMS-MIB|cache userinfocache|cache userinfocache enabled
+          EZSYSTEMS-MIB|cache userinfocache|cache userinfocache status
         </name>
         <oid>
           1.3.6.1.4.1.33120.1.2.2.12.2.0
@@ -5337,7 +2423,7 @@
           #
         </units>
         <indicator>
-          cache userinfocache enabled
+          cache userinfocache status
         </indicator>
         <scale>
           1
@@ -5369,7 +2455,7 @@
           EZSYSTEMS-MIB|cache userinfocache|cache userinfocache count
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.12.4.0
+          1.3.6.1.4.1.33120.1.2.2.12.3.0
         </oid>
         <type>
           vmAbsolute
@@ -5416,7 +2502,7 @@
           EZSYSTEMS-MIB|cache userinfocache|cache userinfocache size
         </name>
         <oid>
-          1.3.6.1.4.1.33120.1.2.2.12.5.0
+          1.3.6.1.4.1.33120.1.2.2.12.4.0
         </oid>
         <type>
           vmAbsolute
@@ -5456,6 +2542,288 @@
         </isfloat>
         <description>
           Sum of size of all files in the cache (-1 if current cluster mode not supported)
+        </description>
+      </entry>
+      <entry>
+        <name>
+          EZSYSTEMS-MIB|storage images|storage images count
+        </name>
+        <oid>
+          1.3.6.1.4.1.33120.1.2.3.1.2.0
+        </oid>
+        <type>
+          vmAbsolute
+        </type>
+        <kind>
+          mkDirect
+        </kind>
+        <unittype>
+          sutCustom
+        </unittype>
+        <units>
+          #
+        </units>
+        <indicator>
+          storage images count
+        </indicator>
+        <scale>
+          1
+        </scale>
+        <multiply>
+          no
+        </multiply>
+        <max>
+          0
+        </max>
+        <usegetnext>
+          no
+        </usegetnext>
+        <is64bit>
+          no
+        </is64bit>
+        <isunsigned>
+          no
+        </isunsigned>
+        <isfloat>
+          no
+        </isfloat>
+        <description>
+          Number of files in the dir (-1 if current cluster mode not supported)
+        </description>
+      </entry>
+      <entry>
+        <name>
+          EZSYSTEMS-MIB|storage images|storage images size
+        </name>
+        <oid>
+          1.3.6.1.4.1.33120.1.2.3.1.3.0
+        </oid>
+        <type>
+          vmAbsolute
+        </type>
+        <kind>
+          mkDirect
+        </kind>
+        <unittype>
+          sutCustom
+        </unittype>
+        <units>
+          #
+        </units>
+        <indicator>
+          storage images size
+        </indicator>
+        <scale>
+          1
+        </scale>
+        <multiply>
+          no
+        </multiply>
+        <max>
+          0
+        </max>
+        <usegetnext>
+          no
+        </usegetnext>
+        <is64bit>
+          no
+        </is64bit>
+        <isunsigned>
+          no
+        </isunsigned>
+        <isfloat>
+          no
+        </isfloat>
+        <description>
+          Sum of size of all files in the dir (-1 if current cluster mode not supported)
+        </description>
+      </entry>
+      <entry>
+        <name>
+          EZSYSTEMS-MIB|storage imagesversioned|storage imagesversioned count
+        </name>
+        <oid>
+          1.3.6.1.4.1.33120.1.2.3.2.2.0
+        </oid>
+        <type>
+          vmAbsolute
+        </type>
+        <kind>
+          mkDirect
+        </kind>
+        <unittype>
+          sutCustom
+        </unittype>
+        <units>
+          #
+        </units>
+        <indicator>
+          storage imagesversioned count
+        </indicator>
+        <scale>
+          1
+        </scale>
+        <multiply>
+          no
+        </multiply>
+        <max>
+          0
+        </max>
+        <usegetnext>
+          no
+        </usegetnext>
+        <is64bit>
+          no
+        </is64bit>
+        <isunsigned>
+          no
+        </isunsigned>
+        <isfloat>
+          no
+        </isfloat>
+        <description>
+          Number of files in the dir (-1 if current cluster mode not supported)
+        </description>
+      </entry>
+      <entry>
+        <name>
+          EZSYSTEMS-MIB|storage imagesversioned|storage imagesversioned size
+        </name>
+        <oid>
+          1.3.6.1.4.1.33120.1.2.3.2.3.0
+        </oid>
+        <type>
+          vmAbsolute
+        </type>
+        <kind>
+          mkDirect
+        </kind>
+        <unittype>
+          sutCustom
+        </unittype>
+        <units>
+          #
+        </units>
+        <indicator>
+          storage imagesversioned size
+        </indicator>
+        <scale>
+          1
+        </scale>
+        <multiply>
+          no
+        </multiply>
+        <max>
+          0
+        </max>
+        <usegetnext>
+          no
+        </usegetnext>
+        <is64bit>
+          no
+        </is64bit>
+        <isunsigned>
+          no
+        </isunsigned>
+        <isfloat>
+          no
+        </isfloat>
+        <description>
+          Sum of size of all files in the dir (-1 if current cluster mode not supported)
+        </description>
+      </entry>
+      <entry>
+        <name>
+          EZSYSTEMS-MIB|storage original|storage original count
+        </name>
+        <oid>
+          1.3.6.1.4.1.33120.1.2.3.3.2.0
+        </oid>
+        <type>
+          vmAbsolute
+        </type>
+        <kind>
+          mkDirect
+        </kind>
+        <unittype>
+          sutCustom
+        </unittype>
+        <units>
+          #
+        </units>
+        <indicator>
+          storage original count
+        </indicator>
+        <scale>
+          1
+        </scale>
+        <multiply>
+          no
+        </multiply>
+        <max>
+          0
+        </max>
+        <usegetnext>
+          no
+        </usegetnext>
+        <is64bit>
+          no
+        </is64bit>
+        <isunsigned>
+          no
+        </isunsigned>
+        <isfloat>
+          no
+        </isfloat>
+        <description>
+          Number of files in the dir (-1 if current cluster mode not supported)
+        </description>
+      </entry>
+      <entry>
+        <name>
+          EZSYSTEMS-MIB|storage original|storage original size
+        </name>
+        <oid>
+          1.3.6.1.4.1.33120.1.2.3.3.3.0
+        </oid>
+        <type>
+          vmAbsolute
+        </type>
+        <kind>
+          mkDirect
+        </kind>
+        <unittype>
+          sutCustom
+        </unittype>
+        <units>
+          #
+        </units>
+        <indicator>
+          storage original size
+        </indicator>
+        <scale>
+          1
+        </scale>
+        <multiply>
+          no
+        </multiply>
+        <max>
+          0
+        </max>
+        <usegetnext>
+          no
+        </usegetnext>
+        <is64bit>
+          no
+        </is64bit>
+        <isunsigned>
+          no
+        </isunsigned>
+        <isfloat>
+          no
+        </isfloat>
+        <description>
+          Sum of size of all files in the dir (-1 if current cluster mode not supported)
         </description>
       </entry>
       <entry>
@@ -5644,6 +3012,53 @@
         </isfloat>
         <description>
           Availability of the cluster database (-1 for NA).
+        </description>
+      </entry>
+      <entry>
+        <name>
+          EZSYSTEMS-MIB|scrap|random
+        </name>
+        <oid>
+          1.3.6.1.4.1.33120.1.5.1.0
+        </oid>
+        <type>
+          vmAbsolute
+        </type>
+        <kind>
+          mkDirect
+        </kind>
+        <unittype>
+          sutCustom
+        </unittype>
+        <units>
+          #
+        </units>
+        <indicator>
+          random
+        </indicator>
+        <scale>
+          1
+        </scale>
+        <multiply>
+          no
+        </multiply>
+        <max>
+          0
+        </max>
+        <usegetnext>
+          no
+        </usegetnext>
+        <is64bit>
+          no
+        </is64bit>
+        <isunsigned>
+          no
+        </isunsigned>
+        <isfloat>
+          no
+        </isfloat>
+        <description>
+          Returns random number.
         </description>
       </entry>
     </list>
