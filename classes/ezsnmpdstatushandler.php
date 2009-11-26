@@ -207,11 +207,11 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                     }
                     if ( $oids[3] == '3' )
                     {
-                        $out = eZsnmpdTools::countFilesInDir( $cachedir );
+                        $out = (int)eZsnmpdTools::countFilesInDir( $cachedir );
                     }
                     else
                     {
-                        $out = eZsnmpdTools::countFilesSizeInDir( $cachedir );
+                        $out = (int)eZsnmpdTools::countFilesSizeInDir( $cachedir );
                     }
                     return array(
                         'oid' => $oid,
@@ -249,11 +249,11 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                     }
                     if ( $oids[3] == '2' )
                     {
-                        $out = eZsnmpdTools::countFilesInDir( self::$storagedirlist[$internaloid] );
+                        $out = (int)eZsnmpdTools::countFilesInDir( self::$storagedirlist[$internaloid] );
                     }
                     else
                     {
-                        $out = eZsnmpdTools::countFilesSizeInDir( self::$storagedirlist[$internaloid] );
+                        $out = (int)eZsnmpdTools::countFilesSizeInDir( self::$storagedirlist[$internaloid] );
                     }
                     return array(
                         'oid' => $oid,
