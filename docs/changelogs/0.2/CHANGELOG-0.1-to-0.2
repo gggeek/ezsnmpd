@@ -1,10 +1,15 @@
-Changes from 0.1 to 0.2 - released 2009-11-zz
+Changes from 0.1 to 0.2 - released 2009-11-26
 
 *Features:
-- added to the status MIB the details of files in cache
+- added to the status MIB the details of files in cache.
   For every cache type, the status (enabled/disabled), file count and total file
   size are reported.
-- added to the status MIB the details of shop orders
+  NB: this currently does not work in cluster configurations
+- added to the status MIB the details of files in storage
+  For every subdir of storage, the path, file count and total file
+  size are reported.
+  NB: this currently does not work in cluster configurations
+- added to the status MIB the details of shop orders.
   For every shop order status defined, the number of active and archived orders
   is reported
 - added a plugin for the PRTG monitoring tool
