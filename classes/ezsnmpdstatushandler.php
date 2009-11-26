@@ -434,7 +434,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                 $clusterhandler = $fileINI->variable( 'ClusteringSettings', 'FileHandler' );
                 if ( $clusterhandler == 'ezdb' || $clusterhandler == 'eZDBFileHandler' )
                 {
-                    // @todo...
+                    $ok = 0;
                     $dbFileHandler = eZClusterFileHandler::instance();
                     if ( $dbFileHandler instanceof eZDBFileHandler )
                     {
@@ -443,7 +443,6 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                         if ( is_resource( $dbFileHandler->backend->db ) )
                             $ok = 1;
                     }
-                    $ok = 0;
                 }
                 else
                 {
