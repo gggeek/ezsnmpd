@@ -31,7 +31,7 @@ class eZSNMPd {
     const TYPE_UNSIGNED32 = 'unsigned';
     const TYPE_UNSIGNED64 = 'unsigned';
 
-    const VERSION         = '0.2';
+    const VERSION         = '0.3-dev';
 /*
 
 $oid = "";
