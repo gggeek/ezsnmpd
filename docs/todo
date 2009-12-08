@@ -1,5 +1,7 @@
 to do:
 
++ add a self-hosted html version of the mib, for the terminally lazy
+
 + test if session count is increased when getting values via cli; find a way not to increase it when getting values via http
 
 + add support for tabular values
