@@ -1,19 +1,44 @@
-eZ SNMPd extension 0.1 installation instructions
+eZ SNMPd extension 0.3 installation instructions
 
-- install eZ Publish
-
-
-- install and activate the extension as per standard eZ Publish 4 procedures (regenerate autoloads)
+1 - install eZ Publish
 
 
-- make sure you have the net-snmp service installed and properly configured with at least a basic configuration
+2 - install and activate the extension as per standard eZ Publish 4 procedures (regenerate autoloads)
+
+
+3 - test that the ezSNMPagent.php script is working properly: launch that script from a command line (remember to move first to the eZ Publish base directory)
+
+    php extension\ezsnmpd\bin\php\ezSNMPagent.php -w
+
+    the output should be a list of key/value pairs resembling this:
+
+    1.3.6.1.4.1.33120.1.2.1.1.0 = INTEGER: 1
+    1.3.6.1.4.1.33120.1.2.1.2.1.0 = INTEGER: 65
+    1.3.6.1.4.1.33120.1.2.1.2.2.0 = INTEGER: 590
+    1.3.6.1.4.1.33120.1.2.1.2.3.0 = INTEGER: 65
+
+
+This is enough if you are going to use the command line script for monitoring.
+
+
+4 - if you are going to use http (web access) for monitoring, you will have to set up roles and policies.
+
+    The address used to retrieve an indicator value will be similar to this one:
+
+    http://my.server/index.php/siteaccess/snmp/get/1.3.6.1.4.1.33120.1.2.1.1.0
+
+    The output will be a plaintext web page consisting of 3 lines of information
+
+
+5 - if you are going to use snmp for monitoring, please continue reading:
+
+5a - make sure you have the net-snmp service installed and properly configured with at least a basic configuration
 
     a simple way is to run the following command:
     snmpget -v 2c -c public localhost system.sysName.0
     (change the '-c public' param to suit your snmp community string)
 
-
-- alter the snmpd.conf file (usually found in /etc/snmp) and restart the service. Example line to add:
+5b - alter the snmpd.conf file (usually found in /etc/snmp) and restart the service. Example line to add:
 
     pass .1.3.6.1.4.1.33120.1 \var\www\eZ\extension\ezsnmpd\bin\shell\ezSNMPagent.sh
 
@@ -24,26 +49,14 @@ eZ SNMPd extension 0.1 installation instructions
     (change the path to the ezSNMPagent script according to your eZ Publish installation)
 
 
-- test that the extension works by running
+5c - test that the extension works by running
 
     snmpget -v 2c -c public localhost 1.3.6.1.4.1.33120.1.2.1.1.0
 
     (change the '-c public' param above to suit your snmp community string)
 
 
-- if the above command results in an error message, test that the ezSNMPagent.php script is working properly
-
-    launch that script from a command line (remember to move first to the eZ Publish base directory)
-    the script should start and wait for commands, without echoing anything to screen
-    type PING [enter]. The script should answer PONG
-    type GET [enter] 1.3.6.1.4.1.33120.1.2.1.1.0 [enter]. The script should answer something like this:
-    1.3.6.1.4.1.33120.1.2.1.1.0
-    integer
-    44
-    type QUIT [enter]
-
-
-- you can retrieve the eZ Publish MIB to install in monitoring tools by pointing the browser at
+5d - you can retrieve the eZ Publish MIB to install in monitoring tools by pointing the browser at
 
     http://my.ezpublish.site/index.php/siteaccess/snmp/mib
 

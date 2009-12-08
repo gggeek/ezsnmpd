@@ -8,6 +8,22 @@ A: This extension does not provide on its own any report or graphical interface
    will do, with a little configuration. OSS tools include nagios, zenoss, munin,
    hyperic and many others.
 
+Q: do you provide plugins for any of those monitoring tools to ease the integration
+   of ezsnmpd and the creation of nice looking graphs?
+A: currently a config file for PRTG is available, but more are planned
+
+Q: SNMP, MIB, OID, what the hell is this?
+A1: please google for "snmp tutorial"
+A2: in short:
+   SNMP = a protocol devised for monitoring of appliances on a network.
+		  Think of it as 'http for monitoring', with the 'snmp manager' acting
+		  as the user-agent (browser), and 'snmp agent' acting as the webserver
+   OID  = a unique object/characteristic identifier, whose value can be queried.
+          These object identifiers consist of numbers separated by decimal points,
+          and are organized in a tree
+   MIB  = the "database of information" listing the existing OIDs with type,
+          description etc. It is stored as a text file with a kludgy syntax.
+
 Q: where do i find the list of indicator values that are available?
 A: in the so-called MIB file. It uses a notation that is standard in snmp world:
    ASN.1. It is unfortunately very hard to read by humans, but there are a lot
@@ -17,10 +33,6 @@ Q: so where is this MIB file? I cannot see it in the distribution
 A: it is in fact dynamically generated.
    You can find it at http://my.ezpublish.site/index.php/siteaccess/snmp/mib
    and save it as ezpublish.mib
-
-Q: do you provide plugins for any of those monitoring tools to ease the integration
-   of ezsnmpd and the creation of nice looking graphs?
-A: currently a config file for PRTG is available, but more are planned
 
 Q: will this extension implement monitoring probes for mysql/apache/other?
 A: no
@@ -72,7 +84,15 @@ A: yes. The address to get the values is:
    you should only do so in a separate siteaccess, that has been created for
    that purpose, and that is not accessible to the public, as sensitive information
    might be divulged to everybody otherwise, especially if you enabled the
-   'settings handelr' in snmpd.ini!
+   'settings handler' in snmpd.ini!
+
+Q: are there disadvantages in querying the server via HTTP GET requests
+   instead of using snmp or the command  line php script?
+A: YES
+   - you will not be able to receive responses if the webserver is down
+   - you will not be able to receive responses if the database is down
+   - if you query the number of active sessions, the act of requesting
+     monitoring values will increase the number of sessions (Heisemberg in action!)
 
 Q: the snmpwalk command times out after a couple of values. What to do?
 A: run it with a higher timeout, such as -t5 or -t10

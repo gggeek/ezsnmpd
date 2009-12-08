@@ -17,17 +17,21 @@ The main advantages of using snmp instead of http for querying values are:
 - snmp is a standard monitoring protocol, understood by every monitoring tool
   in the market, such as nagios, zenoss, hyperic etc...
 - the values can be queried even when the webserver is down / unreachable
+- some values can be queried even when the database is down / unreachable
 - access to snmp can be secured independently of access to the web interfaces
+
+The main advantages of using a php script instead of http for querying values are:
+- the values can be queried even when the webserver is down / unreachable
+- some values can be queried even when the database is down / unreachable
+
+The set of values that can be queried is incomplete in this release of the extension,
+but an extensibility mechanism via "handler" classes is provided, so that other
+extensions can hook into the system to provide new values to be queried.
 
 For the current release there is no support for active event notification, i.e.
 snmp trap signals.
 
 You can read more about snmp at http://en.wikipedia.org/wiki/Snmp
-
-The set of values that can be queried is minimal in this release of the extension,
-but an extensibility mechanism via "handler" classes is provided, so that other
-extensions can hook into the system to provide new values to be queried.
-
 
 Requirements
 ============
