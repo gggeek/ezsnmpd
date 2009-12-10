@@ -18,7 +18,7 @@ class eZsnmpdTools
         if (  eZSys::osType() != 'win32' )
         {
             /// @todo use a command that escapes newlines in file names?
-            exec( "find \"$cachedir\" -type f | wc -l", $result );
+            exec( "find \"$cachedir\" -type f 2>/dev/null | wc -l", $result );
             /// @todo test properly to see if we have received a number or an error...
             return $result[0];
         }
@@ -51,7 +51,7 @@ class eZsnmpdTools
         if (  eZSys::osType() != 'win32' )
         {
             /// @todo verify that we got no error?
-            exec( "du -b -c -s \"$cachedir\"", $result );
+            exec( "du -b -c -s \"$cachedir\" 2>/dev/null", $result );
             $result = @explode( ' ', $result[1] );
             return $result[0];
         }
