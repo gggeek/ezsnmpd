@@ -129,6 +129,7 @@ elseif ( isset( $options['walk'] ) )
 else
 {
 
+    $server->setDaemon( true );
     $mode = "command";
     $buffer = "";
     $quit = false;
@@ -136,53 +137,53 @@ else
     $fh = fopen('php://stdin', 'r');
     do
     {
-    	$buffer = rtrim( fgets( $fh, 4096 ) );
-    	switch ( $mode )
+        $buffer = rtrim( fgets( $fh, 4096 ) );
+        switch ( $mode )
         {
 
-    		case "command":
-        		$response = '';
-    			switch ( strtoupper( $buffer ) )
+            case "command":
+                $response = '';
+                switch ( strtoupper( $buffer ) )
                 {
-    				case "GET":
-    				case "GETNEXT":
-    				case "SET":
-    					$mode = strtolower( $buffer );
-    					break;
-    				case "PING":
-    					// this is for startup handshake
-    					$response = "PONG";
-    					break;
-    				case "QUIT":
-    					// this is for telnet-tests ;-)
-    					$quit = true;
-    					$response = "Terminating.";
-    					break;
-    				default:
-        				// unrecognized command
-    					$response = "NONE";
-    					break;
-    			}
-    			if ( $response !== '' )
-    			{
-        			eZDebugSetting::writeDebug( 'snmp-access', $buffer, 'command' );
-    			    eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
-    				echo "$response\n";
-    			}
-    			break;
+                    case "GET":
+                    case "GETNEXT":
+                    case "SET":
+                        $mode = strtolower( $buffer );
+                        break;
+                    case "PING":
+                        // this is for startup handshake
+                        $response = "PONG";
+                        break;
+                    case "QUIT":
+                        // this is for telnet-tests ;-)
+                        $quit = true;
+                        $response = "Terminating.";
+                        break;
+                    default:
+                        // unrecognized command
+                        $response = "NONE";
+                        break;
+                }
+                if ( $response !== '' )
+                {
+                    eZDebugSetting::writeDebug( 'snmp-access', $buffer, 'command' );
+                    eZDebugSetting::writeDebug( 'snmp-access', $response, 'response' );
+                    echo "$response\n";
+                }
+                break;
 
-    		case "getnext":
-    		case "get":
-    		    $response = snmpget( $mode, $buffer, $server, true );
-    		    echo $response === null ? "NONE\n" : "$response\n";
-    			$mode = "command";
-    			break;
+            case "getnext":
+            case "get":
+                $response = snmpget( $mode, $buffer, $server, true );
+                echo $response === null ? "NONE\n" : "$response\n";
+                $mode = "command";
+                break;
 
-    		case "set":
-        		$oid = $buffer;
-    			$mode = "set2";
-    			break;
-    		case "set2":
+            case "set":
+                $oid = $buffer;
+                $mode = "set2";
+                break;
+            case "set2":
                 if ( strpos( $buffer, ' ' ) === false )
                 {
                     $type = $buffer;
@@ -194,19 +195,19 @@ else
                     list( $type, $buffer ) = explode( ' ', $buffer, 2 );
                     // fall through voluntarily
                 }
-    		case "set3":
-    		    $response = snmpset( $oid, $type, $buffer, $server ) . "\n";
-    		    echo $response === true ? "DONE\n" : $response . "\n";
-    			$mode = "command";
-    			break;
+            case "set3":
+                $response = snmpset( $oid, $type, $buffer, $server ) . "\n";
+                echo $response === true ? "DONE\n" : $response . "\n";
+                $mode = "command";
+                break;
 
-    		default:
-        		// assert false...
-    			eZDebugSetting::writeDebug( 'snmp-access', 'NONE', 'response' );
-    			echo "NONE\n";
-    			$mode = "command";
-    			break;
-    	}
+            default:
+                // assert false...
+                eZDebugSetting::writeDebug( 'snmp-access', 'NONE', 'response' );
+                echo "NONE\n";
+                $mode = "command";
+                break;
+        }
     } while ( !$quit );
 
 }
