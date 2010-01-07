@@ -17,14 +17,31 @@ $ViewList['mib'] = array(
 
 $ViewList['get'] = array(
     'script' => 'get.php',
-    'params' => array( 'oid' )
+    'params' => array( 'oid' ),
+    'functions' => array( 'get' )
 );
 
 $ViewList['getnext'] = array(
     'script' => 'getnext.php',
-    'params' => array( 'oid' )
+    'params' => array( 'oid' ),
+    'functions' => array( 'get' )
 );
 
-$FunctionList = array();
+$ViewList['set'] = array(
+    'script' => 'set.php',
+    'params' => array( 'oid', 'type', 'value' ),
+    'functions' => array( 'set' )
+);
+
+$ViewList['walk'] = array(
+    'script' => 'walk.php',
+    'params' => array( 'oid' ),
+    'functions' => array( 'get' )
+);
+
+$FunctionList = array(
+    'get' => array(),
+    'set' => array()
+);
 
 ?>
