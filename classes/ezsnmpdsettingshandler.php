@@ -19,7 +19,6 @@
  * - settings that are a list on not-previously known values (eg. image.ini) are
  *   even more subject to this problem
  *
- * @todo fix overly-long oid names
  * @todo add support for array-values
  * @todo allow write-access to settings (take into care also siteaccess/override: where do we write them?)
  * @todo allow read-access to know where a given setting is coming from (siteaccess/extension/override/default)
