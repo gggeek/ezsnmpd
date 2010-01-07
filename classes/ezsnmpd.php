@@ -32,6 +32,9 @@ class eZSNMPd {
     const TYPE_UNSIGNED64 = 'unsigned';
 
     const VERSION         = '0.3-dev';
+
+    static $daemon_mode = false;
+
 /*
 
 $oid = "";
@@ -41,21 +44,21 @@ $value = "";
 $oidTree = array();
 
 function oidIsSmaller($a, $b) {
-	list($a1, $a2) = explode(".", $a, 2);
-	list($b1, $b2) = explode(".", $b, 2);
+    list($a1, $a2) = explode(".", $a, 2);
+    list($b1, $b2) = explode(".", $b, 2);
 
-	if ($a1 < $b1) {
-		// catches ($a1 == "")
-		// echo $a1 . " < " . $b1 . "\n";
-		return(false);
-	} else if ($a1 > $b1) {
-		// catches ($b1 == "")
-		// echo $a1 . " > " . $b1 . "\n";
-		return(true);
-	} else {
-		// echo $a1 . " = " . $b1 . "\n";
-		return(oidIsSmaller($a2, $b2));
-	}
+    if ($a1 < $b1) {
+        // catches ($a1 == "")
+        // echo $a1 . " < " . $b1 . "\n";
+        return(false);
+    } else if ($a1 > $b1) {
+        // catches ($b1 == "")
+        // echo $a1 . " > " . $b1 . "\n";
+        return(true);
+    } else {
+        // echo $a1 . " = " . $b1 . "\n";
+        return(oidIsSmaller($a2, $b2));
+    }
 }
 
 */
@@ -77,13 +80,13 @@ function oidIsSmaller($a, $b) {
         {
             if ( !class_exists( $class ) )
             {
-                eZDebug::writeError( "SNMP command handler class $class not found" );
+                eZDebug::writeError( "SNMP command handler class $class not found", __METHOD__ );
                 continue;
             }
             $ref = new ReflectionClass( $class );
             if ( !$ref->implementsInterface( 'eZsnmpdHandlerInterface' ) )
             {
-                eZDebug::writeError( "SNMP command handler class $class does not implement eZsnmpdHandlerInterface" );
+                eZDebug::writeError( "SNMP command handler class $class does not implement eZsnmpdHandlerInterface", __METHOD__ );
                 continue;
             }
             $obj = new $class();
@@ -126,17 +129,17 @@ function oidIsSmaller($a, $b) {
 
         if ( is_object( $handler ) )
         {
-	        $data = $handler->get( $oid );
-	        if ( is_array( $data ) && array_key_exists( 'oid', $data ) && array_key_exists( 'type', $data ) && array_key_exists( 'value', $data ) )
-	        {
-		        $response = $this->prefix . $data['oid'] . "\n" . $data['type'] . "\n" . $data['value']. "\n";
-	        }
-	        else
-	        {
-			    if ( $data !== eZsnmpdHandlerInterface::NO_SUCH_OID )
-			    {
-			        eZDebug::writeError( "SNMP get command handler method returned unexpected result ($data) for oid $oid" );
-			    }
+            $data = $handler->get( $oid );
+            if ( is_array( $data ) && array_key_exists( 'oid', $data ) && array_key_exists( 'type', $data ) && array_key_exists( 'value', $data ) )
+            {
+                $response = $this->prefix . $data['oid'] . "\n" . $data['type'] . "\n" . $data['value']. "\n";
+            }
+            else
+            {
+                if ( $data !== eZsnmpdHandlerInterface::NO_SUCH_OID )
+                {
+                    eZDebug::writeError( "SNMP get command handler method returned unexpected result ($data) for oid $oid", __METHOD__ );
+                }
             }
         }
         return $response;
@@ -184,7 +187,7 @@ function oidIsSmaller($a, $b) {
                 {
                     if ( $data !== eZsnmpdHandlerInterface::NO_SUCH_OID )
                     {
-                        eZDebug::writeError( "SNMP get command handler method returned unexpected result ($data) for oid $oid" );
+                        eZDebug::writeError( "SNMP get command handler method returned unexpected result ($data) for oid $oid", __METHOD__ );
                     }
                     break;
                 }
@@ -203,31 +206,31 @@ function oidIsSmaller($a, $b) {
         $handler = $this->getHandler( $oid );
         if ( is_object( $handler ) )
         {
-	        $ok = $handler->set( $oid, $value, $type );
-	        switch( $ok )
-	        {
-		        case eZsnmpdHandler::SET_SUCCESFUL:
-		            $response = true;
-		            break;
-	            case ezsnmpdHandler::ERROR_WRONG_TYPE:
-	                $response = "wrong-type";
-	                break;
-	            case ezsnmpdHandler::ERROR_WRONG_LENGHT:
-	                $response = "wrong-lenght";
-	                break;
-	            case ezsnmpdHandler::ERROR_WRONG_VALUE:
-	                $response = "wrong-value";
-	                break;
-	            case ezsnmpdHandler::ERROR_INCONSISTENT_VALUE:
-	                $response = "inconsistent-value";
-	                break;
-	            case ezsnmpdHandler::ERROR_NOT_WRITEABLE:
-	                $response = "not-writable";
-	                break;
-	            default:
-		            eZDebug::writeError( "SNMP set command handler method returned unexpected result ($ok) for oid $oid" );
-	                $response = "not-writable";
-	        }
+            $ok = $handler->set( $oid, $value, $type );
+            switch( $ok )
+            {
+                case eZsnmpdHandler::SET_SUCCESFUL:
+                    $response = true;
+                    break;
+                case ezsnmpdHandler::ERROR_WRONG_TYPE:
+                    $response = "wrong-type";
+                    break;
+                case ezsnmpdHandler::ERROR_WRONG_LENGHT:
+                    $response = "wrong-lenght";
+                    break;
+                case ezsnmpdHandler::ERROR_WRONG_VALUE:
+                    $response = "wrong-value";
+                    break;
+                case ezsnmpdHandler::ERROR_INCONSISTENT_VALUE:
+                    $response = "inconsistent-value";
+                    break;
+                case ezsnmpdHandler::ERROR_NOT_WRITEABLE:
+                    $response = "not-writable";
+                    break;
+                default:
+                    eZDebug::writeError( "SNMP set command handler method returned unexpected result ($ok) for oid $oid", __METHOD__ );
+                    $response = "not-writable";
+            }
         }
         return $response;
     }
@@ -266,13 +269,13 @@ function oidIsSmaller($a, $b) {
         {
             if ( !class_exists( $class ) )
             {
-                eZDebug::writeError( "SNMP command handler class $class not found" );
+                eZDebug::writeError( "SNMP command handler class $class not found", __METHOD__ );
                 continue;
             }
             $ref = new ReflectionClass( $class );
             if ( !$ref->implementsInterface( 'eZsnmpdHandlerInterface' ) )
             {
-                eZDebug::writeError( "SNMP command handler class $class does not implement eZsnmpdHandlerInterface" );
+                eZDebug::writeError( "SNMP command handler class $class does not implement eZsnmpdHandlerInterface", __METHOD__ );
                 continue;
             }
             $obj = new $class();
@@ -451,6 +454,17 @@ function oidIsSmaller($a, $b) {
             $name = 'xxx' . $name;
         }
         return substr( $name, 0, 64 );
+    }
+
+    // would be nicer to have these as properties, but we need them static
+    public static function isDaemon()
+    {
+        return self::$daemon_mode;
+    }
+
+    public static function setDaemon( $mode )
+    {
+        self::$daemon_mode = $mode;
     }
 }
 
