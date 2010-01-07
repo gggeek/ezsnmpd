@@ -58,16 +58,25 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         {
 
             // build list of oids corresponding to order status
-            $db = eZDB::instance();
-            $status = $db->arrayQuery( 'select status_id, name from ezorder_status where is_active=1 order by id' );
-            if ( is_array( $status ) )
+            $db = self::eZDBinstance();
+            if ( $db )
             {
-                $i = 1;
-                foreach( $status as $line )
+                $status = $db->arrayQuery( 'select status_id, name from ezorder_status where is_active=1 order by id' );
+                $db->close();
+                if ( is_array( $status ) )
                 {
-                    self::$orderstatuslist = array_merge( self::$orderstatuslist, array( "2.1.5.1.$i.1" => $line['name'], "2.1.5.1.$i.2" => $line['status_id'], "2.1.5.1.$i.3" => $line['status_id'] ) );
-                    $i++;
+                    $i = 1;
+                    foreach( $status as $line )
+                    {
+                        self::$orderstatuslist = array_merge( self::$orderstatuslist, array( "2.1.5.1.$i.1" => $line['name'], "2.1.5.1.$i.2" => $line['status_id'], "2.1.5.1.$i.3" => $line['status_id'] ) );
+                        $i++;
+                    }
                 }
+            }
+            else
+            {
+                // what to do in this case? db is down - maybe we should raise an exception
+                // instead of producing a shortened oid list...
             }
 
             // build list of oids corresponding to caches and store for later their config
@@ -109,36 +118,27 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
     */
     function get( $oid )
     {
+        $this->oidList();
+
         $internaloid = preg_replace( '/\.0$/', '', $oid );
 
         if ( array_key_exists( $internaloid, self::$simplequeries ) )
         {
-            try
+            $count = -1;
+            $db = self::eZDBinstance();
+            if ( $db )
             {
-                $db = eZDB::instance( false, false, true );
-                // eZP 4.0 will not raise an exception on connection errors
-                if ( !$db->isConnected() )
+                $results = $db->arrayQuery( str_replace( '/*anonymousId*/', eZUser::anonymousId(), self::$simplequeries[$internaloid] ) );
+                $db->close();
+                if ( is_array( $results ) && count( $results ) )
                 {
-                    return 0;
+                    $count = $results[0]['count'];
                 }
             }
-            catch ( Exception $e )
-            {
-                return 0;
-            }
-            $results = $db->arrayQuery( str_replace( '/*anonymousId*/', eZUser::anonymousId(), self::$simplequeries[$internaloid] ) );
-            $db->close();
-            if ( is_array( $results ) && count( $results ) )
-            {
-                return array(
-                    'oid' => $oid,
-                    'type' => eZSNMPd::TYPE_INTEGER, // counter cannot be used, as it is monotonically increasing
-                    'value' => $results[0]['count'] );
-            }
-            else
-            {
-                return 0;
-            }
+            return array(
+                'oid' => $oid,
+                'type' => eZSNMPd::TYPE_INTEGER, // counter cannot be used, as it is monotonically increasing
+                'value' => $count );
         }
 
         if ( array_key_exists( $internaloid, self::$orderstatuslist ) )
@@ -153,13 +153,21 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                         'value' => self::$orderstatuslist[$internaloid] );
                 case '2':
                 case '3':
-                    $db = eZDB::instance();
-                    $status = $db->arrayQuery( 'select count(*) as num from ezorder where is_temporary=0 and is_archived=' . ( $oids % 2 ) . ' and status_id='.self::$orderstatuslist[$internaloid], array( 'column' => 'num' ) );
+                    $count = -1;
+                    $db = self::eZDBinstance();
+                    if ( $db )
+                    {
+                        $status = $db->arrayQuery( 'select count(*) as num from ezorder where is_temporary=0 and is_archived=' . ( $oids % 2 ) . ' and status_id='.self::$orderstatuslist[$internaloid], array( 'column' => 'num' ) );
+                        $db->close();
+                        if ( is_array( $status ) && count( $status ) )
+                        {
+                            $count = $status[0];
+                        }
+                    }
                     return array(
                         'oid' => $oid,
                         'type' => eZSNMPd::TYPE_INTEGER,
-                        'value' => $status[0] );
-                    break;
+                        'value' => $count );
             }
         }
 
@@ -199,7 +207,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                     // take care: this is hardcoded from knowledge of cache structure...
                     if ( $cacheinfo['path'] == 'var/cache/ini' )
                     {
-                        $cachedir = eZSys::siteDir() . '/' . $cacheinfo['path'];
+                        $cachedir = $cacheinfo['path'];
                     }
                     else
                     {
@@ -267,19 +275,14 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
             case '2.1.1':
                 // verify if db can be connected to
                 $ok = 1;
-                try
-                {
-                    $db = eZDB::instance( false, false, true );
-                    // eZP 4.0 will not raise an exception on connection errors
-                    if ( !$db->isConnected() )
-                    {
-                        $ok = 0;
-                    }
-                    $db->close();
-                }
-                catch ( Exception $e )
+                $db = self::eZDBinstance();
+                if ( !$db )
                 {
                     $ok = 0;
+                }
+                else
+                {
+                    $db->close();
                 }
                 return array(
                     'oid' => $oid,
@@ -738,5 +741,28 @@ clusterdbstatus OBJECT-TYPE
 ';
     }
 
+    /**
+    * Make sure we use a separate DB connection from the standard one.
+    * This allows us to:
+    * - catch the exception raised if db is down and keep the script going
+    * - run the script in damon mode without keeping a connection open (as we can close as soon as it is not needed anymore)
+    */
+    protected static function eZDBinstance()
+    {
+        try
+        {
+            $db = eZDB::instance( false, false, true );
+            // eZP 4.0 will not raise an exception on connection errors
+            if ( !$db->isConnected() )
+            {
+                return false;
+            }
+            return $db;
+        }
+        catch ( Exception $e )
+        {
+            return false;
+        }
+    }
 }
 ?>
