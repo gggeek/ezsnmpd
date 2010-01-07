@@ -67,6 +67,13 @@ A: at the moment only the net-snmp agent can be used to monitor eZPublish
    instances. Any other agent that can be extended via a script-based API
    (as opposed to a C api) might be supported if there is request for it.
 
+Q: does this extension support sending snmp traps on specific events?
+A: not yet. It might be implemented in the future.
+   In the meantime, you can configure the net-snmp agent for active monitoring
+   (ie. let the agent poll eZ Publish at specified times and send trap messages
+   to specific servers if some oid value matches some determined condition).
+   See the man page for snmpd.conf for more details.
+
 Q: why the siteaccess used by the ezSNMPagent.php script cannot be switched
    using the -s option?
 A: because the '-s' option is used by the net-snmp agent to signal to the script
@@ -77,7 +84,7 @@ Q: can i use a monitoring tool that queries the server via HTTP GET requests
 A: yes. The address to get the values is:
    http://my.server/index.php/siteaccess/snmp/get/$oid
    the output is in plaintext, using the same format as used for communicating
-   with the net-snmp subagent (see snmpd.cong man pages).
+   with the net-snmp subagent (see snmpd.conf man pages).
 
    If the monitoring tool you installed cannt log-in to eZPublish via POST you
    might disable cecking access permissions to the snmp/get view. But TAKE CARE:
@@ -96,3 +103,20 @@ A: YES
 
 Q: the snmpwalk command times out after a couple of values. What to do?
 A: run it with a higher timeout, such as -t5 or -t10
+
+Q: I see in the code that the ezSNMPagent.php script can be run in "daemon" mode.
+   How does it work? Is it better or worse than the standard one-shot mode?
+A: The net-snmp agent can invoke external scripts using two different APIs: pass
+   and pass_persist. The second one expects the called script to keep on running
+   as daemon upon first invocation. The php script is designed to work in both
+   modes of operation, but there are some caveats.
+   Adavantages of daemon mode are speed (all snmp GET operations after the first
+   one will be answered faster).
+   Disadvantages of daemon mode are tied to the many caching layers within eZ Publish
+   and to persistent connections to the database. As an example, once a value has
+   been read from an ini file, it is kept in the memory of the dameon script, and
+   even if the ini file is later changed and the ini cache cleared globally, the
+   only way for the daemon to recognize the new value is to clean its ini cache,
+   which might have a negative impact on performances.
+   In short: using the one-shot script is to be preferred in 99% of the cases, as
+   there is less risk of leaking resources and reading stale values.

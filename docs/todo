@@ -2,17 +2,13 @@ to do:
 
 + add a self-hosted html version of the mib, for the terminally lazy
 
-+ test if session count is increased when getting values via cli; find a way not to increase it when getting values via http
-
 + add support for tabular values
-
-+ fix usage of pass_persist mode (test); also allow handlers to know if they can cache internal data structures or not
 
 + fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir) => test on linux
 
-+ test extensively support for the set command (in 'pass' mode try changing siteaccess via '-a' option)
++ test active monitoring of eZP mib via snmpd.conf/disman: does it work with the 'pass' api?
 
-+ test: disconnect from db after every status query, to avoid keeping resources occupied in pass_persist mode
++ add support for sending traps via a cronjob that runs the external command snmptrap (nb: via snmpd.conf, the standard net-snmp agent can do monitoring on its own, is it worth doing it from within eZP?)
 
 + settle on a list of MIBs, gettable and settable
   - finish stats from ggsysinfo to status mib: cache/storage files in cluster modes; etc...
@@ -28,11 +24,21 @@ to do:
   - a set of common db corruption cases tests
   -  etc...
 
-+ finish ini settings mib: add support for array values, writing settings
-
 + add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ...
 
++ allow a per-oid limitation on get, set and getnext views (and walk too, by consequence)
+
 + facilitate process of creating MIBs at the same time as handlers (see settings handler as base for code and a standard array format)
+
++ find a way not to increase session count when getting values via http
+
++ test extensively support for the set command (in 'pass' mode try changing siteaccess via '-a' option)
+
++ fix usage of pass_persist mode (test it), letting handlers to know if they can cache internal data structures or not
+
++ test: disconnect from db after every status query, to avoid keeping resources occupied, in both pass and pass_persist mode
+
++ finish ini settings mib: add support for array values, writing settings
 
 + generate a SMIv2 MIB that has conformance groups set so that smilint will not complain
 

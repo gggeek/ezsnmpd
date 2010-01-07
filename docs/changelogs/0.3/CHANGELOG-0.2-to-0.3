@@ -1,8 +1,17 @@
-Changes from 0.2 to 0.3 - released xxxx-yy-zz
+Changes from 0.2 to 0.3 - released 2010-01-zz
 
 *Features:
+- added a new view: snmp/walk. It gives the same output as running ezSNMPagent.php -w on the command line
+- added a new view: snmp/set. It works the same as running ezSNMPagent.php -s on the command line
+- added a new php function: eZSNMPd::isDaemon() to be used by handlers classes to determine if they can use cached info or not
 
 *Bugfixes:
 - remove warning when calculating size/nr. of files in cache/storage and dir does not exist on linux (would break output format)
+- the status handler can now answer to all requests even when db is down
+- status handler: fix the reported number (and size) of files in global ini cache (oid 1.3.6.1.4.1.33120.1.2.2.2.1.0 to .4.0)
+- status handler: some values where only readable via a walk command, not via get
+- access permission checking to the snmp views: added a new permission to accomodate changes in eZP that does not allow access anymore to views without permissions
 
 *Misc changes
+- when db is down, requests to OID values from the status handler involving number of items in the db will return -1
+- added new policies: snmp/get to allow access to the get, getnext and walk views without completely disabling access checking, and snmp/set for the set view
