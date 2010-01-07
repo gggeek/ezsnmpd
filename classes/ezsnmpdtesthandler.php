@@ -31,7 +31,8 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
                     'value' => rand( 0, 100 ) );
 
             case '5.2':
-                /// @todo missing here: try-catch around db connection, $db->close() at the end
+                /// @todo missing here: try-catch around db connection, usage of a separate db connection and $db->close() at the end
+                /// @see eZsnmpdStatusHandler::eZDBinstance()
                 $db = eZDB::instance();
                 $rows = $db->arrayQuery( 'SELECT text FROM writetest where id = 42' );
                 return array(
@@ -49,7 +50,8 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
         {
 
             case '5.2':
-                /// @todo missing here: try-catch around db connection, $db->close() at the end
+                /// @todo missing here: try-catch around db connection, usage of a separate db connection and $db->close() at the end
+                /// @see eZsnmpdStatusHandler::eZDBinstance()
                 $value = trim( $value, ' "' );
                 if ( $type != eZSNMPd::TYPE_STRING )
                     return self::ERROR_WRONG_TYPE;
@@ -57,6 +59,7 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
                     return self::ERROR_WRONG_LENGHT;
                 $db = eZDB::instance();
                 $db->query( "UPDATE writetest SET text = '". $db->escapeString( $value ). "' where id = 42" );
+                /// @todo test if update was ok and return KO on error (eg. because table not present...)
                 return self::SET_SUCCESFUL;
         }
 
