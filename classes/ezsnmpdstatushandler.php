@@ -205,7 +205,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
 
                     }
                     // take care: this is hardcoded from knowledge of cache structure...
-                    if ( $cacheinfo['path'] == 'var/cache/ini' )
+                    if ( strpos( $cacheinfo['path'], 'var/cache/' ) === 0 )
                     {
                         $cachedir = $cacheinfo['path'];
                     }
