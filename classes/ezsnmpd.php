@@ -154,7 +154,7 @@ function oidIsSmaller($a, $b) {
         $oid = $this->removePrefix( $oid );
         $found = false;
         // check if we have to walk the mib starting from root
-        if ( $oid == '' || $oid . '.' == $this->prefix )
+        if ( $oid == '' || $oid . '.' == '.' . $this->prefix )
         {
             $found = true;
         }

@@ -10,9 +10,7 @@
 header( 'Content-Type: text/plain' );
 
 $server = new eZSNMPd();
-echo $server->getFullMIB( $handlerMIBs );
-echo $handlerMIBs;
-echo "\nEND";
+echo $server->getFullMIB();
 
 eZExecution::cleanExit();
 
