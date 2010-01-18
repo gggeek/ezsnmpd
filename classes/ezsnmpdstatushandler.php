@@ -17,8 +17,8 @@
  *       expired / active sessions
  *       files in the fs (storage) when in cluster mode
  *       cache files count+size when in cluster mode (right now only fs mode supported)
- *       object nr. per version
- *       object nr. per class
+ *       object nr. per version (using a table)
+ *       object nr. per class (using a table)
  *       inactive users / disabled users
  *       running workflows
  *       cache/storage files count per size per type (eg. 1k, 10k, 100k, 1mb)
@@ -68,7 +68,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                     $i = 1;
                     foreach( $status as $line )
                     {
-                        self::$orderstatuslist = array_merge( self::$orderstatuslist, array( "2.1.5.1.$i.1" => $line['name'], "2.1.5.1.$i.2" => $line['status_id'], "2.1.5.1.$i.3" => $line['status_id'] ) );
+                        self::$orderstatuslist = array_merge( self::$orderstatuslist, array( "2.1.5.1.1.1.$i" => $line['status_id'], "2.1.5.1.1.2.$i" => $line['name'], "2.1.5.1.1.3.$i" => $line['status_id'], "2.1.5.1.1.4.$i" => $line['status_id'] ) );
                         $i++;
                     }
                 }
@@ -149,15 +149,20 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                 case '1':
                     return array(
                         'oid' => $oid,
-                        'type' => eZSNMPd::TYPE_STRING,
+                        'type' => eZSNMPd::TYPE_INTEGER,
                         'value' => self::$orderstatuslist[$internaloid] );
                 case '2':
+                    return array(
+                        'oid' => $oid,
+                        'type' => eZSNMPd::TYPE_STRING,
+                        'value' => self::$orderstatuslist[$internaloid] );
                 case '3':
+                case '4':
                     $count = -1;
                     $db = self::eZDBinstance();
                     if ( $db )
                     {
-                        $status = $db->arrayQuery( 'select count(*) as num from ezorder where is_temporary=0 and is_archived=' . ( $oids % 2 ) . ' and status_id='.self::$orderstatuslist[$internaloid], array( 'column' => 'num' ) );
+                        $status = $db->arrayQuery( 'select count(*) as num from ezorder where is_temporary=0 and is_archived=' . ( ($oids[5]+1) % 2 ) . ' and status_id='.self::$orderstatuslist[$internaloid], array( 'column' => 'num' ) );
                         $db->close();
                         if ( is_array( $status ) && count( $status ) )
                         {
@@ -465,7 +470,6 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
     {
         // prepare MIB chunks
         $cachemib = '';
-        $shopmib = '';
         $storagemib = '';
 
         // make sure we warm up the cache index
@@ -478,7 +482,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
             {
                 $cachename = 'cache' . ucfirst( eZSNMPd::asncleanup( $id ) );
                 $cachemib .= "
-$cachename          OBJECT IDENTIFIER ::= {cache {$oids[2]}}
+$cachename          OBJECT IDENTIFIER ::= { cache {$oids[2]} }
 
 {$cachename}Name OBJECT-TYPE
     SYNTAX          DisplayString
@@ -515,42 +519,6 @@ $cachename          OBJECT IDENTIFIER ::= {cache {$oids[2]}}
             }
         }
 
-        foreach( self::$orderstatuslist as $oid => $id )
-        {
-            $oids = explode( '.', $oid );
-            if ( $oids[3] == '1' && $oids[5] == '1' )
-            {
-                $cachename = 'orderStatus' . ucfirst( eZSNMPd::asncleanup( $id ) );
-                $shopmib .= "
-$cachename          OBJECT IDENTIFIER ::= {orders {$oids[4]}}
-
-{$cachename}Name OBJECT-TYPE
-    SYNTAX          DisplayString
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            \"The name of this order status.\"
-    ::= { $cachename 1 }
-
-{$cachename}Count OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            \"Number of active orders in this status\"
-    ::= { $cachename 2 }
-
-{$cachename}ArchiveCount OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            \"Number of acrchived orders in this status\"
-    ::= { $cachename 3 }
-";
-            }
-        }
-
         foreach( self::$storagedirlist as $oid => $file )
         {
             $oids = explode( '.', $oid );
@@ -558,7 +526,7 @@ $cachename          OBJECT IDENTIFIER ::= {orders {$oids[4]}}
             {
                 $cachename = 'storage' . ucfirst( eZSNMPd::asncleanup( basename( $file ) ) );
                 $storagemib .= "
-$cachename          OBJECT IDENTIFIER ::= {storage {$oids[2]}}
+$cachename          OBJECT IDENTIFIER ::= { storage {$oids[2]} }
 
 {$cachename}Path OBJECT-TYPE
     SYNTAX          DisplayString
@@ -588,7 +556,7 @@ $cachename          OBJECT IDENTIFIER ::= {storage {$oids[2]}}
         }
 
         return '
-status          OBJECT IDENTIFIER ::= {eZPublish 2}
+status          OBJECT IDENTIFIER ::= { eZPublish 2 }
 
 database OBJECT IDENTIFIER ::= { status 1 }
 
@@ -600,7 +568,7 @@ dbstatus OBJECT-TYPE
             "Availability of the database."
     ::= { database 1 }
 
-content         OBJECT IDENTIFIER ::= {database 2}
+content         OBJECT IDENTIFIER ::= { database 2 }
 
 contentObjects OBJECT-TYPE
     SYNTAX          INTEGER
@@ -698,7 +666,67 @@ shop            OBJECT IDENTIFIER ::= {database 5}
 
 orders          OBJECT IDENTIFIER ::= {shop 1}
 
-'.$shopmib.'
+orderStatusTable OBJECT-TYPE
+    SYNTAX          SEQUENCE OF OrderEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+              "A table containing the number of orders per order state."
+    ::= { shop 1 }
+
+orderStatusEntry OBJECT-TYPE
+    SYNTAX          OrderEntry
+    MAX-ACCESS      not-accessible
+    STATUS          current
+    DESCRIPTION
+            "A table row describing the set of orders in status N."
+    INDEX   { orderStatusId }
+    ::= { orderStatusTable 1 }
+
+OrderStatusEntry ::=
+    SEQUENCE {
+        orderStatusId
+            INTEGER,
+        orderStatusName
+            DisplayString,
+        orderStatusCount
+            INTEGER,
+        orderStatusArchiveCount
+            INTEGER
+    }
+
+orderStatusId OBJECT-TYPE
+    SYNTAX          INTEGER (1..99)
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            "ID of this order status."
+    ::= { orderStatusEntry 1 }
+
+orderStatusName OBJECT-TYPE
+    SYNTAX          DisplayString
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            "The name of this order status."
+    ::= { orderStatusEntry 2 }
+
+orderStatusCount OBJECT-TYPE
+    SYNTAX          INTEGER
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            "Number of active orders in this status."
+    ::= { orderStatusEntry 3 }
+
+orderStatusArchiveCount OBJECT-TYPE
+    SYNTAX          INTEGER
+    MAX-ACCESS      read-only
+    STATUS          current
+    DESCRIPTION
+            "Number of acrchived orders in this status."
+    ::= { orderStatusEntry 4 }
+
 cache           OBJECT IDENTIFIER ::= {status 2}
 '.$cachemib.'
 storage         OBJECT IDENTIFIER ::= {status 3}

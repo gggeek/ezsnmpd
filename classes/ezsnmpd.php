@@ -65,6 +65,7 @@ function oidIsSmaller($a, $b) {
 
     private $OIDregexp = array();
     //private $OIDstandard = array();
+    /// format: no starting dot, has ending dot
     private $prefix = '';
     private $prefixregexp = '';
 
@@ -119,7 +120,7 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-    * @return string|null null in case of error
+    * @return string|null null in case of error (man snmpd.conf for format details)
     */
     public function get( $oid )
     {
@@ -146,15 +147,14 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-    * Make sure that if handler X says this is his last oid, we move on to next handler
-    * @return string|null null in case of error
+    * @return string|null null in case of error (man snmpd.conf for format details)
     */
     public function getnext( $oid )
     {
         $oid = $this->removePrefix( $oid );
         $found = false;
         // check if we have to walk the mib starting from root
-        if ( $oid == '' || $oid . '.' == '.' . $this->prefix )
+        if ( $oid == '' || $oid . '.' == '.' . $this->prefix || $oid . '.' == $this->prefix ) /// @todo find a saner way to test this
         {
             $found = true;
         }
@@ -197,7 +197,7 @@ function oidIsSmaller($a, $b) {
     }
 
     /*
-    * @return string|true string in case of error
+    * @return string|true string in case of error (man snmpd.conf for format details)
     */
     public function set( $oid, $value, $type )
     {
@@ -245,6 +245,29 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
+    * @param string $next root oid for the walk, leave empty for walk of full eZP tree
+    * @return array an array of 1-liner strings, in snmpwalk format
+    */
+    public function walk( $oid = '' )
+    {
+        $result = array();
+        while( ( $response = $server->getnext( $oid ) ) !== null )
+        {
+            $parts = explode( "\n", $response );
+            $parts[1] = strtoupper( $parts[1] );
+            /// @todo more decoding of snmpd.conf formats to snmpwalk ones?
+            if ( $parts[1] == 'STRING' )
+            {
+                /// @todo verify if we nedd substitution for " and other chars (which one?)
+                $parts[2] = '"' . $parts[2] . '"';
+            }
+            $result[] = "{$parts[0]} = {$parts[1]}: {$parts[2]}\n";
+            $oid = $parts[0];
+        }
+        return $result;
+    }
+
+    /**
     * @param string $uniqid md5 or other identifier used to tell apart versions
     *                       of the mib that differ (typically because of the
     *                       variable handler part)
@@ -285,7 +308,7 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-    * Remove the prefix part from a full oid
+    * Remove the prefix part from a full oid (the full oid must end with a dot)
     */
     protected function removePrefix( $oid )
     {

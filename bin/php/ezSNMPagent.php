@@ -10,8 +10,6 @@
  * @version $Id$
  * @copyright (C) G. Giunta 2009
  * @license code licensed under the GPL License: see README
- *
- * @todo resolve clash between -s used by eZP standard options and -s used by snmpd for set...
  */
 
 // *** bootstrap ***
@@ -71,7 +69,7 @@ else
 }
 $script->initialize();
 
-// *** init mibs and start answering loop ***
+// *** init mibs ***
 
 $server = new eZSNMPd();
 
@@ -94,14 +92,14 @@ elseif( isset( $options['set'] ) )
 }
 elseif ( isset( $options['mib'] ) )
 {
-    eZDebugSetting::writeDebug( 'snmp-access', "mib", 'command' );
+    eZDebugSetting::writeDebug( 'snmp-access', 'mib', 'command' );
     $response = $server->getFullMIB();
     eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
     echo "$response\n";
 }
 elseif ( isset( $options['walk'] ) )
 {
-    eZDebugSetting::writeDebug( 'snmp-access', "walk", 'command' );
+    eZDebugSetting::writeDebug( 'snmp-access', 'walk', 'command' );
     if ( $options['walk'] === true )
     {
         $next = '';
@@ -110,24 +108,14 @@ elseif ( isset( $options['walk'] ) )
     {
         $next = $options['walk'];
     }
-    while( ( $response = snmpget( 'getnext', $next, $server ) ) !== null )
-    {
-        $parts = explode( "\n", $response );
-        $parts[1] = strtoupper( $parts[1] );
-        /// @todo more decoding of snmpd.conf formats to snmpwalk ones?
-        if ( $parts[1] == 'STRING' )
-        {
-            /// @todo verify if we nedd substitution for " and other chars (which one?)
-            $parts[2] = '"' . $parts[2] . '"';
-        }
-        echo ".{$parts[0]} = {$parts[1]}: {$parts[2]}\n";
-        $next = $parts[0];
-    }
+    $response = implode( "\n", $server->walk( $next ) );
     eZDebugSetting::writeDebug( 'snmp-access', str_replace( "\n", " ", $response), 'response' );
     echo "$response\n";
 }
 else
 {
+
+// *** daemon-mode: start answering loop */
 
     $server->setDaemon( true );
     $mode = "command";

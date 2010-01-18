@@ -1,14 +1,10 @@
-to do:
+to do (roughly ordered by priority):
 
-+ add support for tabular values (see http://oreilly.com/perl/excerpts/system-admin-with-perl/twenty-minute-snmp-tutorial.html for tables tutorial, rfc1155 and rfc2578 for ref)
-  advantage: nr. of rows does not need to be known at mib generation time
-  disadvantage: might need to support non-numeric identifiers (column ids) - test using snmpget in numeric mode to see what is returned for existing tables (eg in tcp tree)
-                might be hard to properly implement a sort algorithm
-				breaking compatibility with current version of the mib
++ finish support for tabular values (see http://oreilly.com/perl/excerpts/system-admin-with-perl/twenty-minute-snmp-tutorial.html for tables tutorial, rfc1212, rfc1155 (v1) and rfc2578 (v2) for ref)
+  - find out why the snmptable command complains about order-status table
+  - write a 2nd version of the settings module based on tables (since some files are allowed to grow the settings they contain)
 
-+ fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir) => test on linux
-
-+ test active monitoring of eZP mib via snmpd.conf/disman: does it work with the 'pass' api?
++ test active monitoring of eZP mib (ie. sending traps) via snmpd.conf/disman: does it work with the 'pass' api?
 
 + add support for sending traps via a cronjob that runs the external command snmptrap (nb: via snmpd.conf, the standard net-snmp agent can do monitoring on its own, is it worth doing it from within eZP?)
 
@@ -19,20 +15,26 @@ to do:
     - active sessions count
 	- logged in users count
 	- upgrade_check (ok/ko)
-  - nodes, objects, classes, users (full info, identified by id, in a separate branch/handler)
+  - nodes, objects, classes, users (full info, identified by id, in a separate branch/handler, using tabular notation)
   - pending items count (drafts and items waiting for approval)
   - object count per version
   - running workflows
-  - a set of common db corruption cases tests
-  -  etc...
+  - a set of common db corruption cases tests (make this independent for maximum reuse)
+  - etc...
 
 + add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ...
 
++ add unit tests
+
 + allow a per-oid limitation on get, set and getnext views (and walk too, by consequence)
+
++ add a wizard to simplify creation of new handlers (takey js code for tree building from phpxmlrpc)
+
++ facilitate process of creating MIBs at the same time as handlers (see settings handler as base for code and a standard array format)
 
 + add a self-hosted html version of the mib, for the terminally lazy (nb: it looks like it needs an ASN1 parser, which is all but trivial)
 
-+ facilitate process of creating MIBs at the same time as handlers (see settings handler as base for code and a standard array format)
++ fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir) => test on linux
 
 + find a way not to increase session count when getting values via http
 
@@ -47,8 +49,6 @@ to do:
 + finish ini settings mib: add support for array values, writing settings
 
 + generate a SMIv2 MIB that has conformance groups set so that smilint will not complain
-
-+ add a fetch function to retrieve and set oid values from within templates
 
 + ...
 
