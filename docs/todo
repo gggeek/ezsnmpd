@@ -1,8 +1,6 @@
 to do (roughly ordered by priority):
 
-+ finish support for tabular values (see http://oreilly.com/perl/excerpts/system-admin-with-perl/twenty-minute-snmp-tutorial.html for tables tutorial, rfc1212, rfc1155 (v1) and rfc2578 (v2) for ref)
-  - find out why the snmptable command complains about order-status table
-  - write a 2nd version of the settings module based on tables (since some files are allowed to grow the settings they contain)
++ alter API (while keeping old one for compat: return arrays for oid values, tree of ojbs for mib)
 
 + test active monitoring of eZP mib (ie. sending traps) via snmpd.conf/disman: does it work with the 'pass' api?
 
@@ -22,13 +20,19 @@ to do (roughly ordered by priority):
   - a set of common db corruption cases tests (make this independent for maximum reuse)
   - etc...
 
++ add a new handler for testing external resources: dbs, ldaps, urls - reusing code from internal poller but allowing user to specify his own list: oid => resource spec
+
 + add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ...
+
++ add a build script - it should both rebuild plugins and use a mib-parsing tool to produce a readable description that is stored in the docs
+
++ write a 2nd version of the settings module based on tables (since some files are allowed to grow the settings they contain)
 
 + add unit tests
 
 + allow a per-oid limitation on get, set and getnext views (and walk too, by consequence)
 
-+ add a wizard to simplify creation of new handlers (takey js code for tree building from phpxmlrpc)
++ add a wizard to simplify creation of new handlers (take js code for tree building from phpxmlrpc)
 
 + facilitate process of creating MIBs at the same time as handlers (see settings handler as base for code and a standard array format)
 

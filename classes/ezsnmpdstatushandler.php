@@ -664,8 +664,6 @@ registeredSessions OBJECT-TYPE
 
 shop            OBJECT IDENTIFIER ::= {database 5}
 
-orders          OBJECT IDENTIFIER ::= {shop 1}
-
 orderStatusTable OBJECT-TYPE
     SYNTAX          SEQUENCE OF OrderEntry
     MAX-ACCESS      not-accessible
