@@ -251,7 +251,7 @@ function oidIsSmaller($a, $b) {
     public function walk( $oid = '' )
     {
         $result = array();
-        while( ( $response = $server->getnext( $oid ) ) !== null )
+        while( ( $response = $this->getnext( $oid ) ) !== null )
         {
             $parts = explode( "\n", $response );
             $parts[1] = strtoupper( $parts[1] );
@@ -261,7 +261,7 @@ function oidIsSmaller($a, $b) {
                 /// @todo verify if we nedd substitution for " and other chars (which one?)
                 $parts[2] = '"' . $parts[2] . '"';
             }
-            $result[] = "{$parts[0]} = {$parts[1]}: {$parts[2]}\n";
+            $result[] = ".{$parts[0]} = {$parts[1]}: {$parts[2]}";
             $oid = $parts[0];
         }
         return $result;
