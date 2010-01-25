@@ -36,7 +36,7 @@ to do (roughly ordered by priority):
 
 + facilitate process of creating MIBs at the same time as handlers (see settings handler as base for code and a standard array format)
 
-+ add a self-hosted html version of the mib, for the terminally lazy (nb: it looks like it needs an ASN1 parser, which is all but trivial)
++ add a self-hosted html version of the mib, for the terminally lazy (nb: it looks like it needs an ASN1 parser, which is all but trivial => libsmi has a mib2xml converter...)
 
 + fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir) => test on linux
 
