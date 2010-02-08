@@ -12,7 +12,7 @@ IMPORTS
 -- The assignments
 
 eZSystemsMIB MODULE-IDENTITY
-        LAST-UPDATED "200911240000Z"
+        LAST-UPDATED "201001080000Z"
         ORGANIZATION "eZ Systems"
         CONTACT-INFO
                 "Gaetano Giunta
@@ -20,7 +20,7 @@ eZSystemsMIB MODULE-IDENTITY
         DESCRIPTION
                 "This MIB module contains application specific
                 managed objects for the eZ Publish CMS server."
-        REVISION "20100180000Z"
+        REVISION "201001080000Z"
         DESCRIPTION
                 "changed shop orders per status info oids in status handler into a table format"
         REVISION "200911240000Z"
