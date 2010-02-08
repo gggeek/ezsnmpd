@@ -61,23 +61,34 @@ class eZMIBTree {
     */
     static function walk( $oid, $funcname, $prefix='', $leaves_only=true )
     {
-        if ( !$leaves_only || count( $oid['children'] ) == 0 )
+        if ( !$leaves_only || ( !isset( $oid['children'] ) || count( $oid['children'] ) == 0 ) )
         {
             call_user_func( $funcname, $oid, $prefix );
         }
-        foreach(  $oid['children'] as $i => $child )
+        if ( isset( $oid['children'] ) )
         {
-            self::walk( $child, $funcname, $prefix . '.' . $i, $leaves_only );
+            foreach( $oid['children'] as $i => $child )
+            {
+                self::walk( $child, $funcname, $prefix . '.' . $i, $leaves_only );
+            }
         }
     }
 
     /**
     * Return the ASN.1 representation of the tree as string
     */
-    static function toMIB( $oid )
+    static function toMIB( $oid, $prefix='' )
     {
         self::$_mib = '';
-        self::walk( $oid, array( 'eZMIBTree', 'OIDtoMIB' ), '', false );
+        self::walk( $oid, array( 'eZMIBTree', 'OIDtoMIB' ), $prefix, false );
+        return self::$_mib;
+    }
+
+    // return the leaves in the tree, flattened to an array indexed by oid
+    static function toArray( $oid, $prefix='' )
+    {
+        self::$_mib = array();
+        self::walk( $oid, array( 'eZMIBTree', 'OIDtoArray' ), $prefix );
         return self::$_mib;
     }
 
@@ -109,6 +120,13 @@ class eZMIBTree {
         }
     }
 
+    private static function OIDtoArray( $oid, $prefix='' )
+    {
+        if ( !isset( $oid['children'] ) || !count( $oid['children'] ) )
+        {
+            self::$_mib[$prefix] = $oid;
+        }
+    }
 }
 
 ?>

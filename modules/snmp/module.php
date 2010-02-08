@@ -12,7 +12,13 @@ $Module = array( 'name' => 'snmp' );
 $ViewList = array();
 
 $ViewList['mib'] = array(
-    'script' => 'mib.php'
+    'script' => 'mib.php',
+    'params' => array( 'format' ),
+);
+
+$ViewList['plugins'] = array(
+    'script' => 'walk.php',
+    'params' => array( 'plugin' )
 );
 
 $ViewList['get'] = array(

@@ -185,7 +185,12 @@ $oidname OBJECT-TYPE
                                 {
                                     $type = 'DisplayString';
                                 }
-                                $values[$i] = array( 'name' => $setting, 'value' => $val, 'syntax' => $type, 'access' => eZMIBTree::access_read_only /* $ini->isSettingReadOnly( $file, $group, $setting )*/ );
+                                $values[$i] = array(
+                                    'name' => $setting,
+                                    'value' => $val,
+                                    'syntax' => $type,
+                                    'access' => eZMIBTree::access_read_only, /* $ini->isSettingReadOnly( $file, $group, $setting )*/
+                                    'description' => $file . ' / ' . $group . ' / ' . $setting );
                             }
                             $i++;
                         }

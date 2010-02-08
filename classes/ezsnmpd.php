@@ -245,6 +245,22 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
+    * @return array
+    */
+    public function getMIBTree()
+    {
+        return $this->getHandlerMIBs( true );
+    }
+
+    /**
+    * @return array
+    */
+    public function getMIBArray()
+    {
+        return eZMIBTree::toArray( $this->getHandlerMIBs( true ), substr( $this->prefix, 0, -1 ) );
+    }
+
+    /**
     * @param string $next root oid for the walk, leave empty for walk of full eZP tree
     * @return array an array of 1-liner strings, in snmpwalk format
     */
@@ -284,9 +300,17 @@ function oidIsSmaller($a, $b) {
     /**
     * @return string
     */
-    protected function getHandlerMIBs()
+    protected function getHandlerMIBs( $return_objects = false )
     {
-        $mibs = '';
+        if ( $return_objects )
+        {
+            $mibs = array( 'name' => 'eZPublish', 'children' => array() );
+        }
+        else
+        {
+            $mibs = '';
+        }
+
         $ini = eZINI::instance( 'snmpd.ini' );
         foreach( $ini->variable( 'MIB', 'SNMPHandlerClasses' ) as $class )
         {
@@ -302,7 +326,34 @@ function oidIsSmaller($a, $b) {
                 continue;
             }
             $obj = new $class();
-            $mibs .= $obj->getMIB() . "\n";
+            if ( $return_objects )
+            {
+                if ( is_callable( array( $obj, 'getMIBTree' ) ) )
+                {
+                    $hmibs = $obj->getMibTree();
+                    if ( !is_array( $hmibs ) || !isset( $hmibs['name'] ) || $hmibs['name'] != 'eZPublish' || !isset( $hmibs['children'] ) || !is_array( $hmibs['children'] ) )
+                    {
+                        eZDebug::writeWarning( "SNMP command handler class $class method getMIBTree does not return a tree rooted at eZPublish", __METHOD__ );
+                    }
+                    else
+                    {
+                        foreach( $hmibs['children'] as $key => $val)
+                        {
+                            $mibs['children'][$key] = $val;
+                        }
+                        //$mibs['children'] = array_merge( $mibs['children'], $hmibs['children'] );
+                    }
+                }
+                else
+                {
+                    eZDebug::writeWarning( "SNMP command handler class $class does not implement getMIBTree", __METHOD__ );
+                }
+            }
+            else
+            {
+                $mibs .= $obj->getMIB() . "\n";
+            }
+
         }
         return $mibs;
     }

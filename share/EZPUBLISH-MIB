@@ -20,6 +20,9 @@ eZSystemsMIB MODULE-IDENTITY
         DESCRIPTION
                 "This MIB module contains application specific
                 managed objects for the eZ Publish CMS server."
+        REVISION "201002080000Z"
+        DESCRIPTION
+                "changed the STATUS description of oids from 'current' (MIB I) to 'mandatory' (MIB II)"
         REVISION "201001080000Z"
         DESCRIPTION
                 "changed shop orders per status info oids in status handler into a table format"

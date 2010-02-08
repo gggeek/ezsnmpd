@@ -2,6 +2,8 @@ to do (roughly ordered by priority):
 
 + alter API (while keeping old one for compat: return arrays for oid values, tree of ojbs for mib)
 
++ alter API so that we can have a full base MIB even handlers are disabled (using STATUS description for oids) ?
+
 + test active monitoring of eZP mib (ie. sending traps) via snmpd.conf/disman: does it work with the 'pass' api?
 
 + add support for sending traps via a cronjob that runs the external command snmptrap (nb: via snmpd.conf, the standard net-snmp agent can do monitoring on its own, is it worth doing it from within eZP?)
