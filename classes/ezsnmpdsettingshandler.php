@@ -40,30 +40,30 @@ class eZsnmpdSettingsHandler extends eZsnmpdHandler {
         static $settings;
         if ( !is_array( $settings ) )
         {
-            $settings = array();
+            /*$settings = array();
             foreach ( $this->buildMIB() as $i => $file )
             {
-                foreach( $file['groups'] as $j => $group )
+                foreach( $file['children'] as $j => $group )
                 {
-                    foreach( array_keys( $group['settings'] ) as $k )
+                    foreach( array_keys( $group['children'] ) as $k )
                     {
                         $settings[] = "1.1.$i.$j.$k";
                     }
                 }
-            }
+            }*/
+            $settings = parent::oidList();
         }
-        //$settings = array( '1.1.*' );
         return $settings;
     }
 
     function get( $oid )
     {
-        $result = $this->buildMIB( preg_replace( array( '/^1\.1\./', '/\.0$/' ), '', $oid ) );
+        $result = $this->getMIBTree( preg_replace( array( '/^1\.1\./', '/\.0$/' ), '', $oid ) );
         if ( count( $result ) )
         {
             $result = reset( $result );
-            $group = reset( $result['groups'] );
-            $val = reset( $group['settings'] );
+            $group = reset( $result['children'] );
+            $val = reset( $group['children'] );
             $decodedtypes = array( 'Boolean' => eZSNMPd::TYPE_INTEGER,
                                    'INTEGER' => eZSNMPd::TYPE_INTEGER,
                                    'DisplayString' => eZSNMPd::TYPE_STRING );
@@ -87,7 +87,7 @@ class eZsnmpdSettingsHandler extends eZsnmpdHandler {
         return 0;
     }*/
 
-    function getMIB()
+    /*function getMIB()
     {
         $out = '
 
@@ -118,16 +118,18 @@ $oidname OBJECT-TYPE
             }
         }
         return $out;
-    }
+    }*/
 
     /**
     * Builds the mib tree, either for a single oid or for full settings.
+    * Contrary to parents version, we store value too
     * NB: we do not cache this, as in pass_persist mode settings might change
     *     over time (be added/removed, etc...)
     * @return array A nested array:
-    *               [ 1-n => [ 'file' => filename, 'groups' => [ 1-n => [ 'group' => groupname, 'settings' => [ 1-n => [ 'name' => settingname, 'value' => value, 'type' => asn-type, 'rw' => bool ] ] ] ] ] ]
+    *               [ 1-n => [ 'name' => filename, 'children' => [ 1-n => [ 'name' => groupname, 'children' => [ 1-n => [ 'name' => settingname, 'value' => value, 'syntax' => asn-type, 'access' => rw/ro ] ] ] ] ] ]
+    * @see eZMIBTree
     */
-    protected function buildMIB( $oid=null )
+    protected function getMIBTree( $oid=null )
     {
         if ( $oid != null )
         {
@@ -183,16 +185,33 @@ $oidname OBJECT-TYPE
                                 {
                                     $type = 'DisplayString';
                                 }
-                                $values[$i] = array( 'name' => $setting, 'value' => $val, 'type' => $type, 'rw' => false /* $ini->isSettingReadOnly( $file, $group, $setting )*/ );
+                                $values[$i] = array( 'name' => $setting, 'value' => $val, 'syntax' => $type, 'access' => eZMIBTree::access_read_only /* $ini->isSettingReadOnly( $file, $group, $setting )*/ );
                             }
                             $i++;
                         }
-                        $outgroups[$j] = array( 'group' => $group, 'settings' => $values );
+                        $outgroups[$j] = array( 'name' => $group, 'children' => $values );
                     }
                     $j++;
                 }
-                $out[$key+1] = array( 'file' => $file, 'groups' => $outgroups );
+                $out[$key+1] = array( 'name' => $file, 'children' => $outgroups );
             }
+        }
+        if ( $oid == null )
+        {
+            $out = array(
+                'name' => 'eZPublish',
+                'children' => array(
+                    1 => array(
+                        'name' => 'settings',
+                        'children' => array(
+                            1 => array(
+                                'name' => 'currentSASettings',
+                                'children' => $out
+                            )
+                        )
+                    )
+                )
+            );
         }
         return $out;
     }

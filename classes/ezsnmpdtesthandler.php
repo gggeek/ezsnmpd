@@ -15,10 +15,10 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
         return '5.';
     }
 
-    function oidList( )
+    /*function oidList( )
     {
         return array ( '5.1', '5.2' );
-    }
+    }*/
 
     function get( $oid )
     {
@@ -66,7 +66,32 @@ class eZsnmpdTestHandler extends eZsnmpdHandler {
         return self::ERROR_NOT_WRITEABLE; // oid not managed
     }
 
-    function getMIB()
+    function getMIBTree()
+    {
+        return array(
+            'name' => 'eZPublish',
+            'children' => array(
+                5 => array(
+                    'name' => 'scrap',
+                    'children' => array(
+                        1 => array(
+                            'name' => 'random',
+                            'syntax' => 'INTEGER',
+                            'description' => 'The eZ Publish release number.'
+                        ),
+                        2 => array(
+                            'name' => 'writetest',
+                            'syntax' => 'DisplayString',
+                            'access' => eZMIBTree::access_read_write,
+                            'description' => 'Testing write access.'
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /*function getMIB()
     {
         return '
 scrap        OBJECT IDENTIFIER ::= {eZPublish 5}
@@ -86,6 +111,6 @@ writetest OBJECT-TYPE
     DESCRIPTION
             "Testing write access."
     ::= { scrap 2 }';
-    }
+    }*/
 }
 ?>

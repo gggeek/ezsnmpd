@@ -17,10 +17,10 @@ class eZsnmpdInfoHandler extends eZsnmpdHandler {
         return '3.';
     }
 
-    function oidList( )
+    /*function oidList( )
     {
         return array( '3.1', '3.2', '3.3' );
-    }
+    }*/
 
     function get( $oid )
     {
@@ -52,7 +52,36 @@ class eZsnmpdInfoHandler extends eZsnmpdHandler {
         return self::NO_SUCH_OID; // oid not managed
     }
 
-    function getMIB()
+    function getMIBTree()
+    {
+        return array(
+            'name' => 'eZPublish',
+            'children' => array(
+                3 => array(
+                    'name' => 'info',
+                    'children' => array(
+                        1 => array(
+                            'name' => 'ezpInfoeZPVersion',
+                            'syntax' => 'DisplayString',
+                            'description' => 'The eZ Publish release number.'
+                        ),
+                        2 => array(
+                            'name' => 'ezpInfoezsnmpdVersion',
+                            'syntax' => 'DisplayString',
+                            'description' => 'The ezsnmpd extension release number.'
+                        ),
+                        3 => array(
+                            'name' => 'ezpInfoSiteAccess',
+                            'syntax' => 'DisplayString',
+                            'description' => 'The siteaccess in use when answering this request.'
+                        ),
+                    )
+                )
+            )
+        );
+    }
+
+    /*function getMIB()
     {
         return '
 info            OBJECT IDENTIFIER ::= {eZPublish 3}
@@ -80,6 +109,6 @@ ezpInfoSiteAccess OBJECT-TYPE
     DESCRIPTION
     "The siteaccess in use when answering this request."
     ::= { info 3 }';
-    }
+    }*/
 }
 ?>

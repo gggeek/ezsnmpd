@@ -13,15 +13,34 @@
 
 abstract class eZsnmpdHandler implements eZsnmpdHandlerInterface {
 
+    var $_oidlist = array();
 
     /**
-    * Must return an array of all the OIDs handled, properly sorted - use
-    * usort( $array, 'version_compare' ) for sorting the array.
+    * Must return an array of all the OIDs handled, properly sorted.
+    * If you implement the getMIBTree function, ne need to reimplement this one.
+    * Use usort( $array, 'version_compare' ) for sorting the array.
     * NB: for scalar objects, the trailing .0 is to be omitted
     * Trailing wildcards are NOT accepted: this class must return a finite list of oids.
     * @return array
     */
-    abstract public function oidList();
+    public function oidList()
+    {
+        if ( is_callable( array( $this, 'getMIBTree' ) ) )
+        {
+            $this->_oidlist = array();
+            eZMIBTree::walk( $this->getMIBTree(), array( $this, 'oidListBuilder' ) );
+            return $this->_oidlist;
+        }
+        return array();
+    }
+
+    /**
+    * Used by oidList to build the array of oids out of the tree
+    */
+    public function oidListBuilder( $oid, $prefix )
+    {
+        $this->_oidlist[] = preg_replace( '/^\./', '', $prefix );
+    }
 
     /**
     * As long as the oidList() function is implemented correctly, there is no need
@@ -92,12 +111,23 @@ abstract class eZsnmpdHandler implements eZsnmpdHandlerInterface {
     }
 
     /**
-    * Please override this in subclasses to provide a mib (textual) description of
+    * Please implement getMIBTree in subclasses to provide a tree of OIDs that
+    * are managed by this handler
+    *
+    * OR (deprecated)
+    *
+    * override this in subclasses to provide directly a mib (textual) description of
     * the oids managed b y the handler, so that automated mib parsing tools can
     * be used by monitoring plugins.
     */
     public function getMIB()
     {
+        if ( is_callable( array( $this, 'getMIBTree' ) ) )
+        {
+            $out = '';
+            $out .= eZMIBTree::toMIB( $this->getMIBTree() );
+            return $out;
+        }
         return '';
     }
 }
