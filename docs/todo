@@ -1,12 +1,8 @@
 to do (roughly ordered by priority):
 
-+ alter API (while keeping old one for compat: return arrays for oid values, tree of ojbs for mib)
++ begin work on creating plugins templates via xml the same way as snmp/mib/$type does (prtg, cacti)
 
-+ alter API so that we can have a full base MIB even handlers are disabled (using STATUS description for oids) ?
-
-+ test active monitoring of eZP mib (ie. sending traps) via snmpd.conf/disman: does it work with the 'pass' api?
-
-+ add support for sending traps via a cronjob that runs the external command snmptrap (nb: via snmpd.conf, the standard net-snmp agent can do monitoring on its own, is it worth doing it from within eZP?)
++ add support for sending traps via a php call that runs the external command snmptrap
 
 + settle on a list of MIBs, gettable and settable
   - finish stats from ggsysinfo to status mib: cache/storage files in cluster modes; etc...
@@ -22,11 +18,19 @@ to do (roughly ordered by priority):
   - a set of common db corruption cases tests (make this independent for maximum reuse)
   - etc...
 
++ facilitate process of creating MIBs with tables (eg. write a tutorial)
+
++ test active monitoring of eZP mib (ie. sending traps) via snmpd.conf/disman: does it work with the 'pass' api?
+
 + add a new handler for testing external resources: dbs, ldaps, urls - reusing code from internal poller but allowing user to specify his own list: oid => resource spec
 
 + add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ...
 
-+ add a build script - it should both rebuild plugins and use a mib-parsing tool to produce a readable description that is stored in the docs
++ make a 2nd getnext html result tpl (use 2nd param in url ?) that links to self, making traversal easier
+
++ alter API so that we can have a full base MIB even when handlers are disabled (using STATUS description for oids to indicate enabled/disabled) ?
+
++ add a build script - it should both rebuild plugins (unless they're built using views)
 
 + write a 2nd version of the settings module based on tables (since some files are allowed to grow the settings they contain)
 
@@ -36,15 +40,11 @@ to do (roughly ordered by priority):
 
 + add a wizard to simplify creation of new handlers (take js code for tree building from phpxmlrpc)
 
-+ facilitate process of creating MIBs at the same time as handlers (see settings handler as base for code and a standard array format)
-
-+ add a self-hosted html version of the mib, for the terminally lazy (nb: it looks like it needs an ASN1 parser, which is all but trivial => libsmi has a mib2xml converter...)
-
 + fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir) => test on linux
 
 + find a way not to increase session count when getting values via http
 
-+ add support for getting many values in a single get call (as snmpget does)
++ add support for getting many values in a single get call (as snmpget does in bulk mode)
 
 + test extensively support for the set command (in 'pass' mode try changing siteaccess via '-a' option)
 

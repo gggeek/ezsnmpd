@@ -17,8 +17,6 @@
 
 {* DESIGN: Content START *}<div class="box-bc"><div class="box-ml"><div class="box-mr"><div class="box-bl"><div class="box-br"><div class="box-content">
 
-{$mib|eZDebug()}
-
 <table class="list" cellspacing="0">
 <tbody>
     <tr>

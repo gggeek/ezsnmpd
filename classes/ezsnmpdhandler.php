@@ -1,14 +1,14 @@
 <?php
 /**
- * Abstract SNMP Handler class
- * Implements basic genext logic for all handlers with a fixed list of oids
+ * Abstract SNMP Handler class.
+ *
+ * Implements basic oid tree => oid array conversion logic and array-based getnext
+ * logic for all handlers with a fixed list of oids
  *
  * @author G. Giunta
  * @version $Id$
- * @copyright (C) G. Giunta 2009
+ * @copyright (C) G. Giunta 2009, 2010
  * @license code licensed under the GPL License: see README
- *
- * @todo add support for columnar objects
  */
 
 abstract class eZsnmpdHandler implements eZsnmpdHandlerInterface {
@@ -17,7 +17,8 @@ abstract class eZsnmpdHandler implements eZsnmpdHandlerInterface {
 
     /**
     * Must return an array of all the OIDs handled, properly sorted.
-    * If you implement the getMIBTree function, ne need to reimplement this one.
+    * Called internally by getnext.
+    * If you implement the getMIBTree function, no need to reimplement this one.
     * Use usort( $array, 'version_compare' ) for sorting the array.
     * NB: for scalar objects, the trailing .0 is to be omitted
     * Trailing wildcards are NOT accepted: this class must return a finite list of oids.
@@ -35,11 +36,15 @@ abstract class eZsnmpdHandler implements eZsnmpdHandlerInterface {
     }
 
     /**
-    * Used by oidList to build the array of oids out of the tree
+    * Used by oidList to build the array of oids out of the tree.
+    * Needs to be public because it is invoked by eZMIBTree tree traversal
     */
     public function oidListBuilder( $oid, $prefix )
     {
-        $this->_oidlist[] = preg_replace( '/^\./', '', $prefix );
+        if ( !isset( $oid['syntax'] ) || $oid['syntax'] != 'SEQUENCE' )
+        {
+            $this->_oidlist[] = preg_replace( '/^\./', '', $prefix );
+        }
     }
 
     /**
@@ -52,6 +57,7 @@ abstract class eZsnmpdHandler implements eZsnmpdHandlerInterface {
     public function getnext( $oid )
     {
         $array = $this->oidList();
+
         // if it is not a scalar value, look first to see if the object exists
         // if it does, return its scalar value
         if ( !preg_match( '/\.0$/', $oid ) )
@@ -103,7 +109,7 @@ abstract class eZsnmpdHandler implements eZsnmpdHandlerInterface {
     }
 
     /**
-    * Override this in subclasses for write support.
+    * Override this in subclasses to add write support.
     */
     public function set( $oid, $value, $type )
     {

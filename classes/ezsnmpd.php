@@ -31,9 +31,9 @@ class eZSNMPd {
     const TYPE_UNSIGNED32 = 'unsigned';
     const TYPE_UNSIGNED64 = 'unsigned';
 
-    const VERSION         = '0.5-dev';
+    const VERSION         = '0.5';
 
-    static $daemon_mode = false;
+    protected static $daemon_mode = false;
 
 /*
 
@@ -236,31 +236,6 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-    * @return string
-    */
-    public function getFullMIB()
-    {
-        $out = $this->getHandlerMIBs();
-        return $this->getRootMIB( md5( $out ) ) . $out . "\n\nEND\n";
-    }
-
-    /**
-    * @return array
-    */
-    public function getMIBTree()
-    {
-        return $this->getHandlerMIBs( true );
-    }
-
-    /**
-    * @return array
-    */
-    public function getMIBArray()
-    {
-        return eZMIBTree::toArray( $this->getHandlerMIBs( true ), substr( $this->prefix, 0, -1 ) );
-    }
-
-    /**
     * @param string $next root oid for the walk, leave empty for walk of full eZP tree
     * @return array an array of 1-liner strings, in snmpwalk format
     */
@@ -284,6 +259,36 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
+    * Return the ASN.1 representation of the eZ Publish MIB
+    * @return string
+    * @todo rename this method to getMIB, for consistency (!important)
+    */
+    public function getFullMIB()
+    {
+        $out = $this->getHandlerMIBs();
+        return $this->getRootMIB( md5( $out ) ) . $out . "\n\nEND\n";
+    }
+
+    /**
+    * Return the eZ Publish MIB as a nested php array
+    * @return array
+    */
+    public function getMIBTree()
+    {
+        return $this->getHandlerMIBs( true );
+    }
+
+    /**
+    * Return the eZ Publish MIB as a flattened php array (only tree leaves left)
+    * @return array
+    */
+    public function getMIBArray()
+    {
+        return eZMIBTree::toArray( $this->getHandlerMIBs( true ), substr( $this->prefix, 0, -1 ) );
+    }
+
+    /**
+    * Return the ASN.1 header part for the eZ Publish MIB
     * @param string $uniqid md5 or other identifier used to tell apart versions
     *                       of the mib that differ (typically because of the
     *                       variable handler part)
@@ -298,7 +303,9 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-    * @return string
+    * Return the MIB of all registered handlers, either in ASN.1 string format or
+    * as php array
+    * @return string | array
     */
     protected function getHandlerMIBs( $return_objects = false )
     {
@@ -359,7 +366,8 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-    * Remove the prefix part from a full oid (the full oid must end with a dot)
+    * Remove the prefix part from a full oid string (the full oid must end with a dot).
+    * The prefix is set in snmpd.ini.
     */
     protected function removePrefix( $oid )
     {
@@ -367,7 +375,7 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-     * Remove the suffix part from a full oid.
+     * Remove the suffix part from a full oid string.
      * This is used to simplify writing handlers - the .0 used for scalar values is removed
      */
     public static function removeSuffix( $oid )
@@ -376,7 +384,7 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
-    * Given an oid, return the corresponding handler class, or null
+    * Given an oid string, return the corresponding handler class, or null
     */
     protected function getHandler( $oid )
     {

@@ -2,9 +2,12 @@
 /**
  * SNMP Handler class interface
  *
+ * It should be changed to implement getMIBTree instead of getMIB for simplicity;
+ * we keep it like this for backwards compatibility
+ *
  * @author G. Giunta
  * @version $Id: ezsnmpdhandler.php 45 2009-09-10 12:08:25Z gg $
- * @copyright (C) G. Giunta 2009
+ * @copyright (C) G. Giunta 2009, 2010
  * @license code licensed under the GPL License: see README
  *
  */
@@ -54,6 +57,7 @@ interface eZsnmpdHandlerInterface {
     /**
     * Must return plaintext MIB description for the OIDs served
     * @return string
+    * @see eZsnmpdHandler::getMIB for an alternative: implement getMIBTree instead of this one
     */
     public function getMIB();
 }

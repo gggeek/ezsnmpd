@@ -6,7 +6,7 @@
  *
  * @author G. Giunta
  * @version $Id$
- * @copyright (C) G. Giunta 2009
+ * @copyright (C) G. Giunta 2009, 2010
  * @license code licensed under the GPL License: see README
  *
  * @todo add enum for OK/KO/NA values, use 1/2/3 instead of 1/0/-1, as it is more snmp-standard
@@ -52,63 +52,14 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         return '2.';
     }
 
+    /// cache oid list for some speedup. NB: parent::oidList invokes getMIBTree
     function oidList( )
     {
         if ( self::$oidlist === null )
         {
-
-            // build list of oids corresponding to order status
-            $db = self::eZDBinstance();
-            if ( $db )
-            {
-                $status = $db->arrayQuery( 'select status_id, name from ezorder_status where is_active=1 order by id' );
-                $db->close();
-                if ( is_array( $status ) )
-                {
-                    $i = 1;
-                    foreach( $status as $line )
-                    {
-                        self::$orderstatuslist = array_merge( self::$orderstatuslist, array( "2.1.5.1.1.1.$i" => $line['status_id'], "2.1.5.1.1.2.$i" => $line['name'], "2.1.5.1.1.3.$i" => $line['status_id'], "2.1.5.1.1.4.$i" => $line['status_id'] ) );
-                        $i++;
-                    }
-                }
-            }
-            else
-            {
-                // what to do in this case? db is down - maybe we should raise an exception
-                // instead of producing a shortened oid list...
-            }
-
-            // build list of oids corresponding to caches and store for later their config
-            $i = 1;
-            $cachemib = '';
-            foreach ( eZCache::fetchList() as $cacheItem )
-            {
-                if ( $cacheItem['path'] != false /*&& $cacheItem['enabled']*/ )
-                {
-                    $id = $cacheItem['id'];
-                    self::$cachelist =  array_merge( self::$cachelist, array( "2.2.$i.1" => $id, "2.2.$i.2" => $id, "2.2.$i.3" => $id, "2.2.$i.4" => $id ) );
-                    $i++;
-                }
-            }
-
-            // build list of oids corresponding to storage dirs
-            /// @todo this way of finding storage dir is lame, as it depends on them having been created
-            ///       it will also not work in cluster mode, as there will be no dirs on the fs...
-            $storagedir = eZSys::storageDirectory();
-            $files = @scandir( $storagedir );
-            $i = 1;
-            foreach( $files as $file )
-            {
-                if ( $file != '.' && $file != '..' && is_dir( $storagedir . '/' . $file ) )
-                {
-                    self::$storagedirlist = array_merge( self::$storagedirlist, array( "2.3.$i.1" => $storagedir . '/' . $file,  "2.3.$i.2" => $storagedir . '/' . $file, "2.3.$i.3" => $storagedir . '/' . $file ) );
-                    $i++;
-                }
-            }
-
-            self::$oidlist = array_merge ( array_keys( self::$simplequeries ), array_keys( self::$orderstatuslist ), array_keys( self::$cachelist ), array_keys( self::$storagedirlist ), array( '2.1.1', '2.4.1', '2.4.2', '2.4.3', '2.5.1' ) );
-            usort( self::$oidlist, 'version_compare' );
+            self::$oidlist = parent::oidList();
+            //self::$oidlist = array_merge ( array_keys( self::$simplequeries ), array_keys( self::$orderstatuslist ), array_keys( self::$cachelist ), array_keys( self::$storagedirlist ), array( '2.1.1', '2.4.1', '2.4.2', '2.4.3', '2.5.1' ) );
+            //usort( self::$oidlist, 'version_compare' );
         }
         return self::$oidlist;
     }
@@ -118,6 +69,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
     */
     function get( $oid )
     {
+        // warm up list of existing oids, if not yet done
         $this->oidList();
 
         $internaloid = preg_replace( '/\.0$/', '', $oid );
@@ -466,8 +418,324 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         return self::NO_SUCH_OID; // oid not managed
     }
 
-    function getMIB()
+    function getMIBTree()
     {
+
+        // build list of oids corresponding to order status
+        $db = self::eZDBinstance();
+        $orderStatusIdoids = array();
+        $orderStatusNameoids = array();
+        $orderStatusCountoids = array();
+        $orderStatusArchiveCountoids = array();
+        if ( $db )
+        {
+            $status = $db->arrayQuery( 'select status_id, name from ezorder_status where is_active=1 order by id' );
+            $db->close();
+            if ( is_array( $status ) )
+            {
+                $i = 1;
+                foreach( $status as $line )
+                {
+                    self::$orderstatuslist = array_merge( self::$orderstatuslist, array( "2.1.5.1.1.1.$i" => $line['status_id'], "2.1.5.1.1.2.$i" => $line['name'], "2.1.5.1.1.3.$i" => $line['status_id'], "2.1.5.1.1.4.$i" => $line['status_id'] ) );
+                    $orderStatusIdoids[$i] = array( 'name' => 'orderStatusId'.$i, 'syntax' => 'INTEGER' );
+                    $orderStatusNameoids[$i] = array( 'name' => 'orderStatusname'.$i, 'syntax' => 'DisplayString' );
+                    $orderStatusCountoids[$i] = array( 'name' => 'orderStatusCount'.$i, 'syntax' => 'INTEGER' );
+                    $orderStatusArchiveCountoids[$i] = array( 'name' => 'orderStatusArchive'.$i, 'syntax' => 'INTEGER' );
+                    $i++;
+                }
+            }
+            //var_dump($orderStatusArchiveCountoids);
+            //die();
+        }
+        else
+        {
+            // what to do in this case? db is down - maybe we should raise an exception
+            // instead of producing a shortened oid list...
+        }
+
+        // build list of oids corresponding to caches and store for later their config
+        $i = 1;
+        $cacheoids = array();
+        foreach ( eZCache::fetchList() as $cacheItem )
+        {
+            if ( $cacheItem['path'] != false /*&& $cacheItem['enabled']*/ )
+            {
+                $id = $cacheItem['id'];
+                self::$cachelist =  array_merge( self::$cachelist, array( "2.2.$i.1" => $id, "2.2.$i.2" => $id, "2.2.$i.3" => $id, "2.2.$i.4" => $id ) );
+                $cachename = 'cache' . ucfirst( eZSNMPd::asncleanup( $id ) );
+                $cacheoids[$i] = array(
+                    'name' => $cachename,
+                    'children' => array(
+                        1 => array(
+                            'name' => "{$cachename}Name",
+                            'syntax' => 'DisplayString',
+                            'description' => 'The name of this cache.'
+                        ),
+                        2 => array(
+                            'name' => "{$cachename}Status",
+                            'syntax' => 'INTEGER',
+                            'description' => 'Cache status: 1 for enabled, 0 for disabled.'
+                        ),
+                        3 => array(
+                            'name' => "{$cachename}Count",
+                            'syntax' => 'INTEGER',
+                            'description' => 'Number of files in the cache (-1 if current cluster mode not supported).'
+                        ),
+                        4 => array(
+                            'name' => "{$cachename}Size",
+                            'syntax' => 'INTEGER',
+                            'description' => 'Sum of size of all files in the cache (-1 if current cluster mode not supported).'
+                        ),
+                    )
+                );
+                $i++;
+            }
+        }
+
+        // build list of oids corresponding to storage dirs
+        /// @todo this way of finding storage dir is lame, as it depends on them having been created
+        ///       it will also not work in cluster mode, as there will be no dirs on the fs...
+        $storagedir = eZSys::storageDirectory();
+        $files = @scandir( $storagedir );
+        $i = 1;
+        $storagediroids = array();
+        foreach( $files as $file )
+        {
+            if ( $file != '.' && $file != '..' && is_dir( $storagedir . '/' . $file ) )
+            {
+                self::$storagedirlist = array_merge( self::$storagedirlist, array( "2.3.$i.1" => $storagedir . '/' . $file,  "2.3.$i.2" => $storagedir . '/' . $file, "2.3.$i.3" => $storagedir . '/' . $file ) );
+                $storagedirname = 'storage' . ucfirst( eZSNMPd::asncleanup( $file ) );
+                $storagediroids[$i] = array(
+                    'name' => $storagedirname,
+                    'children' => array(
+                        1 => array(
+                            'name' => "{$storagedirname}Path",
+                            'syntax' => 'DisplayString',
+                            'description' => 'The path of this storage dir.'
+                        ),
+                        2 => array(
+                            'name' => "{$storagedirname}Count",
+                            'syntax' => 'INTEGER',
+                            'description' => 'Number of files in the dir (-1 if current cluster mode not supported).'
+                        ),
+                        3 => array(
+                            'name' => "{$storagedirname}Size",
+                            'syntax' => 'INTEGER',
+                            'description' => 'Sum of size of all files in the dir (-1 if current cluster mode not supported).'
+                        )
+                    )
+                );
+                $i++;
+            }
+        }
+
+        return array(
+            'name' => 'eZPublish',
+            'children' => array(
+                2 => array(
+                    'name' => 'status',
+                    'children' => array(
+                        1 => array(
+                            'name' => 'database',
+                            'children' => array(
+                                1 => array(
+                                    'name' => 'dbstatus',
+                                    'syntax' => 'INTEGER',
+                                    'description' => 'Availability of the database.'
+                                ),
+                                2 => array(
+                                    'name' => 'content',
+                                    'children' => array(
+                                        1 => array(
+                                            'name' => 'contentObjects',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of content objects.'
+                                        ),
+                                        2 => array(
+                                            'name' => 'contentObjectAttributes',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of content object attributes.'
+                                        ),
+                                        3 => array(
+                                            'name' => 'contentObjectNodes',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of content nodes.'
+                                        ),
+                                        4 => array(
+                                            'name' => 'contentObjectRelations',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of content object relations.'
+                                        ),
+                                        5 => array(
+                                            'name' => 'contentObjectDrafts',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of content objects in DRAFT state.'
+                                        ),
+                                        6 => array(
+                                            'name' => 'contentObjectClasses',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of content object classes.'
+                                        ),
+                                        7 => array(
+                                            'name' => 'contentObjectInfoCollections',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of information collections.'
+                                        )
+                                    )
+                                ),
+                                3 => array(
+                                    'name' => 'users',
+                                    'children' => array(
+                                        1 => array(
+                                            'name' => 'registeredusers',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of existing user accounts.'
+                                        )
+                                    )
+                                ),
+                                4 => array(
+                                    'name' => 'sessions',
+                                    'children' => array(
+                                        1 => array(
+                                            'name' => 'allSessions',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of active sessions.'
+                                        ),
+                                        2 => array(
+                                            'name' => 'anonSessions',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of active anonymous users sessions.'
+                                        ),
+                                        3 => array(
+                                            'name' => 'registeredSessions',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of active registered users sessions.'
+                                        )
+                                    )
+                                ),
+                                5 => array(
+                                    'name' => 'shop',
+                                    'children' => array(
+                                        1 => array(
+                                            'name' => 'orderStatusTable',
+                                            'access' => eZMIBTree::access_not_accessible,
+                                            'syntax' => 'SEQUENCE OF OrderStatusEntry',
+                                            'description' => 'A table containing the number of orders per order state.',
+                                            'children' => array(
+                                                0 => array(
+                                                    'name' => 'OrderStatusEntry',
+                                                    'syntax' => 'SEQUENCE', // this makes this entry unavailable from oid array
+                                                    'items' => array(
+                                                        1 => array(
+                                                            'name' => 'orderStatusId',
+                                                            'syntax' => 'INTEGER',
+                                                        ),
+                                                        2 => array(
+                                                            'name' => 'orderStatusName',
+                                                            'syntax' => 'DisplayString',
+                                                        ),
+                                                        3 => array(
+                                                            'name' => 'orderStatusCount',
+                                                            'syntax' => 'INTEGER',
+                                                        ),
+                                                        4 => array(
+                                                            'name' => 'orderStatusArchiveCount',
+                                                            'syntax' => 'INTEGER',
+                                                        )
+                                                    )
+                                                ),
+                                                1 => array(
+                                                    'name' => 'orderStatusEntry',
+                                                    'access' => eZMIBTree::access_not_accessible,
+                                                    'syntax' => 'OrderStatusEntry',
+                                                    'description' => 'A table row describing the set of orders in status N.',
+                                                    'index' => 'orderStatusId',
+                                                    'children' => array(
+                                                        1 => array(
+                                                            'name' => 'orderStatusId',
+                                                            'syntax' => 'INTEGER (1..99)',
+                                                            'description' => 'ID of this order status.',
+                                                            'nochildreninmib' => true,
+                                                            'children' => $orderStatusIdoids
+                                                        ),
+                                                        2 => array(
+                                                            'name' => 'orderStatusName',
+                                                            'syntax' => 'DisplayString',
+                                                            'description' => 'The name of this order status.',
+                                                            'nochildreninmib' => true,
+                                                            'children' => $orderStatusNameoids
+                                                        ),
+                                                        3 => array(
+                                                            'name' => 'orderStatusCount',
+                                                            'syntax' => 'INTEGER',
+                                                            'description' => 'Number of active orders in this status.',
+                                                            'nochildreninmib' => true,
+                                                            'children' => $orderStatusCountoids
+                                                        ),
+                                                        4 => array(
+                                                            'name' => 'orderStatusArchiveCount',
+                                                            'syntax' => 'INTEGER',
+                                                            'description' => 'Number of archived orders in this status.',
+                                                            'nochildreninmib' => true,
+                                                            'children' => $orderStatusArchiveCountoids
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        2 => array(
+                            'name' => 'cache',
+                            'children' => $cacheoids
+                        ),
+                        3 => array(
+                            'name' => 'storage',
+                            'children' => $storagediroids
+                        ),
+                        4 => array(
+                            'name' => 'external',
+                            'children' => array(
+                                1 => array(
+                                    'name' => 'ldap',
+                                    'syntax' => 'INTEGER',
+                                    'description' => 'Connectivity to LDAP server (-1 if not configured).'
+                                ),
+                                2 => array(
+                                    'name' => 'web',
+                                    'syntax' => 'INTEGER',
+                                    'description' => 'Connectivity to the web. (probes a series of webservers defined in snmpd.ini, returns -1 if not configured).'
+                                ),
+                                3 => array(
+                                    'name' => 'email',
+                                    'syntax' => 'INTEGER',
+                                    'description' => 'Connectivity to mail server (NB: will send a test mail when probed to a recipient defined in snmpd.ini, returns -1 if not configured).'
+                                )
+                            )
+                        ),
+                        5 => array(
+                            'name' => 'cluster',
+                            'children' => array(
+                                1 => array(
+                                    'name' => 'clusterdbstatus',
+                                    'syntax' => 'INTEGER',
+                                    'description' => 'Availability of the cluster database (-1 for NA).'
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+
+    /*function getMIB()
+    {
+        return parent::getMIB();
+
+
         // prepare MIB chunks
         $cachemib = '';
         $storagemib = '';
@@ -475,297 +743,43 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         // make sure we warm up the cache index
         $this->oidList();
 
+        $cacheoids = array();
+
         foreach( self::$cachelist as $oid => $id )
         {
             $oids = explode( '.', $oid );
             if ( $oids[3] == '1' )
             {
                 $cachename = 'cache' . ucfirst( eZSNMPd::asncleanup( $id ) );
-                $cachemib .= "
-$cachename          OBJECT IDENTIFIER ::= { cache {$oids[2]} }
-
-{$cachename}Name OBJECT-TYPE
-    SYNTAX          DisplayString
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            \"The name of this cache.\"
-    ::= { $cachename 1 }
-
-{$cachename}Status OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            \"Cache status: 1 for enabled, 0 for disabled\"
-    ::= { $cachename 2 }
-
-{$cachename}Count OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            \"Number of files in the cache (-1 if current cluster mode not supported)\"
-    ::= { $cachename 3 }
-
-{$cachename}Size OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            \"Sum of size of all files in the cache (-1 if current cluster mode not supported)\"
-    ::= { $cachename 4 }
-";
+                $cacheoids[$oids[2]] = array(
+                    'name' => $cachename,
+                    'children' => array(
+                        1 => array(
+                            'name' => "{$cachename}Name",
+                            'syntax' => 'DisplayString',
+                            'description' => 'The name of this cache.'
+                        ),
+                        2 => array(
+                            'name' => "{$cachename}Status",
+                            'syntax' => 'INTEGER',
+                            'description' => 'Cache status: 1 for enabled, 0 for disabled.'
+                        ),
+                        3 => array(
+                            'name' => "{$cachename}Count",
+                            'syntax' => 'INTEGER',
+                            'description' => 'Number of files in the cache (-1 if current cluster mode not supported).'
+                        ),
+                        4 => array(
+                            'name' => "{$cachename}Size",
+                            'syntax' => 'INTEGER',
+                            'description' => 'Sum of size of all files in the cache (-1 if current cluster mode not supported).'
+                        ),
+                    )
+                );
             }
         }
 
-        foreach( self::$storagedirlist as $oid => $file )
-        {
-            $oids = explode( '.', $oid );
-            if ( $oids[3] == '1' )
-            {
-                $cachename = 'storage' . ucfirst( eZSNMPd::asncleanup( basename( $file ) ) );
-                $storagemib .= "
-$cachename          OBJECT IDENTIFIER ::= { storage {$oids[2]} }
-
-{$cachename}Path OBJECT-TYPE
-    SYNTAX          DisplayString
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            \"The path of this storage dir.\"
-    ::= { $cachename 1 }
-
-{$cachename}Count OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            \"Number of files in the dir (-1 if current cluster mode not supported)\"
-    ::= { $cachename 2 }
-
-{$cachename}Size OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            \"Sum of size of all files in the dir (-1 if current cluster mode not supported)\"
-    ::= { $cachename 3 }
-";
-            }
-        }
-
-        return '
-status          OBJECT IDENTIFIER ::= { eZPublish 2 }
-
-database OBJECT IDENTIFIER ::= { status 1 }
-
-dbstatus OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "Availability of the database."
-    ::= { database 1 }
-
-content         OBJECT IDENTIFIER ::= { database 2 }
-
-contentObjects OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "The number of content objects."
-    ::= { content 1 }
-
-contentObjectAttributes OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "The number of content object attributes."
-    ::= { content 2 }
-
-contentObjectNodes OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-        "The number of content nodes."
-    ::= { content 3 }
-
-contentObjectRelations OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-    "The number of content object relations."
-    ::= { content 4 }
-
-contentObjectDrafts OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "The number of content objects in DRAFT state."
-    ::= { content 5 }
-
-contentObjectClasses OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "The number of content object classes."
-    ::= { content 6 }
-
-contentObjectInfoCollections OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "The number of information collections."
-    ::= { content 7 }
-
-users           OBJECT IDENTIFIER ::= {database 3}
-
-registeredusers OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "The number of existing user accounts."
-    ::= { users 1 }
-
-sessions           OBJECT IDENTIFIER ::= {database 4}
-
-allSessions OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "The number of active sessions."
-    ::= { sessions 1 }
-
-anonSessions OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "The number of active anonymous users sessions."
-    ::= { sessions 2 }
-
-registeredSessions OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "The number of active registered users sessions."
-    ::= { sessions 3 }
-
-shop            OBJECT IDENTIFIER ::= {database 5}
-
-orderStatusTable OBJECT-TYPE
-    SYNTAX          SEQUENCE OF OrderEntry
-    MAX-ACCESS      not-accessible
-    STATUS          current
-    DESCRIPTION
-              "A table containing the number of orders per order state."
-    ::= { shop 1 }
-
-orderStatusEntry OBJECT-TYPE
-    SYNTAX          OrderEntry
-    MAX-ACCESS      not-accessible
-    STATUS          current
-    DESCRIPTION
-            "A table row describing the set of orders in status N."
-    INDEX   { orderStatusId }
-    ::= { orderStatusTable 1 }
-
-OrderStatusEntry ::=
-    SEQUENCE {
-        orderStatusId
-            INTEGER,
-        orderStatusName
-            DisplayString,
-        orderStatusCount
-            INTEGER,
-        orderStatusArchiveCount
-            INTEGER
-    }
-
-orderStatusId OBJECT-TYPE
-    SYNTAX          INTEGER (1..99)
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "ID of this order status."
-    ::= { orderStatusEntry 1 }
-
-orderStatusName OBJECT-TYPE
-    SYNTAX          DisplayString
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "The name of this order status."
-    ::= { orderStatusEntry 2 }
-
-orderStatusCount OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "Number of active orders in this status."
-    ::= { orderStatusEntry 3 }
-
-orderStatusArchiveCount OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "Number of acrchived orders in this status."
-    ::= { orderStatusEntry 4 }
-
-cache           OBJECT IDENTIFIER ::= {status 2}
-'.$cachemib.'
-storage         OBJECT IDENTIFIER ::= {status 3}
-'.$storagemib.'
-external        OBJECT IDENTIFIER ::= {status 4}
-
-ldap OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "Connectivity to LDAP server (-1 if not configured)."
-    ::= { external 1 }
-
-web OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "Connectivity to the web. (probes a series of webservers defined in snmpd.ini, returns -1 if not configured)."
-    ::= { external 2 }
-
-email OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "Connectivity to mail server (NB: will send a test mail when probed to a recipient defined in snmpd.ini, returns -1 if not configured)."
-    ::= { external 3 }
-
-cluster        OBJECT IDENTIFIER ::= {status 5}
-
-clusterdbstatus OBJECT-TYPE
-    SYNTAX          INTEGER
-    MAX-ACCESS      read-only
-    STATUS          current
-    DESCRIPTION
-            "Availability of the cluster database (-1 for NA)."
-    ::= { cluster 1 }
-';
-    }
+    }*/
 
     /**
     * Make sure we use a separate DB connection from the standard one.

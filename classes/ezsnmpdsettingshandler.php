@@ -38,7 +38,7 @@ class eZsnmpdSettingsHandler extends eZsnmpdHandler {
     function oidList( )
     {
         static $settings;
-        if ( !is_array( $settings ) )
+        if ( !is_array( $this->_oidlist ) || count( $this->_oidlist ) == 0 )
         {
             /*$settings = array();
             foreach ( $this->buildMIB() as $i => $file )
@@ -51,9 +51,9 @@ class eZsnmpdSettingsHandler extends eZsnmpdHandler {
                     }
                 }
             }*/
-            $settings = parent::oidList();
+            parent::oidList();
         }
-        return $settings;
+        return $this->_oidlist;
     }
 
     function get( $oid )
@@ -69,7 +69,7 @@ class eZsnmpdSettingsHandler extends eZsnmpdHandler {
                                    'DisplayString' => eZSNMPd::TYPE_STRING );
             return array(
                 'oid' => $oid,
-                'type' => $decodedtypes[$val['type']],
+                'type' => $decodedtypes[$val['syntax']],
                 'value' => $val['value'] );
         }
         return self::NO_SUCH_OID;
@@ -129,7 +129,7 @@ $oidname OBJECT-TYPE
     *               [ 1-n => [ 'name' => filename, 'children' => [ 1-n => [ 'name' => groupname, 'children' => [ 1-n => [ 'name' => settingname, 'value' => value, 'syntax' => asn-type, 'access' => rw/ro ] ] ] ] ] ]
     * @see eZMIBTree
     */
-    protected function getMIBTree( $oid=null )
+    function getMIBTree( $oid=null )
     {
         if ( $oid != null )
         {
@@ -186,7 +186,8 @@ $oidname OBJECT-TYPE
                                     $type = 'DisplayString';
                                 }
                                 $values[$i] = array(
-                                    'name' => $setting,
+                                    // try to create a unique name...
+                                    'name' => $setting . ucfirst( $group ) . ucfirst( str_replace( '.ini', '', $file ) ),
                                     'value' => $val,
                                     'syntax' => $type,
                                     'access' => eZMIBTree::access_read_only, /* $ini->isSettingReadOnly( $file, $group, $setting )*/
@@ -194,11 +195,12 @@ $oidname OBJECT-TYPE
                             }
                             $i++;
                         }
-                        $outgroups[$j] = array( 'name' => $group, 'children' => $values );
+                        $outgroups[$j] = array( 'name' => $group . ucfirst( str_replace( '.ini', '', $file ) ), 'children' => $values );
                     }
                     $j++;
                 }
-                $out[$key+1] = array( 'name' => $file, 'children' => $outgroups );
+                // we do not remove.ini here to avoid clashes with identifier 'shop', 'ldap', etc...
+                $out[$key+1] = array( 'name' =>  $file, 'children' => $outgroups );
             }
         }
         if ( $oid == null )
