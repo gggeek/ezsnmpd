@@ -1,5 +1,7 @@
 to do (roughly ordered by priority):
 
+- add title to mib/html view
+
 + begin work on creating plugins templates via xml the same way as snmp/mib/$type does (prtg, cacti)
 
 + add support for sending traps via a php call that runs the external command snmptrap
@@ -24,7 +26,7 @@ to do (roughly ordered by priority):
 
 + add a new handler for testing external resources: dbs, ldaps, urls - reusing code from internal poller but allowing user to specify his own list: oid => resource spec
 
-+ add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ...
++ add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ... ganglia, collected?
 
 + make a 2nd getnext html result tpl (use 2nd param in url ?) that links to self, making traversal easier
 
