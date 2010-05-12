@@ -9,6 +9,8 @@ to do (roughly ordered by priority):
 + settle on a list of MIBs, gettable and settable
   - finish stats from ggsysinfo to status mib: cache/storage files in cluster modes; etc...
   - finish counters imported from ezmunin (missing: nbr. of cache-block and view-cache templates)
+  - pending notifications (important, as they accumulate when cronjobs stop)
+  - pending indexation events
   - add other info from eZP admin interface:
     - active sessions count
 	- logged in users count
