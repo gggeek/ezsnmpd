@@ -28,7 +28,7 @@ to do (roughly ordered by priority):
 
 + add a new handler for testing external resources: dbs, ldaps, urls - reusing code from internal poller but allowing user to specify his own list: oid => resource spec
 
-+ add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ... ganglia, collected?
++ add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ... ganglia, collectd, dstat?
 
 + make a 2nd getnext html result tpl (use 2nd param in url ?) that links to self, making traversal easier
 
