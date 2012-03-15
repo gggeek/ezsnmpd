@@ -1,16 +1,17 @@
 to do (roughly ordered by priority):
 
-- add title to mib/html view
+- fix session count in sessions-on-fs mode (send -1)
 
-+ begin work on creating plugins templates via xml the same way as snmp/mib/$type does (prtg, cacti)
+- clusterdbstatus says -1 for ezdfs
 
-+ add support for sending traps via a php call that runs the external command snmptrap
+- check it template fetch functions work
 
 + settle on a list of MIBs, gettable and settable
   - finish stats from ggsysinfo to status mib: cache/storage files in cluster modes; etc...
   - finish counters imported from ezmunin (missing: nbr. of cache-block and view-cache templates)
   - pending notifications (important, as they accumulate when cronjobs stop)
   - pending indexation events
+  - queued/executed async publications
   - add other info from eZP admin interface:
     - active sessions count
 	- logged in users count
@@ -22,13 +23,26 @@ to do (roughly ordered by priority):
   - a set of common db corruption cases tests (make this independent for maximum reuse)
   - etc...
 
++ add online docs in the admin interface
+
++ begin work on creating plugins templates via xml the same way as snmp/mib/$type does (prtg, cacti)
+
++ allow admin to limit http connections from a single ip (see ggws as example)
+
++ add support for sending traps via a php call that runs the external command snmptrap
+
++ add an xmlrpc API
+
+
++ make extension multilingual
+
++ add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ... ganglia, collectd, dstat?
+
 + facilitate process of creating MIBs with tables (eg. write a tutorial)
 
 + test active monitoring of eZP mib (ie. sending traps) via snmpd.conf/disman: does it work with the 'pass' api?
 
 + add a new handler for testing external resources: dbs, ldaps, urls - reusing code from internal poller but allowing user to specify his own list: oid => resource spec
-
-+ add plugins with config for std pollers: nagios, cacti, munin, opensnmp, zenoss, hyperic, zabbix, ... ganglia, collectd, dstat?
 
 + make a 2nd getnext html result tpl (use 2nd param in url ?) that links to self, making traversal easier
 
@@ -42,11 +56,11 @@ to do (roughly ordered by priority):
 
 + allow a per-oid limitation on get, set and getnext views (and walk too, by consequence)
 
-+ add a wizard to simplify creation of new handlers (take js code for tree building from phpxmlrpc)
++ add a wizard to simplify creation of new handlers (take js code for tree building from phpxmlrpc?)
 
 + fix cli script not working if called from an eZP install with symlinks (side-effect of snmp agent not executing script from within ezp root dir) => test on linux
 
-+ find a way not to increase session count when getting values via http
++ find a way not to increase session count when getting values via http - Possibly OK with recent eZ versions, but only for anon users
 
 + add support for getting many values in a single get call (as snmpget does in bulk mode)
 

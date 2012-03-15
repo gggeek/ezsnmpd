@@ -27,8 +27,9 @@ $tpl->setVariable( 'mib', $mib );
 $Result = array();
 $Result['content'] = $tpl->fetch( "design:snmp/mib/$format.tpl" );
 //include_once( 'kernel/common/i18n.php' );
-//$Result['left_menu'] = 'design:parts/wsdebugger/menu.tpl';
-//$Result['path'] = array( array( 'url' => 'webservices/debugger',
-//                                'text' => ezi18n( 'extension/webservices', 'WS Debugger' ) ) );
+$Result['path'] = array( array( 'url' => '',
+                                'text' => 'SNMP Monitoring' ),
+                         array( 'url' => 'snmp/mib/html',
+                                'text' => 'MIB' ) );
 
 ?>

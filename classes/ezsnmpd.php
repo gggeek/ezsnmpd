@@ -120,6 +120,20 @@ function oidIsSmaller($a, $b) {
     }
 
     /**
+    * Sloow code. Use get( $oid ) for real work
+    * @todo use internal mib tree caching for multiple requests
+    */
+    public function getByName( $name )
+    {
+        $mibArray = $this->getMIBArray( true );
+        if ( isset( $mibArray[$name] ) )
+        {
+            return $this->get( $mibArray[$name]['oid'] );
+        }
+        return null;
+    }
+
+    /**
     * @return string|null null in case of error (man snmpd.conf for format details)
     */
     public function get( $oid )
@@ -280,11 +294,19 @@ function oidIsSmaller($a, $b) {
 
     /**
     * Return the eZ Publish MIB as a flattened php array (only tree leaves left)
+    * @param bool $indexByName if false, index by oid, else by name
     * @return array
     */
-    public function getMIBArray()
+    public function getMIBArray( $indexByName=false )
     {
-        return eZMIBTree::toArray( $this->getHandlerMIBs( true ), substr( $this->prefix, 0, -1 ) );
+        if ( $indexByName )
+        {
+            return eZMIBTree::toNamedArray( $this->getHandlerMIBs( true ), substr( $this->prefix, 0, -1 ) );
+        }
+        else
+        {
+            return eZMIBTree::toArray( $this->getHandlerMIBs( true ), substr( $this->prefix, 0, -1 ) );
+        }
     }
 
     /**
@@ -296,6 +318,7 @@ function oidIsSmaller($a, $b) {
     *
     * @todo find a more appropriate piece of MODULE-IDENTITY to put the uniqid into
     *       than a simple comment
+    * @todo replace in the text file the striing "ezsystems" with the value from the ini file
     */
     protected function getRootMIB( $uniqid )
     {

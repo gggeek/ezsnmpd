@@ -9,7 +9,7 @@
 
 {* DESIGN: Header START *}<div class="box-header"><div class="box-tc"><div class="box-ml"><div class="box-mr"><div class="box-tl"><div class="box-tr">
 
-<h2 class="context-title">eZSystemsMIB MIB Module</h2>
+<h2 class="context-title">eZSystemsMIB MIB Module [<a href={'snmp/mib/ezsystems.mib'|ezurl()}>Download the MIB</a>]</h2>
 
 {* DESIGN: Subline *}<div class="header-subline"></div>
 
@@ -27,7 +27,7 @@
     </tr>
     {foreach $mib as $idx => $oid sequence array('bglight','bgdark') as $bgColor}
     <tr class="{$bgColor}">
-        <td><a href={concat('/snmp/get/', $idx)|ezurl()}>eZSystems::{$oid.name|wash()}</a></td>
+        <td><a href={concat('/snmp/get/', $idx)|ezurl()}>{ezini('MIB', 'PrefixName', 'snmpd.ini')}::{$oid.name|wash()}</a></td>
         <td>{$idx|wash()}</td>
         <td>{$oid.syntax|wash()}</td>
         <td>{$oid.description|wash()}</td>

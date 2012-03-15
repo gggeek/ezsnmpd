@@ -14,16 +14,23 @@ $ViewList = array();
 $ViewList['mib'] = array(
     'script' => 'mib.php',
     'params' => array( 'format' ),
+    'default_navigation_part' => 'ezsetupnavigationpart'
 );
 
-$ViewList['plugins'] = array(
-    'script' => 'walk.php',
+/*$ViewList['plugins'] = array(
+    'script' => 'plugin.php',
     'params' => array( 'plugin' )
-);
+);*/
 
 $ViewList['get'] = array(
     'script' => 'get.php',
     'params' => array( 'oid' ),
+    'functions' => array( 'get' )
+);
+
+$ViewList['getbyname'] = array(
+    'script' => 'getbyname.php',
+    'params' => array( 'name' ),
     'functions' => array( 'get' )
 );
 

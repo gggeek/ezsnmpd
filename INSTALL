@@ -1,14 +1,15 @@
-eZ SNMPd extension 0.3 installation instructions
+eZ SNMPd extension installation instructions
+============================================
 
 1 - install eZ Publish
 
 
-2 - install and activate the extension as per standard eZ Publish 4 procedures (regenerate autoloads)
+2 - install and activate the extension as per standard eZ Publish 4 procedures (regenerate autoloads!)
 
 
 3 - test that the ezSNMPagent.php script is working properly: launch that script from a command line (remember to move first to the eZ Publish base directory)
 
-    php extension\ezsnmpd\bin\php\ezSNMPagent.php -w
+    php extension/ezsnmpd/bin/php/ezSNMPagent.php -w
 
     the output should be a list of key/value pairs resembling this:
 
@@ -17,8 +18,15 @@ eZ SNMPd extension 0.3 installation instructions
     1.3.6.1.4.1.33120.1.2.1.2.2.0 = INTEGER: 590
     1.3.6.1.4.1.33120.1.2.1.2.3.0 = INTEGER: 65
 
+    To retrieve the value of a single indicator, run
 
-This is enough if you are going to use the command line script for monitoring.
+    php extension/ezsnmpd/bin/php/ezSNMPagent.php --get=1.3.6.1.4.1.33120.1.2.1.1.0
+
+    The list of all available indicators and their description is available at:
+
+    http://my.server/index.php/siteaccess/snmp/mib/html
+
+    This is enough if you are going to use the command line script for monitoring.
 
 
 4 - if you are going to use http (web access) for monitoring, you will have to set up roles and policies.
@@ -27,16 +35,18 @@ This is enough if you are going to use the command line script for monitoring.
 
     http://my.server/index.php/siteaccess/snmp/get/1.3.6.1.4.1.33120.1.2.1.1.0
 
-    The output will be a plaintext web page consisting of 3 lines of information
+    The output will be a plaintext web page consisting of 3 lines of information.
 
 
 5 - if you are going to use snmp for monitoring, please continue reading:
+
 
 5a - make sure you have the net-snmp service installed and properly configured with at least a basic configuration
 
     a simple way is to run the following command:
     snmpget -v 2c -c public localhost system.sysName.0
     (change the '-c public' param to suit your snmp community string)
+
 
 5b - alter the snmpd.conf file (usually found in /etc/snmp) and restart the service. Example line to add:
 
@@ -59,6 +69,11 @@ This is enough if you are going to use the command line script for monitoring.
 
 5d - you can retrieve the eZ Publish MIB to install in monitoring tools by pointing the browser at
 
-    http://my.ezpublish.site/index.php/siteaccess/snmp/mib
+    http://my.ezpublish.site/index.php/siteaccess/snmp/mib/ezsystems.mib
 
-    and save it as EZSYSTEMS-MIB.txt. Please note that by default that page is world-readable.
+    Please note that by default that page is world-readable.
+
+    Another way to retrieve the mib file is to run the cli script:
+
+    php extension/ezsnmpd/bin/php/ezSNMPagent.php -m > ezsystems.mib
+

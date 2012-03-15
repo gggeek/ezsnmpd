@@ -96,6 +96,16 @@ class eZMIBTree {
     }
 
     /**
+     * return the leaves in the tree, flattened to an array indexed by name
+     */
+    static function toNamedArray( $oid, $prefix='' )
+    {
+        self::$_mib = array();
+        self::walk( $oid, array( 'eZMIBTree', 'OIDtoNamedArray' ), $prefix );
+        return self::$_mib;
+    }
+
+    /**
     * Converts to ASN.1 format the children of the given oid
     *
     *
@@ -157,6 +167,19 @@ class eZMIBTree {
         if ( !isset( $oid['syntax'] ) || $oid['syntax'] != 'SEQUENCE' )
         {
             self::$_mib[$prefix] = $oid;
+        }
+    }
+
+    /**
+     * The simple tree walking got dirtier for supporting tables:
+     * in 'leaves only' mode, we skip SEQUENCE nodes, that are leaves
+     */
+    private static function OIDtoNamedArray( $oid, $prefix='' )
+    {
+        if ( !isset( $oid['syntax'] ) || $oid['syntax'] != 'SEQUENCE' )
+        {
+            self::$_mib[$oid['name']] = $oid + array( 'oid' => $prefix );
+            unset( self::$_mib[$oid['name']]['name'] );
         }
     }
 }

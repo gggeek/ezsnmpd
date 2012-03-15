@@ -1,5 +1,5 @@
 Q: I installed the extension, now where do I see monitoring reports?
-A: This extension does not provide on its own any report or graphical interface
+A1: This extension does not provide on its own any report or graphical interface
    to show the working condition of your eZ Publish server. It only exposes some
    indicator values that 'can be used' to monitor the status of the server.
    The actual tool used to query the values and store them / display them / provide
@@ -7,6 +7,9 @@ A: This extension does not provide on its own any report or graphical interface
    expose indicator values is an industry standard (snmp), most monitoring tools
    will do, with a little configuration. OSS tools include nagios, zenoss, munin,
    hyperic and many others.
+A2: Since we're nice guys, we still provide the user with a nice GUI interface,
+   listing all available indicators.
+	ou can find it at http://my.ezpublish.site/index.php/siteaccess/snmp/mib/html
 
 Q: do you provide plugins for any of those monitoring tools to ease the integration
    of ezsnmpd and the creation of nice looking graphs?
@@ -25,9 +28,10 @@ A2: in short:
           description etc. It is stored as a text file with a kludgy syntax.
 
 Q: where do i find the list of indicator values that are available?
-A: in the so-called MIB file. It uses a notation that is standard in snmp world:
+A1: in the so-called MIB file. It uses a notation that is standard in snmp world:
    ASN.1. It is unfortunately very hard to read by humans, but there are a lot
    of tools that will happily parse it and turn it into something user-friendly
+A2: in the administration interface of eZ Publish: go to Setup | SNMP Monitoring
 
 Q: so where is this MIB file? I cannot see it in the distribution
 A: it is in fact dynamically generated.

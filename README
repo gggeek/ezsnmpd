@@ -1,8 +1,9 @@
 ezSNMPd extension for eZ publish
-===================================
+================================
 
 The goal of the ezSNMPd extension is to provide a unified API for monitoring
-installations of the eZ Publish cms.
+installations of the eZ Publish cms - both availability monitoring and
+performance monitoring are target use cases.
 
 This means exposing a set of values that can be queried, such as e.g. the status
 of the datadabase (can connect to or not), the number of content objects and so
@@ -49,7 +50,7 @@ o  SNMP Agent:
    too, but they have not been tested.
 
    NB: without an snmp-agent, the extension can still be used but monitoring will
-   have to be done via http calls or dircet execution of command-line php scripts.
+   have to be done via http calls or direct execution of command-line php scripts.
 
 
 Developer References

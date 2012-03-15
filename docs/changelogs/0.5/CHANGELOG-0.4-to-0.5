@@ -1,12 +1,16 @@
-Changes from 0.4 to 0.5 - released 2010-02-xx
+Changes from 0.4 to 0.5 - released 2012-03-15
 
-*Features:
+* Features:
 - added a new view mode the list of existing oids is shown as an html list instead of the standard MIB: snmp/mib/html
   The underlying code changes also pave the way for easy creation of plugins specific to different monitoring tools
+- for recent eZ versions, the Setup page in the admin interface now has links to the mib list page
+- add link to mib download from mib display page
+- a new view is available, to retrieve oids by name: snmp/getbname/$name. Easier to remember than their numeric id, but slower in execution!
+- the same functionality is available via command line, using the --getbyname=$name option
 
-*Bugfixes:
+* Bugfixes:
 
-*Misc changes
+* Misc changes
 - the handler functions should now return a tree structure defining the mib they handle, instead of a textual ASN.1 representation
   This allows for both less code to be written and more output formats (eg. html pages with the MIB described or xml format for monitoring tools plugins)
   (directly producing asn.1 in textual form is supported but DEPRECATED)

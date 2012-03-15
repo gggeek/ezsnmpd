@@ -51,11 +51,12 @@ $script->startup();
 if ( $argc > 1 )
 {
     // if no options passed on cli, do not waste time with parsing stuff
-    $options = $script->getOptions( '[a:|siteaccess:][g:|get:][n:|getnext:][s:|set:][m|mib][w|walk:]',
+    $options = $script->getOptions( '[a:|siteaccess:][g:|get:][n:|getnext:][e|getbyname:][s:|set:][m|mib][w|walk:]',
                                     '',
                                     array(
                                         'get' => 'get oid value, ex: --get=a.b.c',
-                                        'getnext' => 'get next oid value, ex: --getnext=a.b.c',
+                                        'getnext' => 'get oid value by name, ex: --getbyname=a.b.c',
+                                        'getbyname' => 'get next oid value, ex: --getnext=dbstatus',
                                         'set' => 'set oid value, ex: --set=a.b.c type value',
                                         'walk' => 'walk the mib tree',
                                         'mib' => 'get the complete MIB'
@@ -80,6 +81,12 @@ if ( isset( $options['get'] ) )
 elseif ( isset( $options['getnext'] ) )
 {
     echo snmpget( 'getnext', $options['getnext'], $server );
+}
+elseif ( isset( $options['getbyname'] ) )
+{
+    $ini = eZINI::instance( 'snmpd.ini' );
+    $prefix = $ini->variable( 'MIB', 'PrefixName' );
+    echo snmpget( 'getByName', preg_replace( "/^$prefix::/", '', $options['getbyname'] ), $server );
 }
 elseif( isset( $options['set'] ) )
 {
