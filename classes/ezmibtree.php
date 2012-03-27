@@ -3,8 +3,7 @@
  * The class used to work on the MIB represented as a tree (php nested array)
  *
  * @author G. Giunta
- * @version $Id: ezsnmpd.php 83 2010-01-25 13:27:09Z gg $
- * @copyright (C) G. Giunta 2010
+ * @copyright (C) G. Giunta 2010-2012
  * @license code licensed under the GPL License: see README
  */
 

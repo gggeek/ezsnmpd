@@ -1,8 +1,8 @@
 {**
  *
  * @author G. Giunta
- * @version $Id: admin_assets.tpl 53500 2010-01-26 09:55:57Z gg $
- * @copyright (C) G; giunta 2010
+ * @copyright (C) G. Giunta 2010-2012
+ * @license Licensed under GNU General Public License v2.0. See file license.txt
  *}
 {* Details window. *}
 <div class="context-block">

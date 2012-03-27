@@ -3,8 +3,7 @@
  * Handles access to a branch reserved for testing / provides an example of a writable oid
  *
  * @author G. Giunta
- * @version $Id$
- * @copyright (C) G. Giunta 2009
+ * @copyright (C) G. Giunta 2009-2012
  * @license code licensed under the GPL License: see README
  */
 

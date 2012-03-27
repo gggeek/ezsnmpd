@@ -3,8 +3,7 @@
  * Various helper routines that could be useful in many handlers
  *
  * @author G. Giunta
- * @version $Id: sysinfotools.php 8 2008-12-17 10:45:54Z gg $
- * @copyright (C) G. Giunta 2009
+ * @copyright (C) G. Giunta 2009-2012
  * @license Licensed under GNU General Public License v2.0. See file license.txt
  *
  * @todo add support for clustered configs

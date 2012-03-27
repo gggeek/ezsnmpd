@@ -1,8 +1,7 @@
 <?php
 /**
- * @version $Id$
  * @author Gaetano Giunta
- * @copyright (c) 2009 G. Giunta
+ * @copyright (c) 2009-2012 G. Giunta
  * @license code licensed under the GPL License: see README
  */
 

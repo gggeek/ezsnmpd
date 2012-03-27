@@ -2,9 +2,8 @@
 /**
  * Displays the equivalent of snmpwalk: a list of oid names and their types + values
  *
- * @version $Id: get.php 22 2009-05-24 15:09:30Z gg $
  * @author Gaetano Giunta
- * @copyright (c) 2009 G. Giunta
+ * @copyright (c) 2009-2012 G. Giunta
  * @license code licensed under the GPL License: see README
  */
 

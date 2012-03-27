@@ -4,8 +4,7 @@
  * NB: slowes down a bit the snmpd serving when in use
  *
  * @author G. Giunta
- * @version $Id$
- * @copyright (C) G. Giunta 2009
+ * @copyright (C) G. Giunta 2009-2012
  * @license code licensed under the GPL License: see README
  *
  * Notes:

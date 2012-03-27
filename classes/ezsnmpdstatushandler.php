@@ -5,8 +5,7 @@
  * initial key indicators taken from ezmunin and ggsysinfo
  *
  * @author G. Giunta
- * @version $Id$
- * @copyright (C) G. Giunta 2009, 2010
+ * @copyright (C) G. Giunta 2009-2012
  * @license code licensed under the GPL License: see README
  *
  * @todo add enum for OK/KO/NA values, use 1/2/3 instead of 1/0/-1, as it is more snmp-standard

@@ -3,8 +3,7 @@
  * The daemon class that implements the get/getnext/set snmp API
  *
  * @author G. Giunta
- * @version $Id$
- * @copyright (C) G. Giunta 2009
+ * @copyright (C) G. Giunta 2009-2012
  * @license code licensed under the GPL License: see README
  */
 

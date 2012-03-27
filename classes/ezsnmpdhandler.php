@@ -6,8 +6,7 @@
  * logic for all handlers with a fixed list of oids
  *
  * @author G. Giunta
- * @version $Id$
- * @copyright (C) G. Giunta 2009, 2010
+ * @copyright (C) G. Giunta 2009-2012
  * @license code licensed under the GPL License: see README
  */
 

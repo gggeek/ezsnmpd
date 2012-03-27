@@ -6,8 +6,7 @@
  * we keep it like this for backwards compatibility
  *
  * @author G. Giunta
- * @version $Id: ezsnmpdhandler.php 45 2009-09-10 12:08:25Z gg $
- * @copyright (C) G. Giunta 2009, 2010
+ * @copyright (C) G. Giunta 2009-2012
  * @license code licensed under the GPL License: see README
  *
  */

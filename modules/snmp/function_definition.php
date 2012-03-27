@@ -3,8 +3,8 @@
  * Template fetch functions for snmpd
  *
  * @author G. Giunta
- * @version $Id: function_definition.php 5 2009-01-26 15:41:36Z gg $
- * @copyright 2009
+ * @copyright (C) G. Giunta 2009-2012
+ * @license code licensed under the GPL License: see README
  */
 
 $FunctionList = array(
