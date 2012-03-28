@@ -12,8 +12,8 @@ ezp:
         minor: 0
         release: 7
 
-svn:
-    url:  http://svn.projects.ez.no/ezsnmpd/trunk/extension/ezsnmpd/
+git:
+    url: https://github.com/gggeek/ezsnmpd.git
 
 create:
     tarball: no
