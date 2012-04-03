@@ -30,7 +30,7 @@ class eZSNMPd {
     const TYPE_UNSIGNED32 = 'unsigned';
     const TYPE_UNSIGNED64 = 'unsigned';
 
-    const VERSION         = '0.5';
+    const VERSION         = '0.6';
 
     protected static $daemon_mode = false;
 
