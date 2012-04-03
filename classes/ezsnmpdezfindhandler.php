@@ -83,12 +83,12 @@ class eZsnmpdeZFindHandler extends eZsnmpdFlexibleHandler
                                 1 => array(
                                     'name' => 'ezfindSolrStatus',
                                     'syntax' => 'INTEGER',
-                                    'description' => 'Availability of the SOLR server.'
+                                    'description' => 'Availability of the SOLR server (-1 if eZFind not enabled).'
                                 ),
                                 2 => array(
                                     'name' => 'ezfindSolrCount',
                                     'syntax' => 'INTEGER',
-                                    'description' => 'Number of documents indexed in the SOLR server.'
+                                    'description' => 'Number of documents indexed in the SOLR server  (-1 if eZFind not enabled, -2 if connection error).'
                                 )
                             )
                         )

@@ -42,6 +42,13 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         '2.1.4.1' => 'SELECT COUNT(session_key) AS count FROM ezsession', // all sessions
         '2.1.4.2' => 'SELECT COUNT(session_key) AS count FROM ezsession where ezsession.user_id = /*anonymousId*/', // anon sessions
         '2.1.4.3' => 'SELECT COUNT(session_key) AS count FROM ezsession where ezsession.user_id != /*anonymousId*/', // registered sessions
+
+        '2.1.6.1' => 'SELECT COUNT(*) AS count FROM ezpublishingqueueprocesses WHERE status = 1',
+        '2.1.6.2' => 'SELECT COUNT(*) AS count FROM ezpublishingqueueprocesses WHERE status = 2',
+        '2.1.6.3' => 'SELECT COUNT(*) AS count FROM ezpublishingqueueprocesses WHERE status = 3',
+        '2.1.6.4' => 'SELECT COUNT(*) AS count FROM ezpublishingqueueprocesses WHERE status = 4',
+        '2.1.6.5' => 'SELECT COUNT(*) AS count FROM ezpublishingqueueprocesses WHERE status = 5'
+
     );
 
     static $oidlist = null;
@@ -88,9 +95,22 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                 if ( $sessionHandler != 'ezpSessionHandlerDB' )
                 {
                     return array(
-                    'oid' => $oid,
-                    'type' => eZSNMPd::TYPE_INTEGER,
-                    'value' => $count );
+                        'oid' => $oid,
+                        'type' => eZSNMPd::TYPE_INTEGER,
+                        'value' => $count );
+                }
+            }
+
+            if ( strpos( $internaloid, '2.1.6.' ) === 0 )
+            {
+                // async-publication-related queries: return -1 if not using it
+                $ini = eZINI::instance( 'content.ini' );
+                if ( $ini->variable( 'PublishingSettings', 'AsynchronousPublishing' ) != 'enabled' )
+                {
+                    return array(
+                        'oid' => $oid,
+                        'type' => eZSNMPd::TYPE_INTEGER,
+                        'value' => $count );
                 }
             }
 
@@ -728,6 +748,36 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                                                     )
                                                 )
                                             )
+                                        )
+                                    )
+                                ),
+                                6 => array(
+                                    'name' => 'asyncpublishing',
+                                    'children' => array(
+                                        1 => array(
+                                            'name' => 'AsyncPublishingWorkingCount',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'Number of Asynchronous Publication events in Working status',
+                                        ),
+                                        2 => array(
+                                            'name' => 'AsyncPublishingFinishedCount',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'Number of Asynchronous Publication events in Finished status',
+                                        ),
+                                        3 => array(
+                                            'name' => 'AsyncPublishingPendingCount',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'Number of Asynchronous Publication events in Pending status',
+                                        ),
+                                        4 => array(
+                                            'name' => 'AsyncPublishingDeferredCount',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'Number of Asynchronous Publication events in Deferred status',
+                                        ),
+                                        5 => array(
+                                            'name' => 'AsyncPublishingUnknownCount',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'Number of Asynchronous Publication events in Unknown status',
                                         )
                                     )
                                 )

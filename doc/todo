@@ -5,22 +5,21 @@ to do (roughly ordered by priority):
 + settle on a list of MIBs, gettable and settable
   - finish stats from ggsysinfo to status mib: cache/storage files in cluster modes; etc...
   - finish counters imported from ezmunin (missing: nbr. of cache-block and view-cache templates)
-  - queued/executed async publications
   - add other info from eZP admin interface:
     - active sessions count
 	- logged in users count
 	- upgrade_check (ok/ko)
   - pending items count (drafts and items waiting for approval)
-  - object count per version
   - running workflows (see workflow/processlist.php)
-  - a set of common db corruption cases tests (make this independent for maximum reuse)
-  - nodes, objects, classes, users (full info, identified by id, in a separate branch/handler, using tabular notation)
   - number of comments for ezcomments
   - rating stats for ezstarrating
   - number of blocks, block items for ezflow?
   - number of pending events for ezcontentstaging
   - number of scheduled scripts for ezscriptmonitor
   - number of blocks for ezsi?
+  - object count per version
+  - a set of common db corruption cases tests (make this independent for maximum reuse)
+  - nodes, objects, classes, users (full info, identified by id, in a separate branch/handler, using tabular notation)
   - etc...
 
 + add online docs in the admin interface
