@@ -2,7 +2,7 @@
 /**
  * SNMP Handler used to retrieve status-related information
  * Handles access to the 'status' branch of the MIB (2)
- * initial key indicators taken from ezmunin and ggsysinfo
+ * Initial key indicators taken from ezmunin and ggsysinfo
  *
  * @author G. Giunta
  * @copyright (C) G. Giunta 2009-2012
@@ -827,61 +827,11 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         );
     }
 
-    /*function getMIB()
-    {
-        return parent::getMIB();
-
-
-        // prepare MIB chunks
-        $cachemib = '';
-        $storagemib = '';
-
-        // make sure we warm up the cache index
-        $this->oidList();
-
-        $cacheoids = array();
-
-        foreach( self::$cachelist as $oid => $id )
-        {
-            $oids = explode( '.', $oid );
-            if ( $oids[3] == '1' )
-            {
-                $cachename = 'cache' . ucfirst( eZSNMPd::asncleanup( $id ) );
-                $cacheoids[$oids[2]] = array(
-                    'name' => $cachename,
-                    'children' => array(
-                        1 => array(
-                            'name' => "{$cachename}Name",
-                            'syntax' => 'DisplayString',
-                            'description' => 'The name of this cache.'
-                        ),
-                        2 => array(
-                            'name' => "{$cachename}Status",
-                            'syntax' => 'INTEGER',
-                            'description' => 'Cache status: 1 for enabled, 0 for disabled.'
-                        ),
-                        3 => array(
-                            'name' => "{$cachename}Count",
-                            'syntax' => 'INTEGER',
-                            'description' => 'Number of files in the cache (-1 if current cluster mode not supported).'
-                        ),
-                        4 => array(
-                            'name' => "{$cachename}Size",
-                            'syntax' => 'INTEGER',
-                            'description' => 'Sum of size of all files in the cache (-1 if current cluster mode not supported).'
-                        ),
-                    )
-                );
-            }
-        }
-
-    }*/
-
     /**
     * Make sure we use a separate DB connection from the standard one.
     * This allows us to:
     * - catch the exception raised if db is down and keep the script going
-    * - run the script in damon mode without keeping a connection open (as we can close as soon as it is not needed anymore)
+    * - run the script in daemon mode without keeping a connection open (as we can close as soon as it is not needed anymore)
     */
     protected static function eZDBinstance()
     {

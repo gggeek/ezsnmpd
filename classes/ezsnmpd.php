@@ -304,7 +304,9 @@ function oidIsSmaller($a, $b) {
         }
         else
         {
-            return eZMIBTree::toArray( $this->getHandlerMIBs( true ), substr( $this->prefix, 0, -1 ) );
+            $array = eZMIBTree::toArray( $this->getHandlerMIBs( true ), substr( $this->prefix, 0, -1 ) );
+            uksort( $array, 'version_compare' );
+            return $array;
         }
     }
 
