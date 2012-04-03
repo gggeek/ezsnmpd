@@ -41,6 +41,7 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         '2.1.4.2' => 'SELECT COUNT(session_key) AS count FROM ezsession where ezsession.user_id = /*anonymousId*/', // anon sessions
         '2.1.4.3' => 'SELECT COUNT(session_key) AS count FROM ezsession where ezsession.user_id != /*anonymousId*/', // registered sessions
     );
+
     static $oidlist = null;
     static $cachelist = array();
     static $orderstatuslist = array();
@@ -76,6 +77,21 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         if ( array_key_exists( $internaloid, self::$simplequeries ) )
         {
             $count = -1;
+
+            if ( strpos( $internaloid, '2.1.4.' ) === 0 )
+            {
+                // session-related queries: return -1 if not using db-based storage
+                $ini = eZINI::instance();
+                $sessionHandler = $ini->variable( 'Session', 'Handler' );
+                if ( $sessionHandler != 'ezpSessionHandlerDB' )
+                {
+                    return array(
+                    'oid' => $oid,
+                    'type' => eZSNMPd::TYPE_INTEGER,
+                    'value' => $count );
+                }
+            }
+
             $db = self::eZDBinstance();
             if ( $db )
             {
