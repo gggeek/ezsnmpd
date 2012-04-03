@@ -29,12 +29,11 @@ to do (roughly ordered by priority):
 
 + allow admin to limit http connections from a single ip (see ggws as example)
 
-+ find a way for extensions to register an oid without stomping each other (nb: max oid value is 2^32-1 - 4294967295 decimal).
-  Maybe allow extensions to register using "flexible" oids via an ini?
++ ezfind mib: add support for multicore configurations
 
 + add support for sending traps via a php call that runs the external command snmptrap
 
-+ add an xmlrpc API
++ add an xmlrpc API and/or eZRest one
 
 + make extension multilingual
 

@@ -39,6 +39,29 @@ class eZsnmpdeZFindHandler extends eZsnmpdFlexibleHandler
                     'type' => eZSNMPd::TYPE_INTEGER,
                     'value' => $status );
 
+            case $oidroot . '1.2':
+                if ( in_array( 'ezfind', eZExtension::activeExtensions() )  )
+                {
+                    $ini = eZINI::instance( 'solr.ini' );
+                    $data = eZHTTPTool::getDataByURL( $ini->variable( 'SolrBase', 'SearchServerURI' )."/admin/stats.jsp", false );
+                    if ( preg_match( '#<stat +name="numDocs" +>[ \t\r\n]*(\d+)[ \t\r\n]*</stat>#', $data, $status ) )
+                    {
+                        $status = $status[1];
+                    }
+                    else
+                    {
+                        $status = -2;
+                    }
+                }
+                else
+                {
+                    $status = -1;
+                }
+                return array(
+                    'oid' => $oid,
+                    'type' => eZSNMPd::TYPE_INTEGER,
+                    'value' => $status );
+
         }
 
         return self::NO_SUCH_OID;
@@ -61,6 +84,11 @@ class eZsnmpdeZFindHandler extends eZsnmpdFlexibleHandler
                                     'name' => 'ezfindSolrStatus',
                                     'syntax' => 'INTEGER',
                                     'description' => 'Availability of the SOLR server.'
+                                ),
+                                2 => array(
+                                    'name' => 'ezfindSolrCount',
+                                    'syntax' => 'INTEGER',
+                                    'description' => 'Number of documents indexed in the SOLR server.'
                                 )
                             )
                         )
