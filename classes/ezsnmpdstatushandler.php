@@ -34,6 +34,8 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
         '2.1.2.5' => 'SELECT COUNT(id) AS count FROM ezcontentobject WHERE STATUS=0', // eZContentObjectDrafts
         '2.1.2.6' => 'SELECT COUNT(id) AS count FROM ezcontentclass',
         '2.1.2.7' => 'SELECT COUNT(id) AS count FROM ezinfocollection',
+        '2.1.2.8' => 'SELECT COUNT(*) AS count FROM ezpending_actions WHERE ACTION=\'index_object\'',
+        '2.1.2.9' => 'SELECT COUNT(id) AS count FROM eznotificationevent WHERE STATUS=0',
 
         '2.1.3.1' => 'SELECT COUNT(contentobject_id) AS count FROM ezuser', // user count
 
@@ -614,6 +616,16 @@ class eZsnmpdStatusHandler extends eZsnmpdHandler {
                                             'name' => 'contentObjectInfoCollections',
                                             'syntax' => 'INTEGER',
                                             'description' => 'The number of information collections.'
+                                        ),
+                                        8 => array(
+                                            'name' => 'contentObjectsPendingIndexation',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of objects pending a search-engine indexation.'
+                                        ),
+                                        9 => array(
+                                            'name' => 'pendingNotificationEvents',
+                                            'syntax' => 'INTEGER',
+                                            'description' => 'The number of pending notification events.'
                                         )
                                     )
                                 ),

@@ -366,6 +366,7 @@ function oidIsSmaller($a, $b) {
                     }
                     else
                     {
+                        //$depth = count( explode( '.', rtrim( '.', $obj->oidRoot() ) ) );
                         foreach( $hmibs['children'] as $key => $val)
                         {
                             $mibs['children'][$key] = $val;
