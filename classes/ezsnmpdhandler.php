@@ -135,6 +135,30 @@ abstract class eZsnmpdHandler implements eZsnmpdHandlerInterface {
         }
         return '';
     }
+
+    /**
+     * Make sure we use a separate DB connection from the standard one (courtesy function to be used by subclasses).
+     * This allows us to:
+     * - catch the exception raised if db is down and keep the script going
+     * - run the script in daemon mode without keeping a connection open (as we can close as soon as it is not needed anymore)
+     */
+    protected static function eZDBinstance()
+    {
+        try
+        {
+            $db = eZDB::instance( false, false, true );
+            // eZP 4.0 will not raise an exception on connection errors
+            if ( !$db->isConnected() )
+            {
+                return false;
+            }
+            return $db;
+        }
+        catch ( Exception $e )
+        {
+            return false;
+        }
+    }
 }
 
 ?>
