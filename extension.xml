@@ -8,8 +8,9 @@
     </metadata>
 
     <dependencies>
-        <extends>
-        </extends>
+        <uses>
+            <extension name="ezperformancelogger" />
+        </uses>
         <requires>
         </requires>
     </dependencies>

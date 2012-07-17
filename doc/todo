@@ -2,6 +2,8 @@ to do (roughly ordered by priority):
 
 - check it template fetch functions work
 
++ add support for ezperformancelogger
+
 + settle on a list of MIBs, gettable and settable
   - finish stats from ggsysinfo to status mib: cache/storage files in cluster modes; etc...
   - finish counters imported from ezmunin (missing: nbr. of cache-block and view-cache templates)

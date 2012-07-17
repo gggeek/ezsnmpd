@@ -20,8 +20,7 @@ switch( $Params['format'] )
         eZExecution::cleanExit();
 }
 
-require_once( "kernel/common/template.php" );
-$tpl = templateInit();
+$tpl = eZsnmpdTools::eZTemplateFactory();
 $tpl->setVariable( 'mib', $mib );
 $Result = array();
 $Result['content'] = $tpl->fetch( "design:snmp/mib/$format.tpl" );
