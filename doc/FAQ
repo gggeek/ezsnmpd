@@ -9,21 +9,27 @@ A1: This extension does not provide on its own any report or graphical interface
    hyperic and many others.
 A2: Since we're nice guys, we still provide the user with a nice GUI interface,
    listing all available indicators.
-	ou can find it at http://my.ezpublish.site/index.php/siteaccess/snmp/mib/html
+   You can find it at http://my.ezpublish.site/index.php/siteaccess/snmp/mib/html
+A3: If you install the ezperformancelogger extension in addition to this one, you
+  can log the indicator values provided here into the ezperformancelogger csv log
+  file, which in turn can be easily graphed by Munin.
+  Note that you'd probably be better off integrating munin directly via snmp though...
 
 Q: do you provide plugins for any of those monitoring tools to ease the integration
    of ezsnmpd and the creation of nice looking graphs?
-A: currently a config file for PRTG is available, but more are planned
+A1: currently a config file for PRTG is available, but more are planned
+A2: for integration with Munin, see answer A3 above
 
 Q: SNMP, MIB, OID, what the hell is this?
 A1: please google for "snmp tutorial"
 A2: in short:
    SNMP = a protocol devised for monitoring of appliances on a network.
-		  Think of it as 'http for monitoring', with the 'snmp manager' acting
-		  as the user-agent (browser), and 'snmp agent' acting as the webserver
+          Think of it as 'http for monitoring', with the 'snmp manager' acting
+          as the user-agent (browser), and 'snmp agent' acting as the webserver
    OID  = a unique object/characteristic identifier, whose value can be queried.
           These object identifiers consist of numbers separated by decimal points,
-          and are organized in a tree
+          and are organized in a tree.
+          Example: 1.3.6.1.4.1.33120.1.2.1.1 (used to monitor database avaiability)
    MIB  = the "database of information" listing the existing OIDs with type,
           description etc. It is stored as a text file with a kludgy syntax.
 
@@ -51,7 +57,7 @@ A: because of the principle of separation of concerns. Every app knows best how
 
    Mysql - http://www.webnms.com/mysql_agent/index.html
            http://www.masterzen.fr/2009/04/13/introducing-mysql-snmp/
-		   http://www.mysql.com/products/enterprise/monitor-features.html
+           http://www.mysql.com/products/enterprise/monitor-features.html
 
    Postgresql - pgsnmpd (http://pgsnmpd.projects.postgresql.org/)
 
