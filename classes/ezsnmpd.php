@@ -132,6 +132,11 @@ function oidIsSmaller($a, $b) {
         return null;
     }
 
+    public function fetchByName( $name )
+    {
+        return array( 'result' => $this->getByName( $name ) );
+    }
+
     /**
     * @return string|null null in case of error (man snmpd.conf for format details)
     */
@@ -157,6 +162,11 @@ function oidIsSmaller($a, $b) {
             }
         }
         return $response;
+    }
+
+    public function fetch( $oid )
+    {
+        return array( 'result' => $this->get( $oid ) );
     }
 
     /**
@@ -269,6 +279,11 @@ function oidIsSmaller($a, $b) {
             $oid = $parts[0];
         }
         return $result;
+    }
+
+    public function fetchWalk( $oid='' )
+    {
+        return array( 'result' => $this->walk( $oid ) );
     }
 
     /**

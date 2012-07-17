@@ -1,7 +1,8 @@
 <?php
 /**
  * Bridge that allows any value exposed in the MIB to be traced via the eZPerformanceLogger
- * framework
+ * framework.
+ * See ezperformancelogger.ini.append.php for examples on setting this up
  *
  * @author G. Giunta
  * @copyright (C) G. Giunta 2012
@@ -11,7 +12,7 @@
 class eZsnmpdPerfLogger implements eZPerfLoggerProvider
 {
 
-        /**
+    /**
      * This method is called (by the framework) to allow this class to provide
      * values for the variables it caters to.
      * @param string $output current page output
@@ -29,16 +30,12 @@ class eZsnmpdPerfLogger implements eZPerfLoggerProvider
             {
                 $parts = explode( '/', $var, 2 );
                 $oid = $parts[1];
-//var_dump( $oid );
                 $snmpd = ( $snmpd == null ) ? new eZSNMPd() : $snmpd;
                 $value = ( strpos( $oid, '.' ) !== false ) ? $snmpd->get( $oid ) : $snmpd->getByName( str_replace( 'eZSystems::', '', $oid ) );
-//var_dump( $value );
                 $value = explode( "\n", $value );
                 $out[$var] = $value[2];
-//die();
             }
         }
-
         return $out;
     }
 
