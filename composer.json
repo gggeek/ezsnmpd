@@ -2,7 +2,7 @@
     "name": "gggeek/ezsnmpd",
     "type": "ezpublish-legacy-extension",
     "description": "The goal of the ezSNMPd extension is to provide a unified API for monitoring installations of the eZ Publish cms - both availability monitoring and performance monitoring are target use cases.",
-    "license": "GNU General Public License v2.0",
+    "license": "GPL-2.0-or-later",
     "homepage": "http://projects.ez.no/ezsnmpd",
     "minimum-stability": "dev",
     "require": {
